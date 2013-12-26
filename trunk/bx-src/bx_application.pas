@@ -201,7 +201,7 @@ procedure TBxApplication.CommentArc;
 begin
   if swtACC in FCommandLine.Options then
   begin
-    FArchiver.Comment := FCommandLine.SwitchACC;
+    FArchiver.Comment := FCommandLine.SwitchACC.Text;
     // FArchiver.ForceSave;
   end;
 end;
@@ -210,7 +210,7 @@ procedure TBXApplication.CommentItem(Item: TArchiveItem);
 begin
   if swtCC in FCommandLine.Options then
   begin
-    Item.Comment := FCommandLine.SwitchCC;
+    Item.Comment := FCommandLine.SwitchCC.Text;
     // FArchiver.ForceSave;
   end;
 end;
@@ -771,4 +771,4 @@ begin
 end;
 
 end.
-
+

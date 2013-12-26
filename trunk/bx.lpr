@@ -23,7 +23,7 @@
 
   Fist release:
 
-    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
+    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -34,15 +34,15 @@ program bx;
 {$I bx_compiler.inc}
 
 uses
-  {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  Classes,
-  // ---
+  {$IFDEF UNIX} BaseUnix, {$ENDIF}
+  {$IFDEF MAC} TODO... , {$ENDIF}
   bx_Application,
-  bx_Common;
+  bx_Common,
+  Classes;
 
 var
-  Application: TBxApplication;
+  App: TBxApplication;
 
   { control+c event }
 
@@ -50,11 +50,11 @@ var
   function CtrlHandler(CtrlType: longword): longbool;
   begin
     case CtrlType of
-      CTRL_C_EVENT:        Application.Terminate;
-      CTRL_BREAK_EVENT:    Application.Terminate;
-      CTRL_CLOSE_EVENT:    Application.Terminate;
-      CTRL_LOGOFF_EVENT:   Application.Terminate;
-      CTRL_SHUTDOWN_EVENT: Application.Terminate;
+      CTRL_C_EVENT:        App.Terminate;
+      CTRL_BREAK_EVENT:    App.Terminate;
+      CTRL_CLOSE_EVENT:    App.Terminate;
+      CTRL_LOGOFF_EVENT:   App.Terminate;
+      CTRL_SHUTDOWN_EVENT: App.Terminate;
     end;
     Result := True;
   end;
@@ -64,17 +64,21 @@ var
   procedure CtrlHandler(sig: cint);
   begin
     case sig of
-      SIGINT:  Application.Terminate;
-      SIGQUIT: Application.Terminate;
-      SIGKILL: Application.Terminate;
-      SIGSTOP: Application.Terminate;
+      SIGINT:  App.Terminate;
+      SIGQUIT: App.Terminate;
+      SIGKILL: App.Terminate;
+      SIGSTOP: App.Terminate;
     end;
   end;
   {$ENDIF}
 
+  {$IFDEF MAC}
+  TODO...
+  {$ENDIF}
+
 begin
   SetCtrlCHandler(@CtrlHandler);
-  Application := TBxApplication.Create;
-  Application.Execute;
-  Application.Destroy;
-end.
+  App := TBxApplication.Create;
+  App.Execute;
+  App.Destroy;
+end.

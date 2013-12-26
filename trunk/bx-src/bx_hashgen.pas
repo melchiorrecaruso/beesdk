@@ -23,7 +23,7 @@
 
   Fist release:
 
-    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
+    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -44,12 +44,10 @@ type
   { THashGen class }
 
   THashGen = class(TObject)
-  private
-    FDigest: string;
   public
-    procedure Start;  virtual; abstract;
-    function  Finish: string; virtual; abstract;
-    procedure Update(Data: PByte; Count: longint); virtual; abstract;
+    procedure Start;  virtual;
+    function  Finish: string; virtual;
+    procedure Update(Data: PByte; Count: longint); virtual;
   end;
 
   { TCRC32HashGen class }
@@ -100,6 +98,23 @@ implementation
 
 uses
   bx_Common;
+
+/// THashGen class
+
+procedure THashGen.Start;
+begin
+  // nothing to do
+end;
+
+function THashGen.Finish: string;
+begin
+  Result := '';
+end;
+
+procedure THashGen.Update(Data: PByte; Count: longint);
+begin
+  // nothing to do
+end;
 
 /// TCRC32HashGen class
 
@@ -175,4 +190,4 @@ begin
   MD5Update(FCTX, Data[0], Count);
 end;
 
-end.
+end.

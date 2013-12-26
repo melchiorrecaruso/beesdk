@@ -23,7 +23,7 @@
 
   Fist release:
 
-    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
+    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -45,36 +45,53 @@ const
 type
   TBuffer = array [0.. DefaultBufferSize - 1] of byte;
 
-  { TCipher class }
+  { TCipher abstract class }
 
   TCipher = class(TObject)
   public
-    function Encrypt(var Data: TBuffer; Count: longint): longint; virtual; abstract;
-    function Decrypt(var Data: TBuffer; Count: longint): longint; virtual; abstract;
+    procedure Start(const Key: string); virtual;
+    procedure Finish virtual;
+    function Update(var Data: TBuffer; Count: longint): longint; virtual;
   end;
 
   { TBlowFishCipher class }
 
-  TBlowFishCipher = class(TCipher)
+  TBlowFishEnCipher = class(TCipher)
   private
     FBlowFish: TBlowFish;
   public
-    constructor Create(const Key: string);
-    destructor Destroy; override;
-    function Encrypt(var Data: TBuffer; Count: longint): longint; override;
-    function Decrypt(var Data: TBuffer; Count: longint): longint; override;
+    procedure Start(const Key: string); override;
+    procedure Finish; override;
+    function Update(var Data: TBuffer; Count: longint): longint; override;
+  end;
+
+  TBlowFishDeCipher = class(TCipher)
+  private
+    FBlowFish: TBlowFish;
+  public
+    procedure Start(const Key: string); override;
+    procedure Finish; override;
+    function Update(var Data: TBuffer; Count: longint): longint; override;
   end;
 
   { TIdeaCipher class }
 
-  TIdeaCipher = class(TCipher)
+  TIdeaEnCipher = class(TCipher)
   private
     FKey: TIDEAKey;
   public
-    constructor CreateEnc(const Key: string);
-    constructor CreateDec(const Key: string);
-    function Encrypt(var Data: TBuffer; Count: longint): longint; override;
-    function Decrypt(var Data: TBuffer; Count: longint): longint; override;
+    procedure Start(const Key: string); override;
+    procedure Finish; override;
+    function Update(var Data: TBuffer; Count: longint): longint; override;
+  end;
+
+  TIdeaDeCipher = class(TCipher)
+  private
+    FKey: TIDEAKey;
+  public
+    procedure Start(const Key: string); override;
+    procedure Finish; override;
+    function Update(var Data: TBuffer; Count: longint): longint; override;
   end;
 
 implementation
@@ -82,27 +99,42 @@ implementation
 uses
   Math;
 
-/// TBlowFishCipher class
+/// TCipher class
 
-constructor TBlowFishCipher.Create(const Key: string);
+procedure TCipher.Start(const Key: string);
+begin
+  // nothing to do
+end;
+
+procedure TCipher.Finish;
+begin
+  // noting do to
+end;
+
+function TCipher.Update(var Data: TBuffer; Count: longint): longint;
+begin
+  Result := Count;
+end;
+
+/// TBlowFishEnCipher class
+
+procedure TBlowFishEnCipher.Start(const Key: string);
 var
   K: TBlowFishKey;
   KLen: longint;
 begin
-  inherited Create;
   FillByte(K[0], SizeOf(K), 0);
   Move(Key[1], K[0], Min(Length(Key), Length(K)));
 
   FBlowFish := TBlowFish.Create(K, Length(K));
 end;
 
-destructor TBlowFishCipher.Destroy;
+procedure TBlowFishEnCipher.Finish;
 begin
   FBlowFish.Destroy;
-  inherited Destroy;
 end;
 
-function TBlowFishCipher.Encrypt(var Data: TBuffer; Count: longint): longint;
+function TBlowFishEnCipher.Update(var Data: TBuffer; Count: longint): longint;
 var
   Block: ^TBFBlock;
 begin
@@ -115,7 +147,25 @@ begin
   end;
 end;
 
-function TBlowFishCipher.Decrypt(var Data: TBuffer; Count: longint): longint;
+/// TBlowFishDeCipher class
+
+procedure TBlowFishDeCipher.Start(const Key: string);
+var
+  K: TBlowFishKey;
+  KLen: longint;
+begin
+  FillByte(K[0], SizeOf(K), 0);
+  Move(Key[1], K[0], Min(Length(Key), Length(K)));
+
+  FBlowFish := TBlowFish.Create(K, Length(K));
+end;
+
+procedure TBlowFishDeCipher.Finish;
+begin
+  FBlowFish.Destroy;
+end;
+
+function TBlowFishDeCipher.Update(var Data: TBuffer; Count: longint): longint;
 var
   Block: ^TBFBlock;
 begin
@@ -128,32 +178,61 @@ begin
   end;
 end;
 
-/// TIdeaCipher class
+/// TIdeaEnCipher class
 
-constructor TIdeaCipher.CreateEnc(const Key: string);
+procedure TIdeaEnCipher.Start(const Key: string);
 var
   K: TIdeaCryptKey;
 begin
-  inherited Create;
   FillByte(K[0], SizeOf(K), 0);
   Move(Key[1], K[0], Min(Length(Key), Length(K)));
 
   EnKeyIdea(K, FKey);
 end;
 
-constructor TIdeaCipher.CreateDec(const Key: string);
+procedure TIdeaEnCipher.Finish;
+begin
+  // nothing to do
+end;
+
+function TIdeaEnCipher.Update(var Data: TBuffer; Count: longint): longint;
+var
+  Cache: TBuffer;
+  InPtr:  ^TIDEACryptData;
+  OutPtr: ^TIDEACryptData;
+begin
+  Move(Data[0], Cache[0], Count);
+
+  Result := 0;
+  while Result < Count do
+  begin
+    InPtr  := @Cache[Result];
+    OutPtr := @Data [Result];
+    CipherIdea(InPtr^, OutPtr^, FKey);
+    Inc(Result, SizeOf(TIDEACryptData));
+  end;
+end;
+
+/// TIdeaDeCipher class
+
+procedure TIdeaDeCipher.Start(const Key: string);
 var
   K: TIdeaCryptKey;
   Z: TIDEAKey;
 begin
-  FillChar(K[0], SizeOf(K),0);
+  FillByte(K[0], SizeOf(K), 0);
   Move(Key[1], K[0], Min(Length(Key), Length(K)));
 
   EnKeyIdea(K, Z);
   DeKeyIdea(Z, FKey);
 end;
 
-function TIdeaCipher.Encrypt(var Data: TBuffer; Count: longint): longint;
+procedure TIdeaDeCipher.Finish;
+begin
+  // nothing to do
+end;
+
+function TIdeaDeCipher.Update(var Data: TBuffer; Count: longint): longint;
 var
   Cache: TBuffer;
   InPtr:  ^TIDEACryptData;
@@ -171,22 +250,4 @@ begin
   end;
 end;
 
-function TIdeaCipher.Decrypt(var Data: TBuffer; Count: longint): longint;
-var
-  Cache: TBuffer;
-  InPtr:  ^TIDEACryptData;
-  OutPtr: ^TIDEACryptData;
-begin
-  Move(Data[0], Cache[0], Count);
-
-  Result := 0;
-  while Result < Count do
-  begin
-    InPtr  := @Cache[Result];
-    OutPtr := @Data [Result];
-    CipherIdea(InPtr^, OutPtr^, FKey);
-    Inc(Result, SizeOf(TIDEACryptData));
-  end;
-end;
-
-end.
+end.

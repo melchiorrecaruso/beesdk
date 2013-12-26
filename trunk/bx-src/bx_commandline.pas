@@ -23,7 +23,7 @@
 
   Fist release:
 
-    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
+    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -93,14 +93,14 @@ type
 
   // TCommandLineParser class
 
-  TCommandLineParser = class
+  TCommandLineParser = class(TObject)
   protected
     FCommand: TCommand;
     FSwitches: TSwitches;
-    FSwitchACC: string;
+    FSwitchACC: TStringList;
     FSwitchB: boolean;
     FSwitchC: string;
-    FSwitchCC: string;
+    FSwitchCC: TStringList;
     FSwitchCD: string;
     FSwitchE: string;
     FSwitchH: string;
@@ -151,10 +151,10 @@ type
     procedure Execute;
     property Command: TCommand read FCommand;
     property Options: TSwitches read FSwitches;
-    property SwitchACC: string read FSwitchACC;
+    property SwitchACC: TStringList read FSwitchACC;
     property SwitchB: boolean read FSwitchB;
     property SwitchC: string read FSwitchC;
-    property SwitchCC: string read FSwitchCC;
+    property SwitchCC: TStringList read FSwitchCC;
     property SwitchCD: string read FSwitchCD;
     property SwitchE: string read FSwitchE;
     property SwitchH: string read FSwitchH;
@@ -190,11 +190,10 @@ type
 implementation
 
 uses
-  DateUtils,
-  SysUtils,
-  // ---
   bx_Common,
-  bx_Messages;
+  bx_Messages,
+  DateUtils,
+  SysUtils;
 
 function TryStrWithMultToQWord(var S: string; out Q: qword) : boolean;
 var
@@ -463,10 +462,10 @@ begin
   inherited Create;
   FCommand     := cmdH;
   FSwitches    := [];
-  FSwitchACC   := '';
+  FSwitchACC   := TStringList.Create;
   FSwitchB     := FALSE;
   FSwitchC     := char(0);
-  FSwitchCC    := '';
+  FSwitchCC    := TStringList.Create;
   FSwitchCD    := '';
 
   FSwitchE     := char(0);
@@ -490,6 +489,8 @@ end;
 
 destructor TCommandLineParser.Destroy;
 begin
+  FSwitchACC.Destroy;
+  FSwitchCC.Destroy;
   FSwitchX.Destroy;
   FFileMasks.Destroy;
   inherited Destroy;
@@ -506,7 +507,8 @@ begin
   if UpCase(S[1]) = 'Q' then FCommand := cmdQ else
   if UpCase(S[1]) = 'R' then FCommand := cmdR else
   if UpCase(S[1]) = 'T' then FCommand := cmdT else
-  if UpCase(S[1]) = 'X' then FCommand := cmdX else SetExitStatus(esCmdLineError);
+  if UpCase(S[1]) = 'X' then FCommand := cmdX else
+    SetExitStatus(esCmdLineError);
 end;
 
 procedure TCommandLineParser.ProcessSwitchACC(var S: string);
@@ -515,14 +517,19 @@ begin
   if Pos('!', S) = 1 then
   begin
     Delete(S, 1, 1);
-    FSwitchACC := S;
+    FSwitchACC.Add(S);
   end else
     if Pos('@', S) = 1 then
     begin
       Delete(S, 1, 1);
       if FileExists(S) then
       begin
-        FSwitchACC := ExtractStrFromFile(S);
+        Writeln('START');
+
+
+        FSwitchACC.LoadFromFile(S);
+
+        Writeln('START2');
       end else
         SetExitStatus(esCmdLineACCError);
     end else
@@ -579,14 +586,14 @@ begin
   if Pos('!', S) = 1 then
   begin
     Delete(S, 1, 1);
-    FSwitchCC := S;
+    FSwitchCC.Add(S);
   end else
     if Pos('@', S) = 1 then
     begin
       Delete(S, 1, 1);
       if FileExists(S) then
       begin
-        FSwitchCC := ExtractStrFromFile(S);
+        FSwitchCC.LoadFromFile(S);
       end else
         SetExitStatus(esCmdLineCCError);
     end else
@@ -667,8 +674,9 @@ begin
     begin
       Delete(S,1, 1);
       if FileExists(S) then
+      begin
         FFileMasks.LoadFromFile(S)
-      else
+      end else
         SetExitStatus(esCmdLineIError);
     end else
       SetExitStatus(esCmdLineIError);
@@ -780,7 +788,7 @@ procedure TCommandLineParser.ProcessSwitchSFX(var S: string);
 begin
   if UpCase(S) = '-SFX' then
   begin
-    S := 'bx.sfx';
+    S := DefaultSfxFileName;
   end else
     if Pos('-SFX/', UpCase(S)) = 1 then
       Delete(S, 1, 5)
@@ -940,8 +948,9 @@ begin
     begin
       Delete(S,1, 1);
       if FileExists(S) then
-        FSwitchX.LoadFromFile(S)
-      else
+      begin
+        FSwitchX.LoadFromFile(S);
+      end else
         SetExitStatus(esCmdLineXError);
     end else
       SetExitStatus(esCmdLineXError);
@@ -1060,7 +1069,8 @@ begin
 
   {$IFDEF DEBUG}
   Writeln('  Command = ', FCommand);
-  Writeln('    swACC = ', FSwitchACC);
+  for I := 0 to FSwitchACC.Count - 1 do
+    Writeln('    swACC = ', FSwitchACC[I]);
   Writeln('      swB = ', FSwitchB);
 
   S := FSwitchC;
@@ -1068,7 +1078,9 @@ begin
     if S[I] = char(0) then S[I] := ' ';
   Writeln('      swC = ', S);
 
-  Writeln('     swCC = ', FSwitchCC);
+  for I := 0 to FSwitchCC.Count - 1 do
+    Writeln('     swCC = ', FSwitchCC[I]);
+
   Writeln('     swCD = ', FSwitchCD);
 
   S := FSwitchE;
@@ -1094,16 +1106,16 @@ begin
   Writeln('      swW = ', FSwitchW);
 
   for I := 0 to FSwitchX.Count -1 do
-    Writeln('      swX= ', FSwitchX.Strings[I]);
+    Writeln('      swX= ', FSwitchX[I]);
 
   Writeln('      swY = ', FSwitchY);
   Writeln('  ArcName = ', FArchiveName);
 
   for I := 0 to FFileMasks.Count -1 do
-    Writeln(' FileMask = ', FFileMasks.Strings[I]);
+    Writeln(' FileMask = ', FFileMasks[I]);
   Writeln;
   {$ENDIF}  
 end;
 
 end.
-
+
