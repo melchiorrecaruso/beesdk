@@ -23,7 +23,7 @@
 
   Fist release:
 
-    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
+    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -38,9 +38,11 @@ interface
 {$IFDEF MSWINDOWS}
   {$linklib libmsvcrt}
 {$ENDIF}
+
 {$IFDEF MAC}
   {$linklib libmsvcrt}
 {$ENDIF}
+
 {$IFDEF UNIX}
   {$linklib libc}
   {$linklib libm}
@@ -105,4 +107,4 @@ function  PpmdModeller_Decode      (Self: pointer; RangeEnc: pointer; Buffer: po
 
 implementation
 
-end.
+end.

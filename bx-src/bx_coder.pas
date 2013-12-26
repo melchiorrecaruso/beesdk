@@ -23,7 +23,7 @@
 
   Fist release:
 
-    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
+    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -129,17 +129,16 @@ type
 implementation
 
 uses
-  SysUtils,
-  // ---
-  bx_Configuration,
   bx_Common,
-  bx_Messages,
+  bx_Configuration,
   {$IFDEF LIBBX}
   bx_LibLink,
   {$ELSE}
-  Bee_Modeller;
+  to do ...
   {$ENDIF}
-  bx_Stream;
+  bx_Messages,
+  bx_Stream,
+  SysUtils;
 
 /// TCoder abstract class
 
@@ -147,11 +146,11 @@ constructor TCoder.Create(Stream: pointer);
 begin
   inherited Create;
   FStream    := Stream;
-  FLevel     := 0;
-  FLevelAux  := 0;
+  FLevel     :=  0;
+  FLevelAux  :=  0;
   FFilter    := '';
   FFilterAux := '';
-  FBlock     := 0;
+  FBlock     :=  0;
 end;
 
 /// TStoreCoder class
@@ -341,4 +340,4 @@ begin
   end;
 end;
 
-end.
+end.

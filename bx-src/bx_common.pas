@@ -23,7 +23,7 @@
 
   Fist release:
 
-    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
+    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -34,12 +34,6 @@ unit bx_Common;
 {$I bx_compiler.inc}
 
 interface
-
-uses
-  {$IFDEF UNIX} BaseUnix, {$ENDIF}
-  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  DateUtils,
-  SysUtils;
 
 const
   { Default file names }
@@ -106,6 +100,12 @@ function  SetIdlePriority: boolean;
 function  SetNormalPriority: boolean;
 
 implementation
+
+uses
+  {$IFDEF UNIX} BaseUnix, {$ENDIF}
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  DateUtils,
+  SysUtils;
 
 const
   HexaDecimals: array [0..15] of char = '0123456789ABCDEF';
@@ -519,4 +519,4 @@ begin
   {$ENDIF}
 end;
 
-end.
+end.

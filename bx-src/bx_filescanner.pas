@@ -23,7 +23,7 @@
 
   First release:
 
-    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
+    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -37,7 +37,6 @@ interface
 
 uses
   Classes,
-  DateUtils,
   SysUtils;
 
 type
@@ -65,15 +64,16 @@ type
     FList: TList;
     function GetCount: integer;
     function GetItem(Index: longint): TFileScannerItem;
-    function AddItem(const RecPath: string; const Rec: TSearchRec): TFileScannerItem;
     procedure Scan(FileMask: string; Recursive: boolean);
+    procedure AddItem(const RecPath: string; const Rec: TSearchRec);
   public
     constructor Create;
     destructor Destroy; override;
     procedure Add(const FileMask: string; Recursive: boolean);
-    procedure Clear;
     procedure Delete(const FileMask: string; Recursive: boolean);
+    function Find(const FileName: string): longint;
     procedure Sort(Compare: TListSortCompare);
+    procedure Clear;
   public
     property Count: integer read GetCount;
     property Items[Index: longint]: TFileScannerItem read GetItem;
@@ -82,7 +82,8 @@ type
 implementation
 
 uses
-  bx_Common;
+  bx_Common,
+  DateUtils;
 
 { TFileScannerItem class }
 
@@ -119,9 +120,25 @@ begin
   FList.Clear;
 end;
 
-function TFileScanner.AddItem(const RecPath: string; const Rec: TSearchRec): TFileScannerItem;
+procedure TFileScanner.AddItem(const RecPath: string; const Rec: TSearchRec);
 begin
-  Result := TFileScannerItem.Create(RecPath, Rec);
+  if Find(RecPath + Rec.Name) = -1 then
+  begin
+    FList.Add(TFileScannerItem.Create(RecPath, Rec));
+  end;
+end;
+
+function TFilescanner.Find(const FileName: string): longint;
+var
+  I: longint;
+begin
+  Result := -1;
+  for I := 0 to GetCount - 1 do
+    if AnsiCompareFileName(FileName, Items[I].FileName) = 0 then
+    begin
+      Result := I;
+      Break;
+    end;
 end;
 
 procedure TFileScanner.Scan(FileMask: string; Recursive: boolean);
@@ -131,18 +148,18 @@ var
   Rec: TSearchRec;
   Error: longint;
 begin
+  if FileMask = '' then Exit;
   // directory and recursive mode ...
   if DirectoryExists(FileMask) then
   begin
     Recursive := TRUE;
     FileMask  := IncludeTrailingPathDelimiter(FileMask) + '*';
   end else
-    if FileMask <> '' then
-      if FileMask[Length(FileMask)] = PathDelim then
-      begin
-        Recursive := TRUE;
-        FileMask  := IncludeTrailingPathDelimiter(FileMask) + '*';
-      end;
+    if FileMask[Length(FileMask)] = PathDelim then
+    begin
+      Recursive := TRUE;
+      FileMask  := IncludeTrailingPathDelimiter(FileMask) + '*';
+    end;
 
   RecPath := ExtractFilePath(FileMask);
   while FileMaskHasWildcards(RecPath) do
@@ -173,10 +190,10 @@ begin
           Scan(IncludeTrailingBackSlash(RecName) +
             ExtractFileName(FileMask), Recursive);
     end else
-    begin
       if FileNameMatch(RecName, FileMask, Recursive) then
-        FList.Add(AddItem(RecPath, Rec));
-    end;
+      begin
+        AddItem(RecPath, Rec);
+      end;
 
     Error := FindNext(Rec);
   end; // end while error ...
@@ -215,4 +232,4 @@ begin
 end;
 
 end.
-
+

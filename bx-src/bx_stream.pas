@@ -23,7 +23,7 @@
 
   Fist release:
 
-    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
+    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -38,7 +38,8 @@ interface
 uses
   bx_Cipher,
   bx_Coder,
-  bx_HashGen;
+  bx_HashGen,
+  bx_Messages;
 
 type
   { TBufStream abstract class }
@@ -137,9 +138,7 @@ implementation
 
 uses
   Math,
-  SysUtils,
-  // ---
-  bx_Messages;
+  SysUtils;
 
 function DoFill(Stream: pointer; Data: PByte; Size: longint): longint; {$IFDEF LIBBX} cdecl; {$ENDIF} inline;
 begin
@@ -157,44 +156,51 @@ constructor TBufStream.Create(Handle: THandle);
 begin
   inherited Create;
   FHandle        := Handle;
-  FHash          := nil;
+  // HashGen ...
+  FHash          := THashGen.Create;
   FHashMethod    := 0;
-  FCipher        := nil;
+  // Cipher ...
+  FCipher        := TCipher.Create;
   FCipherMethod  := 0;
-  FCoder         := nil;
+  // Coder ...
+  FCoder         := TStoreCoder.Create(Self);
   FCoderMethod   := 0;
 end;
 
 destructor TBufStream.Destroy;
 begin
-  if Assigned(FHash  ) then FreeAndNil(FHash  );
-  if Assigned(FCipher) then FreeAndNil(FCipher);
-  if Assigned(FCoder ) then FreeAndNil(FCoder );
+  FreeAndNil(FHash);
+  FreeAndNil(FCipher);
+  FreeAndNil(FCoder);
   inherited Destroy;
 end;
 
 procedure TBufStream.StartSession;
 begin
-  FHashDigest := '';
-  if Assigned(FHash) then
-    FreeAndNil(FHash);
   case FHashMethod of
-    1: FHash := TCRC32HashGen.Create;
-    2: FHash := TCRC64HashGen.Create;
-    3: FHash := TSHA1HashGen .Create;
-    4: FHash := TMD5HashGen  .Create;
+    0: if (FHash is THashGen     ) = FALSE then FreeAndNil(FHash);
+    1: if (FHash is TCRC32HashGen) = FALSE then FreeAndNil(FHash);
+    2: if (FHash is TCRC64HashGen) = FALSE then FreeAndNil(FHash);
+    3: if (FHash is TSHA1HashGen ) = FALSE then FreeAndNil(FHash);
+    4: if (FHash is TMD5HashGen  ) = FALSE then FreeAndNil(FHash);
+    else SetExitStatus(esCaseError);
   end;
-  if Assigned(FHash) then
-    FHash.Start;
+
+  if Assigned(FHash) = FALSE then
+    case FHashMethod of
+      0: FHash := THashGen     .Create;
+      1: FHash := TCRC32HashGen.Create;
+      2: FHash := TCRC64HashGen.Create;
+      3: FHash := TSHA1HashGen .Create;
+      4: FHash := TMD5HashGen  .Create;
+      else SetExitStatus(esCaseError);
+    end;
+  FHash.Start;
 end;
 
 procedure TBufStream.EndSession;
 begin
-  if Assigned(FHash) then
-  begin
-    FHashDigest := FHash.Finish;
-    FreeAndNil(FHash);
-  end;
+  FHashDigest := FHash.Finish;
 end;
 
 /// TReadBufStream class
@@ -220,8 +226,8 @@ begin
     FBufferSize := 0;
     SetExitStatus(esFillStreamError);
   end;
-  if Assigned(FCipher) then
-    FCipher.Decrypt(FBuffer, FBufferSize);
+
+  FCipher.Update(FBuffer, FBufferSize);
 end;
 
 function TReadBufStream.Read(Data: PByte; Count: longint): longint;
@@ -242,8 +248,7 @@ begin
     Inc(Result, I);
   until Result = Count;
 
-  if Assigned(FHash) then
-    FHash.Update(Data, Result);
+  FHash.Update(Data, Result);
 end;
 
 function TReadBufStream.Seek(const Offset: int64; Origin: longint): int64;
@@ -257,19 +262,32 @@ procedure TReadBufStream.StartSession;
 begin
   ClearBuffer;
   inherited StartSession;
-  if Assigned(FCipher) then
-    FreeAndNil(FCipher);
+
+  // Cipher initialization ...
   case FCipherMethod of
-    1: FCipher := TBlowFishCipher.Create   (FCipherPassword);
-    2: FCipher := TIdeaCipher    .CreateDec(FCipherPassword);
+    0: if (FCipher is TCipher          ) = FALSE then FreeAndNil(FCipher);
+    1: if (FCipher is TBlowFishDeCipher) = FALSE then FreeAndNil(FCipher);
+    2: if (FCipher is TIdeaDeCipher    ) = FALSE then FreeAndNil(FCipher);
+    else SetExitStatus(esCaseError);
   end;
 
-  if Assigned(FCoder) then
-    case FCoderMethod of
-      0: if (FCoder is TStoreCoder ) = FALSE then FreeAndNil(FCoder);
-      1: if (FCoder is TBeeDecoder ) = FALSE then FreeAndNil(FCoder);
-      2: if (FCoder is TPpmdDeCoder) = FALSE then FreeAndNil(FCoder);
+  if Assigned(FCipher)= FALSE then
+    case FCipherMethod of
+      0: FCipher := TCipher          .Create;
+      1: FCipher := TBlowFishDeCipher.Create;
+      2: FCipher := TIdeaDeCipher    .Create;
+      else SetExitStatus(esCaseError);
     end;
+
+  FCipher.Start(FCipherPassword);
+
+  // Coder initialization ...
+  case FCoderMethod of
+    0: if (FCoder is TStoreCoder ) = FALSE then FreeAndNil(FCoder);
+    1: if (FCoder is TBeeDecoder ) = FALSE then FreeAndNil(FCoder);
+    2: if (FCoder is TPpmdDeCoder) = FALSE then FreeAndNil(FCoder);
+    else SetExitStatus(esCaseError);
+  end;
 
   if Assigned(FCoder) = FALSE then
     case FCoderMethod of
@@ -289,10 +307,8 @@ end;
 
 procedure TReadBufStream.EndSession;
 begin
-  if Assigned(FCoder) then
-    FCoder.Finish;
-  if Assigned(FCipher) then
-    FreeAndNil(FCipher);
+  FCoder.Finish;
+  FCipher.Finish;
   inherited EndSession;
   ClearBuffer;
 end;
@@ -319,8 +335,7 @@ procedure TWriteBufStream.FlushBuffer;
 begin
   if FBufferIndex > 0 then
   begin
-    if Assigned(FCipher) then
-      FBufferIndex := FCipher.Encrypt(FBuffer, FBufferIndex);
+    FBufferIndex := FCipher.Update(FBuffer, FBufferIndex);
 
     if FBufferIndex <> FileWrite(FHandle, FBuffer[0], FBufferIndex) then
       SetExitStatus(esFlushStreamError);
@@ -346,8 +361,7 @@ begin
     Inc(Result, I);
   until Result = Count;
 
-  if Assigned(FHash) then
-    FHash.Update(Data, Result);
+  FHash.Update(Data, Result);
 end;
 
 function TWriteBufStream.Seek(const Offset: int64; Origin: longint): int64;
@@ -360,19 +374,32 @@ procedure TWriteBufStream.StartSession;
 begin
   FlushBuffer;
   inherited StartSession;
-  if Assigned(FCipher) then
-    FreeAndNil(FCipher);
+
+  // Cipher initialization ...
   case FCipherMethod of
-    1: FCipher := TBlowFishCipher.Create   (FCipherPassword);
-    2: FCipher := TIdeaCipher    .CreateEnc(FCipherPassword);
+    0: if not (FCipher is TCipher          ) then FreeAndNil(FCipher);
+    1: if not (FCipher is TBlowFishEnCipher) then FreeAndNil(FCipher);
+    2: if not (FCipher is TIdeaEnCipher    ) then FreeAndNil(FCipher);
+    else SetExitStatus(esCaseError);
   end;
 
-  if Assigned(FCoder) then
-    case FCoderMethod of
-      0: if not (FCoder is TStoreCoder ) then FreeAndNil(FCoder);
-      1: if not (FCoder is TBeeEncoder ) then FreeAndNil(FCoder);
-      2: if not (FCoder is TPpmdEnCoder) then FreeAndNil(FCoder);
+  if Assigned(FCipher) = FALSE then
+    case FCipherMethod of
+      0: FCipher := TCipher          .Create;
+      1: FCipher := TBlowFishEnCipher.Create;
+      2: FCipher := TIdeaEnCipher    .Create;
+    else SetExitStatus(esCaseError);
     end;
+
+  FCipher.Start(FCipherPassword);
+
+  // Coder initialization ..
+  case FCoderMethod of
+    0: if not (FCoder is TStoreCoder ) then FreeAndNil(FCoder);
+    1: if not (FCoder is TBeeEncoder ) then FreeAndNil(FCoder);
+    2: if not (FCoder is TPpmdEnCoder) then FreeAndNil(FCoder);
+    else SetExitStatus(esCaseError);
+  end;
 
   if Assigned(FCoder) = FALSE then
     case FCoderMethod of
@@ -392,11 +419,8 @@ end;
 
 procedure TWriteBufStream.EndSession;
 begin
-  if Assigned(FCoder) then
-    FCoder.Finish;
+  FCoder.Finish;
   FlushBuffer;
-  if Assigned(FCipher) then
-    FreeAndNil(FCipher);
   inherited EndSession;
 end;
 
@@ -415,8 +439,7 @@ end;
 function TNulBufStream.Write(Data: PByte; Count: longint): longint;
 begin
   Result := Count;
-  if Assigned(FHash) then
-    FHash.Update(Data, Count);
+  FHash.Update(Data, Result);
 end;
 
 function TNulBufStream.Encode(Data: PByte; Count: longint): longint;
@@ -430,4 +453,4 @@ begin
 end;
 
 end.
-
+

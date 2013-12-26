@@ -23,7 +23,7 @@
 
   Fist release:
 
-    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
+    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -34,11 +34,13 @@
 {$INLINE OFF}
 
 {$IFDEF MSWINDOWS}
-  {*$DEFINE FILENAMECASESENSITIVE}
-{$ELSE}
-  {$IFDEF UNIX}
-    {$DEFINE FILENAMECASESENSITIVE}
-  {$ELSE}
-    todo: define filenamecasesensitive
-  {$ENDIF}
+
 {$ENDIF}
+
+{$IFDEF UNIX}
+  {$DEFINE FILENAMECASESENSITIVE}
+{$ENDIF}
+
+{$IFDEF MAC}
+  {$DEFINE FILENAMECASESENSITIVE}
+{$ENDIF}
