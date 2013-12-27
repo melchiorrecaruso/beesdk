@@ -57,10 +57,8 @@ type
     FAssumeYesOnAllQueries: boolean;
     procedure TagItems;
     { Help routines}
-    function  QueryHowToUpdate(const Message: string): char;
     function  QueryHowToRename(const Message: string): string;
-    procedure CommentArc;
-    procedure CommentItem(Item: TArchiveItem);
+    function  QueryHowToUpdate(const Message: string): char;
     procedure ExtractItem(Item: TArchiveItem);
     procedure RenameItem (Item: TArchiveItem);
     procedure UpdateItem(Rec: TFileScannerItem);
@@ -197,24 +195,6 @@ begin
   end;
 end;
 
-procedure TBxApplication.CommentArc;
-begin
-  if swtACC in FCommandLine.Options then
-  begin
-    FArchiver.Comment := FCommandLine.SwitchACC.Text;
-    // FArchiver.ForceSave;
-  end;
-end;
-
-procedure TBXApplication.CommentItem(Item: TArchiveItem);
-begin
-  if swtCC in FCommandLine.Options then
-  begin
-    Item.Comment := FCommandLine.SwitchCC.Text;
-    // FArchiver.ForceSave;
-  end;
-end;
-
 procedure TBxApplication.ExtractItem(Item: TArchiveItem);
 var
   Index: longint;
@@ -315,6 +295,9 @@ begin
     begin
       if FArchiver.Find(RenameAs) = nil then
       begin
+        if swtCC in FCommandLine.Options then
+          Item.Comment := FCommandLine.SwitchCC.Text;
+
         Item.FileName := RenameAs;
         Item.Tag;
         Break;
@@ -422,6 +405,15 @@ begin
         end;
     end;
   end;
+
+  if Item <> nil then
+    if Item.Tagged then
+    begin
+      if swtCC in FCommandLine.Options then
+        Item.Comment := FCommandLine.SwitchCC.Text;
+
+      Writeln(Length(Item.Comment));
+    end;
 end;
 
 { TBxApplicatin class events }
@@ -483,6 +475,9 @@ end;
 procedure TBxApplication.OpenArchive;
 begin
   FArchiver.OpenArchive(FCommandLine.ArchiveName);
+  // archive comment
+  if swtACC in FCommandLine.Options then
+    FArchiver.Comment := FCommandLine.SwitchACC.Text;
   // compression mode
   if swtC in FCommandLine.Options then
     FArchiver.CompressionParams := FCommandLine.SwitchC;
