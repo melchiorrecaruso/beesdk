@@ -524,14 +524,10 @@ begin
       Delete(S, 1, 1);
       if FileExists(S) then
       begin
-        Writeln('START');
-
-
         FSwitchACC.LoadFromFile(S);
-
-        Writeln('START2');
       end else
         SetExitStatus(esCmdLineACCError);
+
     end else
       SetExitStatus(esCmdLineACCError);
 
