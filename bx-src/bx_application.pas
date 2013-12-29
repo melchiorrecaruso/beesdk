@@ -411,8 +411,6 @@ begin
     begin
       if swtCC in FCommandLine.Options then
         Item.Comment := FCommandLine.SwitchCC.Text;
-
-      Writeln(Length(Item.Comment));
     end;
 end;
 

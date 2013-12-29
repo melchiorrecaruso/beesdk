@@ -1543,9 +1543,11 @@ begin
     if aitUpdate in Item.FTags then
     begin
       FIsNeededToRun := TRUE;
+      Writeln('FIsNeededToRun = ', FIsNeededToRun);
     end;
     Exclude(Item.FTags, aitDecode);
   end;
+  Writeln('TEP 0 = ', FIsNeededToRun);
 end;
 
 // TArchiver # EXTRACT #
@@ -1630,8 +1632,13 @@ var
   Item: TArchiveItem;
 begin
   CheckTags;
+  Writeln('TEP 1 = ', FIsNeededToRun);
+
   if FIsNeededToRun then
   begin
+    Writeln('TEP 2');
+
+
     CheckSequences4Extract;
     for I := 0 to FCentralDirectory.Count - 1 do
     begin
@@ -1993,4 +2000,4 @@ begin
 end;
 
 end.
-
+
