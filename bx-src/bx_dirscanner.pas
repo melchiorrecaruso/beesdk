@@ -19,7 +19,7 @@
 {
   Contains:
 
-    TFileScanner class.
+    TDirScanner class.
 
   First release:
 
@@ -29,7 +29,7 @@
 
 }
 
-unit bx_FileScanner;
+unit bx_DirScanner;
 
 {$I bx_compiler.inc}
 
@@ -40,9 +40,9 @@ uses
   SysUtils;
 
 type
-  { TFileScannerItem }
+  { TDirScannerItem }
 
-  TFileScannerItem = class(TObject)
+  TDirScannerItem = class(TObject)
   private
     FFileName: string;
     FFileSize: int64;
@@ -57,26 +57,26 @@ type
     property FileAttr: longint read FFileAttr;
   end;
 
-  { TFileScanner }
+  { TDirScanner }
 
-  TFileScanner = class(TObject)
+  TDirScanner = class(TObject)
   private
     FList: TList;
     function GetCount: integer;
-    function GetItem(Index: longint): TFileScannerItem;
-    procedure Scan(FileMask: string; Recursive: boolean);
+    function GetItem(Index: longint): TDirScannerItem;
+    procedure Scan(const FilePath, FileMask:string; Recursive: boolean);
     procedure AddItem(const RecPath: string; const Rec: TSearchRec);
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Add(const FileMask: string; Recursive: boolean);
+    procedure Add(FileMask: string; Recursive: boolean);
     procedure Delete(const FileMask: string; Recursive: boolean);
     function Find(const FileName: string): longint;
     procedure Sort(Compare: TListSortCompare);
     procedure Clear;
   public
     property Count: integer read GetCount;
-    property Items[Index: longint]: TFileScannerItem read GetItem;
+    property Items[Index: longint]: TDirScannerItem read GetItem;
   end;
 
 implementation
@@ -85,9 +85,9 @@ uses
   bx_Common,
   DateUtils;
 
-{ TFileScannerItem class }
+{ TDirScannerItem class }
 
-constructor TFilescannerItem.Create(const RecPath: string; const Rec: TSearchRec);
+constructor TDirScannerItem.Create(const RecPath: string; const Rec: TSearchRec);
 begin
   inherited Create;
   FFileName := RecPath + Rec.Name;
@@ -96,39 +96,39 @@ begin
   FFileAttr := Rec.Attr;
 end;
 
-{ TFileScanner class }
+{ TDirScanner class }
 
-constructor TFileScanner.Create;
+constructor TDirScanner.Create;
 begin
   inherited Create;
   FList := TList.Create;
 end;
 
-destructor TFileScanner.Destroy;
+destructor TDirScanner.Destroy;
 begin
   Clear;
   FList.Destroy;
   inherited Destroy;
 end;
 
-procedure TFileScanner.Clear;
+procedure TDirScanner.Clear;
 var
   I: longint;
 begin
   for I := 0 to FList.Count - 1 do
-    TFileScannerItem(FList[I]).Destroy;
+    TDirScannerItem(FList[I]).Destroy;
   FList.Clear;
 end;
 
-procedure TFileScanner.AddItem(const RecPath: string; const Rec: TSearchRec);
+procedure TDirScanner.AddItem(const RecPath: string; const Rec: TSearchRec);
 begin
   if Find(RecPath + Rec.Name) = -1 then
   begin
-    FList.Add(TFileScannerItem.Create(RecPath, Rec));
+    FList.Add(TDirScannerItem.Create(RecPath, Rec));
   end;
 end;
 
-function TFilescanner.Find(const FileName: string): longint;
+function TDirScanner.Find(const FileName: string): longint;
 var
   I: longint;
 begin
@@ -141,31 +141,16 @@ begin
     end;
 end;
 
-procedure TFileScanner.Scan(FileMask: string; Recursive: boolean);
+procedure TDirScanner.Scan(const FilePath, FileMask: string; Recursive: boolean);
 var
-  RecName: string;
-  RecPath: string;
-  Rec: TSearchRec;
   Error: longint;
+  Rec: TSearchRec;
+  RecPath: string;
 begin
-  if FileMask = '' then Exit;
-  // directory and recursive mode ...
-  if DirectoryExists(FileMask) then
-  begin
-    Recursive := TRUE;
-    FileMask  := IncludeTrailingPathDelimiter(FileMask) + '*';
-  end else
-    if FileMask[Length(FileMask)] = PathDelim then
-    begin
-      Recursive := TRUE;
-      FileMask  := IncludeTrailingPathDelimiter(FileMask) + '*';
-    end;
-
-  RecPath := ExtractFilePath(FileMask);
-  while FileMaskHasWildcards(RecPath) do
-  begin
-    RecPath := ExtractFilePath(ExcludeTrailingPathDelimiter(RecPath));
-  end;
+  if FilePath <> '' then
+    RecPath := IncludeTrailingPathDelimiter(FilePath)
+  else
+    RecPath := FilePath;
 
   // search filemask ...
   Error := FindFirst(
@@ -182,15 +167,13 @@ begin
 
   while Error = 0 do
   begin
-    RecName := RecPath + Rec.Name;
     if (Rec.Attr and faDirectory) = faDirectory then
     begin
       if (Rec.Attr and faSymLink) = 0 then
-        if (Recursive) and (Rec.Name <> '.') and (Rec.Name <> '..') then
-          Scan(IncludeTrailingBackSlash(RecName) +
-            ExtractFileName(FileMask), Recursive);
+        if (Rec.Name <> '.') and (Rec.Name <> '..') then
+          Scan(RecPath + Rec.Name, FileMask, Recursive);
     end else
-      if FileNameMatch(RecName, FileMask, Recursive) then
+      if FileNameMatch(RecPath + Rec.Name, FileMask, Recursive) then
       begin
         AddItem(RecPath, Rec);
       end;
@@ -200,12 +183,32 @@ begin
   FindClose(Rec);
 end;
 
-procedure TFileScanner.Add(const FileMask: string; Recursive: boolean);
+procedure TDirScanner.Add(FileMask: string; Recursive: boolean);
+var
+  FilePath: string;
 begin
-  Scan(FileMask, Recursive);
+  if FileMask = '' then Exit;
+  // directory and recursive mode ...
+  if DirectoryExists(FileMask) then
+  begin
+    Recursive := TRUE;
+    FileMask  := IncludeTrailingPathDelimiter(FileMask) + '*';
+  end else
+    if FileMask[Length(FileMask)] = PathDelim then
+    begin
+      Recursive := TRUE;
+      FileMask  := FileMask + '*';
+    end;
+
+  FilePath := ExtractFilePath(FileMask);
+  while FileMaskHasWildcards(FilePath) do
+  begin
+    FilePath := ExtractFilePath(ExcludeTrailingPathDelimiter(FilePath));
+  end;
+  Scan(FilePath, FileMask, Recursive);
 end;
 
-procedure TFileScanner.Delete(const FileMask: string; Recursive: boolean);
+procedure TDirScanner.Delete(const FileMask: string; Recursive: boolean);
 var
   I: longint;
 begin
@@ -216,19 +219,19 @@ begin
     end;
 end;
 
-procedure TFileScanner.Sort(Compare: TListSortCompare);
+procedure TDirScanner.Sort(Compare: TListSortCompare);
 begin
   FList.Sort(Compare);
 end;
 
-function TFileScanner.GetCount: longint;
+function TDirScanner.GetCount: longint;
 begin
   Result := FList.Count;
 end;
 
-function TFileScanner.GetItem(Index:longint): TFileScannerItem;
+function TDirScanner.GetItem(Index:longint): TDirScannerItem;
 begin
-  Result := TFileScannerItem(FList.Items[Index]);
+  Result := TDirScannerItem(FList.Items[Index]);
 end;
 
 end.
