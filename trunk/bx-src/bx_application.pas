@@ -176,8 +176,8 @@ begin
         begin
           Result := Answer[1];
           case Result of
-            'Y': ; // nothing do to
-            'N': ; // nothing do to
+            'Y': ;// nothing do to
+            'N': ;// nothing do to
             'A': FAssumeValueOnAllQueries := avYes;
             'S': FAssumeValueOnAllQueries := avNo;
             'Q': SetExitStatus(esUserAbortError);
@@ -186,21 +186,24 @@ begin
           Break;
         end;
       Writeln('Choices:');
-      Writeln('[0] Add only new files                 [Y] Yes');
-      Writeln('[1] Update only existing files         [N] No');
-      Writeln('[2] Replace only existing files        [A] Yes to all queries');
-      Writeln('[3] Query always                       [S] No to all queries');
-      Writeln('[4] Add and update existing files      [Q] Quit, abort process');
+      Writeln('[0] Add only new files                [Y] Yes');
+      Writeln('[1] Update only existing files        [N] No');
+      Writeln('[2] Replace only existing files       [A] Yes to all queries');
+      Writeln('[3] Query always                      [S] No to all queries');
+      Writeln('[4] Add and update existing files     [Q] Quit, abort process');
       Writeln('[5] Add and replace existing files');
       Writeln('[6] Add and query if already exists');
-      Writeln('[7] Add and rename if already exists');
+      Writeln('[7] Add and autorename if already exists');
       Write(#8#8#8#8#8#8, ParamToOem(Message));
-    until FALSE;
+    until ExitStatus = esNoError;
   end else
     if FAssumeValueOnAllQueries = avNo then
       Result := 'N'
     else
-      Result := 'Y';
+      if FAssumeValueOnAllQueries = avYes then
+        Result := 'Y'
+      else
+        SetExitStatus(esCaseError);
 end;
 
 function TBXApplication.QueryHowToRename(const Message: string): string;
@@ -317,9 +320,6 @@ begin
     begin
       if FArchiver.Find(RenameAs) = nil then
       begin
-        if swtCC in FCommandLine.Options then
-          Item.Comment := FCommandLine.SwitchCC.Text;
-
         Item.FileName := RenameAs;
         Item.Tag;
         Break;
@@ -328,6 +328,12 @@ begin
       Break;
 
   until ExitStatus = esNoError;
+
+  if Item.Tagged then
+  begin
+    if swtCC in FCommandLine.Options then
+      Item.Comment := FCommandLine.SwitchCC.Text;
+  end;
 end;
 
 procedure TBxApplication.UpdateItem(Rec: TDirScannerItem);
@@ -560,7 +566,6 @@ begin
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
-
     TagItems;
     case FCommandLine.Command of
       cmdD: FArchiver. DeleteTagged;
@@ -580,14 +585,13 @@ begin
     ExtractFileExt(TDirScannerItem(P2).FileName));
 
   if Result = 0 then
-    Result := AnsiCompareFileName(
-      ExtractFileName(TDirScannerItem(P1).FileName),
-      ExtractFileName(TDirScannerItem(P2).FileName));
-
-  if Result = 0 then
-    Result := AnsiCompareFileName(
-      ExtractFilePath(TDirScannerItem(P1).FileName),
-      ExtractFilePath(TDirScannerItem(P2).FileName));
+  begin
+    if TDirScannerItem(P1).FileSize > TDirScannerItem(P2).FileSize then
+      Result := 1
+    else
+      if TDirScannerItem(P1).FileSize < TDirScannerItem(P2).FileSize then
+        Result := -1;
+  end;
 end;
 
 procedure TBxApplication.EncodeShell;
@@ -627,7 +631,6 @@ begin
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
-
     TagItems;
     for I := 0 to FArchiver.Count - 1 do
     begin
@@ -685,7 +688,7 @@ begin
 
   if Result = 0 then
   begin
-    Result := CompareText(
+    Result := AnsiCompareFileName(
       ExtractFileName(TArchiveItem(P1).FileName),
       ExtractFileName(TArchiveItem(P2).FileName));
   end;
