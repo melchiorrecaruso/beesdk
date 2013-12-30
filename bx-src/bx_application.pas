@@ -46,15 +46,21 @@ uses
   bx_FileStream,
   bx_Messages;
 
+
+
 type
+  { TBxAssumeValueOnAllQueries type }
+
+  TBxAssumeValueOnAllQueries = (avNone, avNo, avYes);
+
   { TBxApplication class }
 
   TBxApplication = class(TObject)
   private
     FArchiver: TArchiver;
+    FAssumeValueOnAllQueries: TBxAssumeValueOnAllQueries;
     FCommandLine: TCommandLineParser;
     FUpdateMethod: TUpdateMethod;
-    FAssumeYesOnAllQueries: boolean;
     procedure TagItems;
     { Help routines}
     function  QueryHowToRename(const Message: string): string;
@@ -106,10 +112,15 @@ begin
   FUpdateMethod := umAddQuery;
   if swtU in FCommandLine.Options then
     FUpdateMethod := FCommandLine.SwitchU;
-  { set if assume yes on all queries }
-  FAssumeYesOnAllQueries := FALSE;
+  { set if assume value on all queries }
+  FAssumeValueOnAllQueries := avNone;
   if swtY in FCommandLine.Options then
-    FAssumeYesOnAllQueries := FCommandLine.SwitchY;
+  begin
+    if FCommandLine.SwitchY then
+      FAssumeValueOnAllQueries := avYes
+    else
+      FAssumeValueOnAllQueries := avNo;
+  end;
 end;
 
 destructor TBxApplication.Destroy;
@@ -154,36 +165,42 @@ function TBxApplication.QueryHowToUpdate(const Message: string): char;
 var
   Answer: string;
 begin
-  Result := 'Y';
-  if FAssumeYesOnAllQueries = FALSE then
+  if FAssumeValueOnAllQueries = avNone then
   begin
     Write(#8#8#8#8#8#8, ParamToOem(Message));
     repeat
       Readln(Answer);
       Answer := UpperCase(OemToParam(Answer));
       if Length(Answer) = 1 then
-        if Pos(Answer, 'YNAQ01234567') > 0 then
+        if Pos(Answer, 'YNASQ01234567') > 0 then
         begin
           Result := Answer[1];
           case Result of
-            'Y': begin end;// nothing do to
-            'N': begin end; // nothing do to
-            'A': FAssumeYesOnAllQueries := TRUE;
+            'Y': ; // nothing do to
+            'N': ; // nothing do to
+            'A': FAssumeValueOnAllQueries := avYes;
+            'S': FAssumeValueOnAllQueries := avNo;
             'Q': SetExitStatus(esUserAbortError);
             else FUpdateMethod := TUpdateMethod(StrToInt(Result));
           end;
           Break;
         end;
       Writeln('Choices:');
-      Writeln('[Y] Yes                         [2] Replace only existing files');
-      Writeln('[N] No                          [3] Query always');
-      Writeln('[A] Yes to all queries          [4] Add and update existing files');
-      Writeln('[Q] Quit, abort process         [5] Add and replace existing files');
-      Writeln('[0] Add only new files          [6] Add and query if already exists');
-      Writeln('[1] Update only existing files  [7] Add and rename if already exists');
+      Writeln('[0] Add only new files                 [Y] Yes');
+      Writeln('[1] Update only existing files         [N] No');
+      Writeln('[2] Replace only existing files        [A] Yes to all queries');
+      Writeln('[3] Query always                       [S] No to all queries');
+      Writeln('[4] Add and update existing files      [Q] Quit, abort process');
+      Writeln('[5] Add and replace existing files');
+      Writeln('[6] Add and query if already exists');
+      Writeln('[7] Add and rename if already exists');
       Write(#8#8#8#8#8#8, ParamToOem(Message));
     until FALSE;
-  end;
+  end else
+    if FAssumeValueOnAllQueries = avNo then
+      Result := 'N'
+    else
+      Result := 'Y';
 end;
 
 function TBXApplication.QueryHowToRename(const Message: string): string;
@@ -203,7 +220,9 @@ begin
     Item.ExternalFileName := ExtractFileName(Item.FileName)
   else
     if FCommandLine.Command = cmdX then
-      Item.ExternalFileName := DeleteFilePath(FCommandLine.SwitchCD, Item.FileName);
+      Item.ExternalFileName := DeleteFilePath(FCommandLine.SwitchCD, Item.FileName)
+    else
+      SetExitStatus(esCaseError);
 
   Item.UnTag;
   case FUpdateMethod of
@@ -255,9 +274,10 @@ begin
       end else
         case QueryHowToUpdate('Overwrite "' + Item.ExternalFileName + '"? ') of
           'Y': Item.Tag;
-          'N': ; // nothing to do
+          'N': ;// nothing to do
           'A': Item.Tag;
-          'Q': ; // nothing to do
+          'S': ;// nothing to do
+          'Q': ;// nothing to do
           else ExtractItem(Item);
         end;
     end;
@@ -265,17 +285,19 @@ begin
       if FileExists(Item.ExternalFileName) = FALSE then
         case QueryHowToUpdate('Extract "' + Item.ExternalFileName + '"? ') of
           'Y': Item.Tag;
-          'N': ; // nothing to do
+          'N': ;// nothing to do
           'A': Item.Tag;
-          'Q': ; // nothing to do
+          'S': ;// nothing to do
+          'Q': ;// nothing to do
           else ExtractItem(Item);
         end
       else
         case QueryHowToUpdate('Overwrite "' + Item.ExternalFileName + '"? ') of
           'Y': Item.Tag;
-          'N': ; // nothing to do
+          'N': ;// nothing to do
           'A': Item.Tag;
-          'Q': ; // nothing to do
+          'S': ;// nothing to do
+          'Q': ;// nothing to do
           else ExtractItem(Item);
         end;
     end;
@@ -376,6 +398,7 @@ begin
           'Y': Item.Tag(Rec);
           'N': ;// nothing to do
           'A': Item.Tag(Rec);
+          'S': ;// nothing to do
           'Q': ;// nothing to do
           else UpdateItem(Rec);
         end;
@@ -392,6 +415,7 @@ begin
             Item := FArchiver.Add(ItemName);
             Item.Tag(Rec);
           end;
+          'S': ;// nothing to do
           'Q': ;// nothing to do
           else UpdateItem(Rec);
         end
@@ -400,6 +424,7 @@ begin
           'Y': Item.Tag(Rec);
           'N': ;// nothing to do
           'A': Item.Tag(Rec);
+          'S': ;// nothing to do
           'Q': ;// nothing to do
           else UpdateItem(Rec);
         end;
