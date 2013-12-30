@@ -42,8 +42,8 @@ uses
   bx_Archiver,
   bx_CommandLine,
   bx_Common,
+  bx_DirScanner,
   bx_FileStream,
-  bx_FileScanner,
   bx_Messages;
 
 type
@@ -61,7 +61,7 @@ type
     function  QueryHowToUpdate(const Message: string): char;
     procedure ExtractItem(Item: TArchiveItem);
     procedure RenameItem (Item: TArchiveItem);
-    procedure UpdateItem(Rec: TFileScannerItem);
+    procedure UpdateItem(Rec: TDirScannerItem);
     { Events routines}
     procedure DoMessage(const Message: string);
     procedure DoPercentage(Percentage: longint);
@@ -125,7 +125,7 @@ var
 begin
   StartTime := Now;
 
-  DoMessage('The BX 1.0 archiver utility, Copyright (c) 2013 Melchiorre Caruso.');
+  DoMessage('The BX 1.0 Alpha archiver utility, Copyright (c) 2013 Melchiorre Caruso.');
   if ExitStatus = esNoError then
     case FCommandLine.Command of
       cmdA: EncodeShell;
@@ -308,7 +308,7 @@ begin
   until ExitStatus = esNoError;
 end;
 
-procedure TBxApplication.UpdateItem(Rec: TFileScannerItem);
+procedure TBxApplication.UpdateItem(Rec: TDirScannerItem);
 var
   Index: longint;
   Item: TArchiveItem;
@@ -551,31 +551,31 @@ end;
 function CompareCustomSearchRec(P1, P2: pointer): longint;
 begin
   Result := AnsiCompareFileName(
-    ExtractFileExt(TFileScannerItem(P1).FileName),
-    ExtractFileExt(TFileScannerItem(P2).FileName));
+    ExtractFileExt(TDirScannerItem(P1).FileName),
+    ExtractFileExt(TDirScannerItem(P2).FileName));
 
   if Result = 0 then
     Result := AnsiCompareFileName(
-      ExtractFileName(TFileScannerItem(P1).FileName),
-      ExtractFileName(TFileScannerItem(P2).FileName));
+      ExtractFileName(TDirScannerItem(P1).FileName),
+      ExtractFileName(TDirScannerItem(P2).FileName));
 
   if Result = 0 then
     Result := AnsiCompareFileName(
-      ExtractFilePath(TFileScannerItem(P1).FileName),
-      ExtractFilePath(TFileScannerItem(P2).FileName));
+      ExtractFilePath(TDirScannerItem(P1).FileName),
+      ExtractFilePath(TDirScannerItem(P2).FileName));
 end;
 
 procedure TBxApplication.EncodeShell;
 var
   I: longint;
-  Scanner: TFileScanner;
+  Scanner: TDirScanner;
 begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
 
-    Scanner := TFileScanner.Create;
+    Scanner := TDirScanner.Create;
     for I := 0 to FCommandLine.FileMasks.Count - 1 do
       Scanner.Add(FCommandLine.FileMasks[I], FCommandLine.SwitchR[I]);
     for I := 0 to FCommandLine.SwitchX.Count - 1 do

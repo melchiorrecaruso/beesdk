@@ -270,40 +270,40 @@ end;
 
 function FileNameMatch(const FileName, FileMask: string; Recursive: boolean): boolean;
 var
-  iFileDrive: string;
-  iFilePath:  string;
-  iFileName:  string;
-  iMaskPath:  string;
-  iMaskName:  string;
+  FDrive: string;
+  FPath: string;
+  FName: string;
+  MPath: string;
+  MName: string;
 begin
   {$IFDEF FILENAMECASESENSITIVE}
-  iFilePath := ExtractFilePath(FileName);
-  iFileName := ExtractFileName(FileName);
-  iMaskPath := ExtractFilePath(FileMask);
-  iMaskName := ExtractFileName(FileMask);
+  FPath := ExtractFilePath(FileName);
+  FName := ExtractFileName(FileName);
+  MPath := ExtractFilePath(FileMask);
+  MName := ExtractFileName(FileMask);
   {$ELSE}
-  iFilePath := ExtractFilePath(UpperCase(FileName));
-  iFileName := ExtractFileName(UpperCase(FileName));
-  iMaskPath := ExtractFilePath(UpperCase(FileMask));
-  iMaskName := ExtractFileName(UpperCase(FileMask));
+  FPath := ExtractFilePath(UpperCase(FileName));
+  FName := ExtractFileName(UpperCase(FileName));
+  MPath := ExtractFilePath(UpperCase(FileMask));
+  MName := ExtractFileName(UpperCase(FileMask));
   {$ENDIF}
 
-  if ExtractFileDrive(iMaskPath) = '' then
+  if ExtractFileDrive(MPath) = '' then
   begin
-    iFileDrive := ExtractFileDrive(iFilePath);
-    if iFileDrive <> '' then
+    FDrive := ExtractFileDrive(FPath);
+    if FDrive <> '' then
     begin
-      iMaskPath := IncludeTrailingBackSlash(iFileDrive) + iMaskPath;
+      MPath := ExcludeTrailingPathDelimiter(FDrive) + MPath;
     end;
   end;
 
   if Recursive then
   begin
-    iMaskPath := iMaskPath + '*';
+    MPath := MPath + '*';
   end;
 
-  Result :=  MatchPattern(PChar(iFilePath), PChar(iMaskPath)) and
-             MatchPattern(PChar(iFileName), PChar(iMaskName));
+  Result :=  MatchPattern(PChar(FPath), PChar(MPath)) and
+             MatchPattern(PChar(FName), PChar(MName));
 end;
 
 function FileNamePos(const FilePath, FileName: string): longint;

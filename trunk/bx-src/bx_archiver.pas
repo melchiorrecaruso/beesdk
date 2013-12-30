@@ -42,7 +42,7 @@ uses
   // ---
   bx_Cipher,
   bx_Configuration,
-  bx_FileScanner,
+  bx_DirScanner,
   bx_FileStream,
   bx_Stream;
 
@@ -160,7 +160,7 @@ type
     constructor Create(const aItemName: string);
     constructor Read(Stream: TFileReader);
     procedure Tag; overload;
-    procedure Tag(Rec: TFileScannerItem); overload;
+    procedure Tag(Rec: TDirScannerItem); overload;
     function  Tagged: boolean;
     procedure UnTag;
     procedure Write(Stream: TFileWriter);
@@ -563,7 +563,7 @@ begin
   Include(FTags, aitUpdate);
 end;
 
-procedure TArchiveItem.Tag(Rec: TFileScannerItem);
+procedure TArchiveItem.Tag(Rec: TDirScannerItem);
 begin
   /// item property ///
   FLastModifiedTime := Rec.FileTime;
@@ -572,7 +572,7 @@ begin
   /// reserved property ///
   FExternalFileName := Rec.FileName;
   FExternalFileSize := Rec.FileSize;
-  // tag //
+  /// tag ///
   Include(FTags, aitUpdate);
 end;
 
@@ -1245,9 +1245,9 @@ begin
     Tester.OpenArchive(FTempName);
     if ExitStatus = esNoError then
     begin
-      for I := 0 to Count - 1 do
+      for I := 0 to Tester.Count - 1 do
       begin
-        Items[I].Tag;
+        Tester.Items[I].Tag;
       end;
       Tester.TestTagged;
     end;
@@ -1543,11 +1543,10 @@ begin
     if aitUpdate in Item.FTags then
     begin
       FIsNeededToRun := TRUE;
-      Writeln('FIsNeededToRun = ', FIsNeededToRun);
     end;
     Exclude(Item.FTags, aitDecode);
   end;
-  Writeln('TEP 0 = ', FIsNeededToRun);
+
 end;
 
 // TArchiver # EXTRACT #
@@ -1632,13 +1631,8 @@ var
   Item: TArchiveItem;
 begin
   CheckTags;
-  Writeln('TEP 1 = ', FIsNeededToRun);
-
   if FIsNeededToRun then
   begin
-    Writeln('TEP 2');
-
-
     CheckSequences4Extract;
     for I := 0 to FCentralDirectory.Count - 1 do
     begin
