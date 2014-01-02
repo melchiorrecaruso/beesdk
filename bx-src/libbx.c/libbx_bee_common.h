@@ -66,7 +66,7 @@ static const TTableParameters DefaultTableParameters = {
 //  Default dictionary level                                          //
 // ------------------------------------------------------------------ //
 
-static const int32_t DefaultDictionaryLevel = 2;
+static const int32_t DefaultDictionaryLevel = 3;
 
 // ------------------------------------------------------------------ //
 //  Common routine                                                    //

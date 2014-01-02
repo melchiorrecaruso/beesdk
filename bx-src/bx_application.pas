@@ -565,7 +565,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmScanning, ['...']));
+    DoMessage(Format(cmScanning, []));
     TagItems;
     case FCommandLine.Command of
       cmdD: FArchiver. DeleteTagged;
@@ -587,10 +587,10 @@ begin
   if Result = 0 then
   begin
     if TDirScannerItem(P1).FileSize > TDirScannerItem(P2).FileSize then
-      Result := 1
+      Result := - 1
     else
       if TDirScannerItem(P1).FileSize < TDirScannerItem(P2).FileSize then
-        Result := -1;
+        Result := 1;
   end;
 end;
 
@@ -602,7 +602,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmScanning, ['...']));
+    DoMessage(Format(cmScanning, []));
 
     Scanner := TDirScanner.Create;
     for I := 0 to FCommandLine.FileMasks.Count - 1 do
@@ -630,7 +630,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmScanning, ['...']));
+    DoMessage(Format(cmScanning, []));
     TagItems;
     for I := 0 to FArchiver.Count - 1 do
     begin
@@ -707,7 +707,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmScanning, ['...']));
+    DoMessage(Format(cmScanning, []));
     TagItems;
 
     TotalSize       := 0;

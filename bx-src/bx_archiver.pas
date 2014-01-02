@@ -1187,6 +1187,7 @@ begin
       //if FCentralDirectory.Count = 0 then
       //  SetExitStatus(esArchiveTypeError);
     end;
+
   end else
   begin
     DoMessage(Format(cmCreating, [aArchiveName]));
@@ -1207,19 +1208,19 @@ begin
   FSwapWriter.WriteDWord(ARCHIVE_MARKER);
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
+    if ExitStatus <> esNoError then Break;
+
     Item := FCentralDirectory.Items[I];
     if Item.FTags = [aitDecode] then
     begin
-      DoMessage(Format(cmSwapping, [Item.FFileName]));
+      DoMessage(Format(cmSwapping, [I, Item.UncompressedSize, Item.FFileName]));
       DecodeToSwap(Item);
     end else
       if Item.FTags = [aitDecode, aitUpdate] then
       begin
-        DoMessage(Format(cmDecoding, [Item.FFileName]));
+        DoMessage(Format(cmDecoding, [I, Item.UncompressedSize ,Item.FFileName]));
         DecodeToNul(Item);
       end;
-
-    if ExitStatus <> esNoError then Break;
   end;
   FreeAndNil(FSwapWriter);
 
@@ -1259,6 +1260,7 @@ end;
 procedure TArchiver.SaveTemporaryArchive;
 var
   I: longint;
+  Item: TArchiveItem;
 begin
   SysUtils.DeleteFile(FSwapName);
   if ExitStatus = esNoError then
@@ -1273,15 +1275,16 @@ begin
       FArchiveReader := TFileReader.Create(FTempName, FOnRequestImage);
       FTempWriter    := TFileWriter.Create(FArchiveName, FOnRequestBlankDisk, FVolumeSize);
       FTempWriter.WriteDWord(ARCHIVE_MARKER);
-
       for I := 0 to FCentralDirectory.Count - 1 do
       begin
         if ExitStatus <> esNoError then Break;
 
-        DoMessage(Format(cmSplitting, [FCentralDirectory.Items[I].FileName]));
-        EncodeFromArchive(FCentralDirectory.Items[I]);
+        Item := FCentralDirectory.Items[I];
+        DoMessage(Format(cmSplitting, [I, Item.CompressedSize, Item.FileName]));
+        EncodeFromArchive(Item);
       end;
-      FCentralDirectory.Write(FTempWriter);
+      if ExitStatus = esNoError then
+        FCentralDirectory.Write(FTempWriter);
 
       FreeAndNil(FTempWriter);
       FreeAndNil(FArchiveReader);
@@ -1608,19 +1611,19 @@ begin
     CheckSequences4Extract;
     for I := 0 to FCentralDirectory.Count - 1 do
     begin
+      if ExitStatus <> esNoError then Break;
+
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [aitUpdate] then
       begin
-        DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
+        DoMessage(Format(cmExtracting, [I, Item.UnCompressedSize, Item.FExternalFileName]));
         DecodeToFile(Item);
       end else
         if Item.FTags = [aitDecode] then
         begin
-          DoMessage(Format(cmDecoding, [Item.FFileName]));
+          DoMessage(Format(cmDecoding, [I, Item.UnCompressedSize, Item.FFileName]));
           DecodeToNul(Item);
         end;
-
-      if ExitStatus <> esNoError then Exit;
     end;
   end;
 end;
@@ -1636,19 +1639,19 @@ begin
     CheckSequences4Extract;
     for I := 0 to FCentralDirectory.Count - 1 do
     begin
+      if ExitStatus <> esNoError then Break;
+
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [aitUpdate] then
       begin
-        DoMessage(Format(cmTesting, [Item.FFileName]));
+        DoMessage(Format(cmTesting, [I, Item.UncompressedSize ,Item.FFileName]));
         DecodeToNul(Item);
       end else
         if Item.FTags = [aitDecode] then
         begin
-          DoMessage(Format(cmDecoding, [Item.FFileName]));
+          DoMessage(Format(cmDecoding, [I, Item.UncompressedSize, Item.FFileName]));
           DecodeToNul(Item);
         end;
-
-      if ExitStatus <> esNoError then Exit;
     end;
   end;
 end;
@@ -1690,22 +1693,24 @@ begin
 
     for I := 0 to FCentralDirectory.Count - 1 do
     begin
+      if ExitStatus <> esNoError then Break;
+
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [aitUpdate] then
       begin
-        DoMessage(Format(cmRenaming, [Item.FileName]));
+        DoMessage(Format(cmRenaming, [I, Item.CompressedSize, Item.FileName]));
         EncodeFromArchive(Item);
       end else
         if Item.FTags = [] then
         begin
-          DoMessage(Format(cmCopying,  [Item.FileName]));
+          DoMessage(Format(cmCopying, [I, Item.CompressedSize, Item.FileName]));
           EncodeFromArchive(Item);
         end;
-
-      if ExitStatus <> esNoError then Exit;
     end;
-    FCentralDirectory.Write(FTempWriter);
-    FIsNeededToSave := TRUE;
+    if ExitStatus = esNoError then
+      FCentralDirectory.Write(FTempWriter);
+    if ExitStatus = esNoError then
+      FIsNeededToSave := TRUE;
   end;
 end;
 
@@ -1780,29 +1785,31 @@ begin
       Item := FCentralDirectory.Items[I];
       if aitUpdate in Item.FTags then
       begin
-        DoMessage(Format(cmDeleting, [Item.FileName]));
+        DoMessage(Format(cmDeleting, [I, Item.CompressedSize, Item.FileName]));
         FCentralDirectory.Delete(I);
       end;
     end;
 
     for I := 0 to FCentralDirectory.Count - 1 do
     begin
+      if ExitStatus <> esNoError then Break;
+
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [] then
       begin
-        DoMessage(Format(cmCopying, [Item.FileName]));
+        DoMessage(Format(cmCopying, [I, Item.CompressedSize, Item.FileName]));
         EncodeFromArchive(Item);
       end else
         if Item.FTags = [aitDecode] then
         begin
-          DoMessage(Format(cmEncoding, [Item.FileName]));
+          DoMessage(Format(cmEncoding, [I, Item.UncompressedSize, Item.FileName]));
           EncodeFromSwap(Item);
         end;
-
-      if ExitStatus <> esNoError then Exit;
     end;
-    FCentralDirectory.Write(FTempWriter);
-    FIsNeededToSave := TRUE;
+    if ExitStatus = esNoError then
+      FCentralDirectory.Write(FTempWriter);
+    if ExitStatus = esNoError then
+      FIsNeededToSave := TRUE;
   end;
 end;
 
@@ -1965,31 +1972,33 @@ begin
     if FIsNeededToSwap then Swapping;
     for I := 0 to FCentralDirectory.Count - 1 do
     begin
+      if ExitStatus <> esNoError then Break;
+
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [] then
       begin
-        DoMessage(Format(cmCopying, [Item.FileName]));
+        DoMessage(Format(cmCopying, [I, Item.CompressedSize, Item.FileName]));
         EncodeFromArchive(Item);
       end else
         if Item.FTags = [aitUpdate] then
         begin
-          DoMessage(Format(cmUpdating, [Item.FileName]));
+          DoMessage(Format(cmAdding, [I, Item.UncompressedSize, Item.FileName]));
           EncodeFromFile(Item);
         end else
           if Item.FTags = [aitDecode] then
           begin
-            DoMessage(Format(cmEncoding, [Item.FileName]));
+            DoMessage(Format(cmEncoding, [I, Item.UncompressedSize, Item.FileName]));
             EncodeFromSwap(Item);
           end else
           begin
-            DoMessage(Format(cmUpdating, [Item.FileName]));
+            DoMessage(Format(cmUpdating, [I, Item.UncompressedSize, Item.FileName]));
             EncodeFromFile(Item);
           end;
-
-      if ExitStatus <> esNoError then Exit;
     end;
-    FCentralDirectory.Write(FTempWriter);
-    FIsNeededToSave := TRUE;
+    if ExitStatus = esNoError then
+      FCentralDirectory.Write(FTempWriter);
+    if ExitStatus = esNoError then
+      FIsNeededToSave := TRUE;
   end;
 end;
 
