@@ -1,37 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="release" />
-	<File name="libbx_bee_common.c" open="1" top="0" tabpos="4">
+	<File name="libbx_bee_common.c" open="0" top="0" tabpos="4">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="libbx_bee_common.h" open="1" top="0" tabpos="5">
+	<File name="libbx_bee_common.h" open="0" top="0" tabpos="5">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="libbx_bee_modeller.c" open="1" top="0" tabpos="1">
+	<File name="libbx_bee_modeller.c" open="0" top="0" tabpos="1">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="libbx_bee_modeller.h" open="1" top="0" tabpos="6">
+	<File name="libbx_bee_modeller.h" open="0" top="0" tabpos="6">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="libbx_bee_rangecoder.c" open="1" top="0" tabpos="2">
+	<File name="libbx_bee_rangecoder.c" open="0" top="0" tabpos="0">
+		<Cursor position="3654" topLine="121" />
+	</File>
+	<File name="libbx_bee_rangecoder.h" open="0" top="0" tabpos="3">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="libbx_bee_rangecoder.h" open="1" top="0" tabpos="3">
-		<Cursor position="0" topLine="0" />
-	</File>
-	<File name="libbx_ppmd_common.h" open="1" top="0" tabpos="7">
+	<File name="libbx_ppmd_common.h" open="0" top="0" tabpos="7">
 		<Cursor position="0" topLine="0" />
 	</File>
 	<File name="libbx_ppmd_modeller.c" open="0" top="0" tabpos="1">
+		<Cursor position="2427" topLine="89" />
+	</File>
+	<File name="libbx_ppmd_modeller.h" open="0" top="0" tabpos="8">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="libbx_ppmd_modeller.h" open="1" top="0" tabpos="8">
+	<File name="libbx_ppmd_rangecoder.h" open="0" top="0" tabpos="9">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="libbx_ppmd_rangecoder.h" open="1" top="0" tabpos="9">
-		<Cursor position="0" topLine="0" />
+	<File name="libbx_stream.c" open="0" top="0" tabpos="0">
+		<Cursor position="1486" topLine="54" />
 	</File>
-	<File name="libbx_stream.h" open="1" top="1" tabpos="10">
+	<File name="libbx_stream.h" open="0" top="0" tabpos="10">
 		<Cursor position="0" topLine="0" />
 	</File>
 </CodeBlocks_layout_file>

@@ -35,9 +35,9 @@ typedef struct TBeeModeller *PBeeModeller;
   PBeeModeller BeeModeller_Create (void *aCodec);
           void BeeModeller_Destroy(PBeeModeller Self);
 
-          void BeeModeller_SetTablePatameters(PBeeModeller Self, const TTableParameters *T);
+          void BeeModeller_SetTableParameters(PBeeModeller Self, const TTableParameters *T);
           void BeeModeller_SetDictionaryLevel(PBeeModeller Self, uint32_t aDictLevel);
-          void BeeModeller_FreshFexible      (PBeeModeller Self);
+          void BeeModeller_FreshFlexible      (PBeeModeller Self);
           void BeeModeller_FreshSolid        (PBeeModeller Self);
 
       uint32_t BeeModeller_Encode (PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize);

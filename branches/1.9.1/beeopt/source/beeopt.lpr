@@ -1,4 +1,4 @@
-program BeeOpt;
+program BxOpt;
 
 uses
   {$IFDEF UNIX}
@@ -6,8 +6,8 @@ uses
   {$ENDIF}
   Interfaces,
   Forms,
-  BeeOpt_Form,
-  BeeOpt_Optimizer;
+  BxOpt_MainFrm,
+  BxOpt_Optimizer;
 
 {$R *.res}
 
@@ -17,4 +17,4 @@ begin
   if Assigned(Optimizer) then Optimizer.Evolution;
   Application.Run;
 end.
-
+
