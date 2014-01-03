@@ -1,0 +1,296 @@
+object MainForm: TMainForm
+  Left = 873
+  Height = 0
+  Top = 104
+  Width = 0
+  HorzScrollBar.Page = 299
+  VertScrollBar.Page = 239
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = 'Bee optimizer'
+  ClientHeight = 0
+  ClientWidth = 0
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnWindowStateChange = FormWindowStateChange
+  ParentFont = True
+  Position = poDefault
+  ShowHint = True
+  LCLVersion = '0.9.31'
+  Visible = True
+  object PageControl: TPageControl
+    Left = 0
+    Height = 0
+    Top = 0
+    Width = 0
+    ActivePage = TabSheet_About
+    Align = alClient
+    BorderSpacing.Around = 2
+    TabIndex = 1
+    TabOrder = 0
+    object TabSheet_Progress: TTabSheet
+      Caption = 'Progress...'
+      ClientHeight = 213
+      ClientWidth = 294
+      object Label_Extension: TLabel
+        AnchorSideLeft.Control = TabSheet_Progress
+        AnchorSideTop.Control = TabSheet_Progress
+        Left = 6
+        Height = 14
+        Top = 10
+        Width = 132
+        BorderSpacing.Left = 6
+        BorderSpacing.Top = 10
+        Caption = 'Optimization of Extensions:'
+        ParentColor = False
+      end
+      object Label_ExtensionValue: TLabel
+        AnchorSideLeft.Control = Label_Extension
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = Label_Extension
+        Left = 168
+        Height = 14
+        Top = 10
+        Width = 13
+        BorderSpacing.Left = 30
+        Caption = '...'
+        ParentColor = False
+      end
+      object Label_VariantsEstimated: TLabel
+        AnchorSideTop.Control = Label_Extension
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = Label_Extension
+        AnchorSideRight.Side = asrBottom
+        Left = 22
+        Height = 14
+        Top = 39
+        Width = 116
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 15
+        Caption = 'Variants was estimated:'
+        ParentColor = False
+      end
+      object Label_VariantsEstimatedValue: TLabel
+        AnchorSideLeft.Control = Label_ExtensionValue
+        AnchorSideTop.Control = Label_VariantsEstimated
+        Left = 168
+        Height = 14
+        Top = 39
+        Width = 17
+        Caption = '?%'
+        ParentColor = False
+      end
+      object Label_LevelValue: TLabel
+        AnchorSideLeft.Control = Label_ExtensionValue
+        AnchorSideTop.Control = Label_Level
+        Left = 168
+        Height = 14
+        Top = 79
+        Width = 33
+        Caption = '? (?%)'
+        ParentColor = False
+      end
+      object Label_PercentOfImprovements: TLabel
+        AnchorSideTop.Control = Label_VariantsEstimated
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = Label_VariantsEstimated
+        AnchorSideRight.Side = asrBottom
+        Left = 11
+        Height = 14
+        Top = 59
+        Width = 127
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 6
+        Caption = 'Percent of Improvements:'
+        ParentColor = False
+      end
+      object Label_PercentOfImprovementsValue: TLabel
+        AnchorSideLeft.Control = Label_ExtensionValue
+        AnchorSideTop.Control = Label_PercentOfImprovements
+        Left = 168
+        Height = 14
+        Top = 59
+        Width = 40
+        Caption = '0.000%'
+        ParentColor = False
+      end
+      object Label_SampleSize: TLabel
+        AnchorSideTop.Control = Label_DictionaryLevel
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = Label_DictionaryLevel
+        AnchorSideRight.Side = asrBottom
+        Left = 40
+        Height = 14
+        Top = 128
+        Width = 98
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 15
+        Caption = 'Size of Sample Files:'
+        ParentColor = False
+      end
+      object Label_SampleSizeValue: TLabel
+        AnchorSideLeft.Control = Label_ExtensionValue
+        AnchorSideTop.Control = Label_SampleSize
+        Left = 168
+        Height = 14
+        Top = 128
+        Width = 6
+        Caption = '?'
+        ParentColor = False
+      end
+      object Label_PackedSize: TLabel
+        AnchorSideTop.Control = Label_SampleSize
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = Label_SampleSize
+        AnchorSideRight.Side = asrBottom
+        Left = 24
+        Height = 14
+        Top = 148
+        Width = 114
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 6
+        Caption = 'Current Size of Packed:'
+        ParentColor = False
+      end
+      object Label_PackedSizeValue: TLabel
+        AnchorSideLeft.Control = Label_ExtensionValue
+        AnchorSideTop.Control = Label_PackedSize
+        Left = 168
+        Height = 14
+        Top = 148
+        Width = 6
+        Caption = '?'
+        ParentColor = False
+      end
+      object Label_DictionaryLevel: TLabel
+        AnchorSideTop.Control = Label_Level
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = Label_Level
+        AnchorSideRight.Side = asrBottom
+        Left = 57
+        Height = 14
+        Top = 99
+        Width = 81
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 6
+        Caption = 'Dictionary Level:'
+        ParentColor = False
+      end
+      object Label_DictionaryLevelValue: TLabel
+        AnchorSideLeft.Control = Label_ExtensionValue
+        AnchorSideTop.Control = Label_DictionaryLevel
+        Left = 168
+        Height = 14
+        Top = 99
+        Width = 6
+        Caption = '?'
+        ParentColor = False
+      end
+      object Label_Level: TLabel
+        AnchorSideTop.Control = Label_PercentOfImprovements
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = Label_PercentOfImprovements
+        AnchorSideRight.Side = asrBottom
+        Left = 44
+        Height = 14
+        Top = 79
+        Width = 94
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 6
+        Caption = 'Compression Level:'
+        ParentColor = False
+      end
+      object Label_BestPackedSize: TLabel
+        AnchorSideTop.Control = Label_PackedSize
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = Label_SampleSize
+        AnchorSideRight.Side = asrBottom
+        Left = 40
+        Height = 14
+        Top = 168
+        Width = 98
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 6
+        Caption = 'Best Size of Packed:'
+        ParentColor = False
+      end
+      object Label_BestPackedSizeValue: TLabel
+        AnchorSideLeft.Control = Label_ExtensionValue
+        AnchorSideTop.Control = Label_BestPackedSize
+        Left = 168
+        Height = 14
+        Top = 168
+        Width = 6
+        Caption = '?'
+        ParentColor = False
+      end
+    end
+    object TabSheet_About: TTabSheet
+      Caption = 'About'
+      ClientHeight = 0
+      ClientWidth = 0
+      ImageIndex = 2
+      object Label_About: TLabel
+        Left = 0
+        Height = 0
+        Top = 2
+        Width = 0
+        Align = alClient
+        BorderSpacing.Left = 6
+        BorderSpacing.Top = 10
+        BorderSpacing.Right = 6
+        BorderSpacing.Bottom = 6
+        Caption = 'BeeOpt 0.8.0 (C) 1999-2012 Andrew Filinsky'#13#10'Freeware version, Feb 2012'#13#10#13#10'This program calculates parameters for Bee 0.8.0 archiver utility, then better compression ratio will be available by using them. '#13#10#13#10'Please, send constructed *.ini and *.dat files'#13#10'to e-mail: filinsky@mail.ru'
+        ParentColor = False
+        WordWrap = True
+      end
+    end
+  end
+  object StatusBar: TStatusBar
+    Left = 0
+    Height = 20
+    Top = -20
+    Width = 0
+    Panels = <    
+      item
+        Alignment = taRightJustify
+        Text = 'Initialization... '
+        Width = 100
+      end>
+    SimplePanel = False
+  end
+  object TrayIcon: TTrayIcon
+    Icon.Data = {
+      FE0200000000010001002020100001000400E802000016000000280000002000
+      0000400000000100040000000000000000000000000000000000000000000000
+      0000000000004080FF0000FFFF00000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000002000000020000000000000000000002222200022222000000000000
+      0000002222222022222220000000000000000022222220222222200000000000
+      0000002222222022222220000000000000000002222200022222000000000000
+      0000000002000100020001000000000000000000000111110001111100000000
+      0000000000111111101111111000000000000000001111111011111110000000
+      0000000000111111101111111000000000000000000111110001111100000000
+      0000000002000100010001000000000000000002222200011111000000000000
+      0000002222222011111110000000000000000022222220111111100000000000
+      0000002222222011111110000000000000000002222200011111000000000000
+      0000000002000200010001000000010000000000000222220001111100011111
+      0000000000222222201111111011111110000000002222222011111110111111
+      1000000000222222201111111011111110000000000222220001111100011111
+      0000000000000200000001000000010000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000FFFFFFFFFBFBFFFFFBFBFFFFF1F1FFFFC0407FFF80001FFF80003FFF8000
+      3FFF80003FFF80001FFFC00005FFF00001FFF80003FFF80003FFF80003FFF000
+      01FFC00004FF80001FFF80003FFF80003FFF80003FFF80001F1FC0000404F000
+      0001F8000003F8000003F8000003F0000001C4040404DF1F1F1FFFBFBFBFFFBF
+      BFBF
+    }
+    Visible = True
+    OnClick = TrayIconClick
+    left = 256
+    top = 184
+  end
+end
