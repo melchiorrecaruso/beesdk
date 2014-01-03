@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="release" />
+	<File name="libbx_bee_common.h" open="1" top="0" tabpos="3">
+		<Cursor position="2538" topLine="48" />
+	</File>
+	<File name="libbx_bee_modeller.c" open="1" top="0" tabpos="1">
+		<Cursor position="11228" topLine="108" />
+	</File>
+	<File name="libbx_bee_modeller.h" open="1" top="0" tabpos="2">
+		<Cursor position="1077" topLine="16" />
+	</File>
+	<File name="libbx_bee_rangecoder.c" open="0" top="0" tabpos="0">
+		<Cursor position="665" topLine="9" />
+	</File>
+	<File name="libbx_bee_rangecoder.h" open="0" top="0" tabpos="0">
+		<Cursor position="1147" topLine="27" />
+	</File>
+	<File name="libbx_ppmd_common.h" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="6" />
+	</File>
+	<File name="libbx_ppmd_modeller.c" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="9" />
+	</File>
+	<File name="libbx_ppmd_modeller.h" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="18" />
+	</File>
+	<File name="libbx_stream.c" open="1" top="1" tabpos="4">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="libbx_stream.h" open="0" top="0" tabpos="0">
+		<Cursor position="970" topLine="24" />
+	</File>
+</CodeBlocks_layout_file>

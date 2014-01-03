@@ -9,7 +9,7 @@
 
 struct TReadStream {
          void *Stream;
-   PStreamRead StreamRead;
+    PStreamRead StreamRead;
        int32_t BufferSize;
        int32_t BufferReaded;
        uint8_t Buffer[DEFAULT_BUFFER_CAPACITY];

@@ -62,7 +62,7 @@ type
   TStreamRead  = function(Stream: pointer; Data: PByte; Count: longint): longint;
   TStreamWrite = function(Stream: pointer; Data: PByte; Count: longint): longint;
 
-// beelib interface
+// bee interface
 function  BeeRangeEnc_Create       (aStream: pointer; aStreamWrite: TStreamWrite): pointer; cdecl; external;
 procedure BeeRangeEnc_Destroy      (Self: pointer); cdecl; external;
 procedure BeeRangeEnc_StartEncode  (Self: pointer); cdecl; external;
@@ -85,7 +85,7 @@ procedure BeeModeller_FreshSolid        (Self: pointer); cdecl; external;
 function  BeeModeller_Encode       (Self: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
 function  BeeModeller_Decode       (Self: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
 
-// ppmdlib interface
+// ppmd interface
 function  PpmdRangeEnc_Create      (aStream: pointer; aStreamWrite: TStreamWrite): pointer; cdecl; external;
 procedure PpmdRangeEnc_Destroy     (Self: pointer); cdecl; external;
 procedure PpmdRangeEnc_StartEncode (Self: pointer); cdecl; external;
