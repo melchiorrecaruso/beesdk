@@ -1,0 +1,120 @@
+{ This is an automatically generated lazarus resource file }
+
+LazarusResources.Add('TMainForm','FORMDATA',[
+  'TPF0'#9'TMainForm'#8'MainForm'#4'Left'#3'i'#3#6'Height'#2#0#3'Top'#2'h'#5'Wi'
+  +'dth'#2#0#18'HorzScrollBar.Page'#3'+'#1#18'VertScrollBar.Page'#3#239#0#11'Bo'
+  +'rderIcons'#11#12'biSystemMenu'#10'biMinimize'#0#11'BorderStyle'#7#8'bsSingl'
+  +'e'#7'Caption'#6#13'Bee optimizer'#12'ClientHeight'#2#0#11'ClientWidth'#2#0#7
+  +'OnClose'#7#9'FormClose'#8'OnCreate'#7#10'FormCreate'#9'OnDestroy'#7#11'Form'
+  +'Destroy'#19'OnWindowStateChange'#7#21'FormWindowStateChange'#10'ParentFont'
+  +#9#8'Position'#7#9'poDefault'#8'ShowHint'#9#10'LCLVersion'#6#6'0.9.31'#7'Vis'
+  +'ible'#9#0#12'TPageControl'#11'PageControl'#4'Left'#2#0#6'Height'#2#0#3'Top'
+  +#2#0#5'Width'#2#0#10'ActivePage'#7#14'TabSheet_About'#5'Align'#7#8'alClient'
+  +#20'BorderSpacing.Around'#2#2#8'TabIndex'#2#1#8'TabOrder'#2#0#0#9'TTabSheet'
+  +#17'TabSheet_Progress'#7'Caption'#6#11'Progress...'#12'ClientHeight'#3#213#0
+  +#11'ClientWidth'#3'&'#1#0#6'TLabel'#15'Label_Extension'#22'AnchorSideLeft.Co'
+  +'ntrol'#7#17'TabSheet_Progress'#21'AnchorSideTop.Control'#7#17'TabSheet_Prog'
+  +'ress'#4'Left'#2#6#6'Height'#2#14#3'Top'#2#10#5'Width'#3#132#0#18'BorderSpac'
+  +'ing.Left'#2#6#17'BorderSpacing.Top'#2#10#7'Caption'#6#27'Optimization of Ex'
+  +'tensions:'#11'ParentColor'#8#0#0#6'TLabel'#20'Label_ExtensionValue'#22'Anch'
+  +'orSideLeft.Control'#7#15'Label_Extension'#19'AnchorSideLeft.Side'#7#9'asrBo'
+  +'ttom'#21'AnchorSideTop.Control'#7#15'Label_Extension'#4'Left'#3#168#0#6'Hei'
+  +'ght'#2#14#3'Top'#2#10#5'Width'#2#13#18'BorderSpacing.Left'#2#30#7'Caption'#6
+  +#3'...'#11'ParentColor'#8#0#0#6'TLabel'#23'Label_VariantsEstimated'#21'Ancho'
+  +'rSideTop.Control'#7#15'Label_Extension'#18'AnchorSideTop.Side'#7#9'asrBotto'
+  +'m'#23'AnchorSideRight.Control'#7#15'Label_Extension'#20'AnchorSideRight.Sid'
+  +'e'#7#9'asrBottom'#4'Left'#2#22#6'Height'#2#14#3'Top'#2''''#5'Width'#2't'#7
+  +'Anchors'#11#5'akTop'#7'akRight'#0#17'BorderSpacing.Top'#2#15#7'Caption'#6#23
+  +'Variants was estimated:'#11'ParentColor'#8#0#0#6'TLabel'#28'Label_VariantsE'
+  +'stimatedValue'#22'AnchorSideLeft.Control'#7#20'Label_ExtensionValue'#21'Anc'
+  +'horSideTop.Control'#7#23'Label_VariantsEstimated'#4'Left'#3#168#0#6'Height'
+  +#2#14#3'Top'#2''''#5'Width'#2#17#7'Caption'#6#2'?%'#11'ParentColor'#8#0#0#6
+  +'TLabel'#16'Label_LevelValue'#22'AnchorSideLeft.Control'#7#20'Label_Extensio'
+  +'nValue'#21'AnchorSideTop.Control'#7#11'Label_Level'#4'Left'#3#168#0#6'Heigh'
+  +'t'#2#14#3'Top'#2'O'#5'Width'#2'!'#7'Caption'#6#6'? (?%)'#11'ParentColor'#8#0
+  +#0#6'TLabel'#27'Label_PercentOfImprovements'#21'AnchorSideTop.Control'#7#23
+  +'Label_VariantsEstimated'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'AnchorSid'
+  +'eRight.Control'#7#23'Label_VariantsEstimated'#20'AnchorSideRight.Side'#7#9
+  +'asrBottom'#4'Left'#2#11#6'Height'#2#14#3'Top'#2';'#5'Width'#2#127#7'Anchors'
+  +#11#5'akTop'#7'akRight'#0#17'BorderSpacing.Top'#2#6#7'Caption'#6#24'Percent '
+  +'of Improvements:'#11'ParentColor'#8#0#0#6'TLabel Label_PercentOfImprovement'
+  +'sValue'#22'AnchorSideLeft.Control'#7#20'Label_ExtensionValue'#21'AnchorSide'
+  +'Top.Control'#7#27'Label_PercentOfImprovements'#4'Left'#3#168#0#6'Height'#2
+  +#14#3'Top'#2';'#5'Width'#2'('#7'Caption'#6#6'0.000%'#11'ParentColor'#8#0#0#6
+  +'TLabel'#16'Label_SampleSize'#21'AnchorSideTop.Control'#7#21'Label_Dictionar'
+  +'yLevel'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7
+  +#21'Label_DictionaryLevel'#20'AnchorSideRight.Side'#7#9'asrBottom'#4'Left'#2
+  +'('#6'Height'#2#14#3'Top'#3#128#0#5'Width'#2'b'#7'Anchors'#11#5'akTop'#7'akR'
+  +'ight'#0#17'BorderSpacing.Top'#2#15#7'Caption'#6#21'Size of Sample Files:'#11
+  +'ParentColor'#8#0#0#6'TLabel'#21'Label_SampleSizeValue'#22'AnchorSideLeft.Co'
+  +'ntrol'#7#20'Label_ExtensionValue'#21'AnchorSideTop.Control'#7#16'Label_Samp'
+  +'leSize'#4'Left'#3#168#0#6'Height'#2#14#3'Top'#3#128#0#5'Width'#2#6#7'Captio'
+  +'n'#6#1'?'#11'ParentColor'#8#0#0#6'TLabel'#16'Label_PackedSize'#21'AnchorSid'
+  +'eTop.Control'#7#16'Label_SampleSize'#18'AnchorSideTop.Side'#7#9'asrBottom'
+  +#23'AnchorSideRight.Control'#7#16'Label_SampleSize'#20'AnchorSideRight.Side'
+  +#7#9'asrBottom'#4'Left'#2#24#6'Height'#2#14#3'Top'#3#148#0#5'Width'#2'r'#7'A'
+  +'nchors'#11#5'akTop'#7'akRight'#0#17'BorderSpacing.Top'#2#6#7'Caption'#6#23
+  +'Current Size of Packed:'#11'ParentColor'#8#0#0#6'TLabel'#21'Label_PackedSiz'
+  +'eValue'#22'AnchorSideLeft.Control'#7#20'Label_ExtensionValue'#21'AnchorSide'
+  +'Top.Control'#7#16'Label_PackedSize'#4'Left'#3#168#0#6'Height'#2#14#3'Top'#3
+  +#148#0#5'Width'#2#6#7'Caption'#6#1'?'#11'ParentColor'#8#0#0#6'TLabel'#21'Lab'
+  +'el_DictionaryLevel'#21'AnchorSideTop.Control'#7#11'Label_Level'#18'AnchorSi'
+  +'deTop.Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7#11'Label_Level'#20
+  +'AnchorSideRight.Side'#7#9'asrBottom'#4'Left'#2'9'#6'Height'#2#14#3'Top'#2'c'
+  +#5'Width'#2'Q'#7'Anchors'#11#5'akTop'#7'akRight'#0#17'BorderSpacing.Top'#2#6
+  +#7'Caption'#6#17'Dictionary Level:'#11'ParentColor'#8#0#0#6'TLabel'#26'Label'
+  +'_DictionaryLevelValue'#22'AnchorSideLeft.Control'#7#20'Label_ExtensionValue'
+  +#21'AnchorSideTop.Control'#7#21'Label_DictionaryLevel'#4'Left'#3#168#0#6'Hei'
+  ,'ght'#2#14#3'Top'#2'c'#5'Width'#2#6#7'Caption'#6#1'?'#11'ParentColor'#8#0#0#6
+  +'TLabel'#11'Label_Level'#21'AnchorSideTop.Control'#7#27'Label_PercentOfImpro'
+  +'vements'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7
+  +#27'Label_PercentOfImprovements'#20'AnchorSideRight.Side'#7#9'asrBottom'#4'L'
+  +'eft'#2','#6'Height'#2#14#3'Top'#2'O'#5'Width'#2'^'#7'Anchors'#11#5'akTop'#7
+  +'akRight'#0#17'BorderSpacing.Top'#2#6#7'Caption'#6#18'Compression Level:'#11
+  +'ParentColor'#8#0#0#6'TLabel'#20'Label_BestPackedSize'#21'AnchorSideTop.Cont'
+  +'rol'#7#16'Label_PackedSize'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'Anchor'
+  +'SideRight.Control'#7#16'Label_SampleSize'#20'AnchorSideRight.Side'#7#9'asrB'
+  +'ottom'#4'Left'#2'('#6'Height'#2#14#3'Top'#3#168#0#5'Width'#2'b'#7'Anchors'
+  +#11#5'akTop'#7'akRight'#0#17'BorderSpacing.Top'#2#6#7'Caption'#6#20'Best Siz'
+  +'e of Packed:'#11'ParentColor'#8#0#0#6'TLabel'#25'Label_BestPackedSizeValue'
+  +#22'AnchorSideLeft.Control'#7#20'Label_ExtensionValue'#21'AnchorSideTop.Cont'
+  +'rol'#7#20'Label_BestPackedSize'#4'Left'#3#168#0#6'Height'#2#14#3'Top'#3#168
+  +#0#5'Width'#2#6#7'Caption'#6#1'?'#11'ParentColor'#8#0#0#0#9'TTabSheet'#14'Ta'
+  +'bSheet_About'#7'Caption'#6#5'About'#12'ClientHeight'#2#0#11'ClientWidth'#2#0
+  +#10'ImageIndex'#2#2#0#6'TLabel'#11'Label_About'#4'Left'#2#0#6'Height'#2#0#3
+  +'Top'#2#2#5'Width'#2#0#5'Align'#7#8'alClient'#18'BorderSpacing.Left'#2#6#17
+  +'BorderSpacing.Top'#2#10#19'BorderSpacing.Right'#2#6#20'BorderSpacing.Bottom'
+  +#2#6#7'Caption'#12#27#1#0#0'BeeOpt 0.8.0 (C) 1999-2012 Andrew Filinsky'#13#10
+  +'Freeware version, Feb 2012'#13#10#13#10'This program calculates parameters '
+  +'for Bee 0.8.0 archiver utility, then better compression ratio will be avail'
+  +'able by using them. '#13#10#13#10'Please, send constructed *.ini and *.dat '
+  +'files'#13#10'to e-mail: filinsky@mail.ru'#11'ParentColor'#8#8'WordWrap'#9#0
+  +#0#0#0#10'TStatusBar'#9'StatusBar'#4'Left'#2#0#6'Height'#2#20#3'Top'#2#236#5
+  +'Width'#2#0#6'Panels'#14#1#9'Alignment'#7#14'taRightJustify'#4'Text'#6#18'In'
+  +'itialization... '#5'Width'#2'd'#0#0#11'SimplePanel'#8#0#0#9'TTrayIcon'#8'Tr'
+  +'ayIcon'#9'Icon.Data'#10#2#3#0#0#254#2#0#0#0#0#1#0#1#0'  '#16#0#1#0#4#0#232#2
+  +#0#0#22#0#0#0'('#0#0#0' '#0#0#0'@'#0#0#0#1#0#4#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+  +#0#0#0#0#0#0#0#0#0#0#0#0#0#0'@'#128#255#0#0#255#255#0#0#0#0#0#0#0#0#0#0#0#0#0
+  +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+  +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+  +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#2#0#0#0#2#0#0#0
+  +#0#0#0#0#0#0#0#2'""'#0#2'""'#0#0#0#0#0#0#0#0#0'""" """ '#0#0#0#0#0#0#0#0'"""'
+  +' """ '#0#0#0#0#0#0#0#0'""" """ '#0#0#0#0#0#0#0#0#2'""'#0#2'""'#0#0#0#0#0#0#0
+  +#0#0#0#2#0#1#0#2#0#1#0#0#0#0#0#0#0#0#0#0#1#17#17#0#1#17#17#0#0#0#0#0#0#0#0#0
+  +#17#17#17#16#17#17#17#16#0#0#0#0#0#0#0#0#17#17#17#16#17#17#17#16#0#0#0#0#0#0
+  +#0#0#17#17#17#16#17#17#17#16#0#0#0#0#0#0#0#0#1#17#17#0#1#17#17#0#0#0#0#0#0#0
+  +#0#2#0#1#0#1#0#1#0#0#0#0#0#0#0#0#2'""'#0#1#17#17#0#0#0#0#0#0#0#0#0'""" '#17
+  +#17#17#16#0#0#0#0#0#0#0#0'""" '#17#17#17#16#0#0#0#0#0#0#0#0'""" '#17#17#17#16
+  +#0#0#0#0#0#0#0#0#2'""'#0#1#17#17#0#0#0#0#0#0#0#0#0#0#2#0#2#0#1#0#1#0#0#0#1#0
+  +#0#0#0#0#0#2'""'#0#1#17#17#0#1#17#17#0#0#0#0#0'""" '#17#17#17#16#17#17#17#16
+  +#0#0#0#0'""" '#17#17#17#16#17#17#17#16#0#0#0#0'""" '#17#17#17#16#17#17#17#16
+  +#0#0#0#0#2'""'#0#1#17#17#0#1#17#17#0#0#0#0#0#0#2#0#0#0#1#0#0#0#1#0#0#0#0#0#0
+  +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+  +#0#0#0#0#0#0#0#255#255#255#255#251#251#255#255#251#251#255#255#241#241#255
+  +#255#192'@'#127#255#128#0#31#255#128#0'?'#255#128#0'?'#255#128#0'?'#255#128#0
+  +#31#255#192#0#5#255#240#0#1#255#248#0#3#255#248#0#3#255#248#0#3#255#240#0#1
+  +#255#192#0#4#255#128#0#31#255#128#0'?'#255#128#0'?'#255#128#0'?'#255#128#0#31
+  +#31#192#0#4#4#240#0#0#1#248#0#0#3#248#0#0#3#248#0#0#3#240#0#0#1#196#4#4#4#223
+  +#31#31#31#255#191#191#191#255#191#191#191#7'Visible'#9#7'OnClick'#7#13'TrayI'
+  +'conClick'#4'left'#3#0#1#3'top'#3#184#0#0#0#0
+]);
