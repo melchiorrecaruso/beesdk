@@ -84,14 +84,14 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="8">
+    <Units Count="10">
       <Unit0>
         <Filename Value="bx.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BX"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="3"/>
+        <TopLine Value="10"/>
         <CursorPos X="26" Y="8"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -100,7 +100,7 @@
       <Unit1>
         <Filename Value="bx-src\bx_common.pas"/>
         <UnitName Value="bx_Common"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="323"/>
         <CursorPos X="13" Y="343"/>
@@ -122,7 +122,7 @@
       <Unit3>
         <Filename Value="bx-src\bx_archiver.pas"/>
         <UnitName Value="bx_Archiver"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1769"/>
         <CursorPos X="16" Y="1771"/>
@@ -133,7 +133,7 @@
       <Unit4>
         <Filename Value="bx-src\bx_application.pas"/>
         <UnitName Value="bx_Application"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="756"/>
         <CursorPos X="15" Y="788"/>
@@ -144,7 +144,7 @@
       <Unit5>
         <Filename Value="bx-src\bx_commandline.pas"/>
         <UnitName Value="bx_CommandLine"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="323"/>
         <CursorPos X="22" Y="330"/>
@@ -155,7 +155,7 @@
       <Unit6>
         <Filename Value="bx-src\bx_dirscanner.pas"/>
         <UnitName Value="bx_DirScanner"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="182"/>
         <CursorPos X="45" Y="193"/>
@@ -166,15 +166,37 @@
       <Unit7>
         <Filename Value="bx-src\bx_messages.pas"/>
         <UnitName Value="bx_Messages"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="34"/>
-        <CursorPos X="41" Y="57"/>
+        <TopLine Value="25"/>
+        <CursorPos X="22" Y="34"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="bx-src\bx_liblink.pas"/>
+        <UnitName Value="bx_LibLink"/>
+        <EditorIndex Value="6"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="26"/>
+        <CursorPos X="7" Y="65"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="bx-src\libbx.pas\libbx_stream.pas"/>
+        <UnitName Value="libbx_Stream"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="16"/>
+        <CursorPos X="12" Y="31"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit9>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
