@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2011 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2013 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,8 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Contains:
+{
+  Contains:
 
   Modifyed:
 }
@@ -60,8 +61,8 @@ type
 
   TPerson = class(TObject)
   public
-    Genome: TTableParameters;
     Cost: longint;
+    Genome: TTableParameters;
   public
     constructor Create; overload;
     constructor Create(Parent1, Parent2: TPerson); overload;
@@ -90,8 +91,8 @@ type
 
   TPopulations = class(TList)
   public
-    CurrentPopulation: longint;
     CurrentAge: longint;
+    CurrentPopulation: longint;
     Improvements: longint;
   public
     constructor Create; overload;
@@ -109,6 +110,9 @@ type
     FSourceFile: string;
     FConfigurationName: string;
     FConfiguration: TConfiguration;
+    FCompressionLevel: longint;
+    FDictionaryLevel: longint;
+    FTableParameters: string;
     FWorld: TPopulations;
     // Reduce unneeded strings from given Section of bee.ini
     procedure ReduceSection;
@@ -120,7 +124,7 @@ type
     procedure Evolution;
 
     procedure CollectWorlds(const Path: string);
-    procedure CollectConfigurations(CfgName: string);
+    procedure CollectConfigurations(ConfigurationName: string);
     procedure ExtractLevels(World: TPopulations; const Ext: string);
     procedure MergeDataRecursively(const Path, Name: string; World: TPopulations);
   public
@@ -171,6 +175,48 @@ var
   Coder:      pointer;
   Modeller:   pointer;
   NulWriter:  TNulBufStream;
+
+ // low level functions...
+
+  function CreateText(var T: Text; const Name: string): boolean;
+  begin
+    {$I-}
+    Assign(T, Name);
+    Rewrite(T);
+    {$I+}
+    Result := IOResult = 0;
+  end;
+
+  function AppendText(var T: Text; const Name: string): boolean;
+  begin
+    {$I-}
+    Assign(T, Name);
+    Append(T);
+    {$I+}
+    Result := IOResult = 0;
+  end;
+
+  function OpenText(var T: Text; const Name: string): boolean;
+  begin
+    {$I-}
+    Assign(T, Name);
+    Reset(T);
+    {$I+}
+    Result := IOResult = 0;
+  end;
+
+  function WriteText(const FileName, S: string): boolean;
+  var
+    T: Text;
+  begin
+    if AppendText(T, FileName) or CreateText(T, FileName) then
+    begin
+      Write(T, S);
+      Close(T);
+      Result := True;
+    end else
+      Result := False;
+  end;
 
   /// TBody...
 
@@ -584,7 +630,7 @@ var
     WriteText(Optimizer.FSourceFile + '.log.txt', Format('%d' + #9, [TPerson(Population1.First).Cost]));
     if CurrentPopulation = 14 then
     begin
-      WriteText(Optimizer.FSourceFile + '.log.txt', Format('| %5d turn, -d%d, %d jumps (%1.1f%%).' + Cr,
+      WriteText(Optimizer.FSourceFile + '.log.txt', Format('| %5d turn, -d%d, %d jumps (%1.1f%%).' + LineEnding,
         [CurrentAge, DictionaryLevel, Improvements, Improvements / (CurrentAge + 1) * 100]));
     end;
     CurrentPopulation := (CurrentPopulation + 1) mod 15;
@@ -623,7 +669,10 @@ var
     inherited Create;
     Randomize;
 
-    FSourceFile := '';
+    FSourceFile        := '';
+    FConfigurationName := '';
+    FCompressionLevel  := 1;
+    FDictionaryLevel   := 5;
 
     NeedToRecalculate := False;
     NeedToReduceIni   := False;
@@ -632,58 +681,60 @@ var
 
     FWorld := TPopulations.Create;
 
-      FConfiguration := TConfiguration.Create;
-      FConfiguration.Selector ('\main');
-      FConfiguration.CurrentSection.Values ['Method']     := '3';
-      FConfiguration.CurrentSection.Values ['Dictionary'] := '5';
-
-      for I := 1 to ParamCount do
+    for I := 1 to ParamCount do
+    begin
+      S := UpperCase(ParamStr(I));
+      if Pos('-RECALCULATE', S) = 1 then
       begin
-        S := UpperCase(ParamStr(I));
-        if Pos('-RECALCULATE', S) = 1 then
-        begin
-          NeedToRecalculate := True;
-        end else
-        if Pos('-REDUCE', S) = 1 then
-        begin
-          NeedToReduceIni := True;
-        end else
-        if Pos('-MERGE', S) = 1 then
-        begin
-          NeedToMerge := True;
-        end else
-        if Pos('-M', S) = 1 then
-        begin
-          Delete(S, 1, 2);
-          FConfiguration.Selector('\main');
-          FConfiguration.CurrentSection.Values['Method'] := IntToStr(Max(1, Min(StrToInt(S), 3)));
-        end else
-        if Pos('-D', S) = 1 then
-        begin
-          Delete(S, 1, 2);
-          FConfiguration.Selector('\main');
-          FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(Max(0, Min(StrToInt(S), 9)));
-        end else
-        if Pos('-C', S) = 1 then
-        begin
-          FConfigurationName := Copy(ParamStr(I), 3, MaxInt);
-          NeedToCollectConfig := True;
-          NeedToRun := False;
-        end else
-        if Pos('-PRI', S) = 1 then
-        begin
-          SetPriority(StrToInt(Copy(ParamStr(I), 5, MaxInt)));
-        end else
+        NeedToRecalculate := True;
+      end else
+      if Pos('-REDUCE', S) = 1 then
+      begin
+        NeedToReduceIni := True;
+      end else
+      if Pos('-MERGE', S) = 1 then
+      begin
+        NeedToMerge := True;
+      end else
+      if Pos('-M', S) = 1 then
+      begin
+        Delete(S, 1, 2);
+        FCompressionLevel := Max(1, Min(StrToInt(S), 3));
+      end else
+      if Pos('-D', S) = 1 then
+      begin
+        Delete(S, 1, 2);
+        FDictionaryLevel := Max(0, Min(StrToInt(S), 9));
+      end else
+      if Pos('-C', S) = 1 then
+      begin
+        FConfigurationName := Copy(ParamStr(I), 3, MaxInt);
+        NeedToCollectConfig := True;
+        NeedToRun := False;
+      end else
+      if Pos('-B', S) = 1 then
+      begin
+        SetIdlePriority;
+      end else
 
-        if S[1] in ['-', '/'] then
-        begin
-          // nothing to do
-        end else
+      if S[1] in ['-', '/'] then
+      begin
+        // nothing to do
+      end else
         if FSourceFile = '' then
         begin
           FSourceFile := ParamStr(I);
         end;
       end;
+
+      if FConfigurationName = '' then
+      begin
+        FConfigurationName := ExtractFilePath(ParamStr(0)) + DefaultConfigFileName;
+      end;
+      FConfiguration := TConfiguration.Create(FConfigurationName);
+      FTableParameters :=
+        FConfiguration.ReadString('level-' + IntToStr(FCompressionLevel),
+          FSourceFile, Hex(DefaultTableParameters, SizeOf(DefaultTableParameters)));
 
       BodyesSize := 0;
       Bodyes     := TList.Create;
@@ -707,9 +758,9 @@ var
       if Assigned(DrawBestPackedSize) then DrawBestPackedSize(BodyesSize);
       if Assigned(DrawExtension)      then DrawExtension     (FSourceFile);
 
-      NulWriter := TNulWriter.Create;
-      Coder     := RangeEncoder_Create(NulWriter, @DoFlushNul);
-      Modeller  := BaseCoder_Create(Coder);
+      NulWriter := TNulBufStream.Create;
+      Coder     := BeeRangeEnc_Create(NulWriter, @DoFlush);
+      Modeller  := BeeModeller_Create(Coder);
     end;
 
     destructor TOptimizer.Destroy;
@@ -723,8 +774,8 @@ var
       end;
       Bodyes.Free;
 
-      BaseCoder_Destroy(Modeller);
-      RangeEncoder_Destroy(Coder);
+      BeeModeller_Destroy(Modeller);
+      BeeRangeDec_Destroy(Coder);
       NulWriter.Free;
       inherited Destroy;
     end;
@@ -810,40 +861,38 @@ var
     begin
       Levels := TList.Create;
 
-      WriteText('collect.txt', Cr + Ext + ':' + Cr);
-      for I := 0 to World.Count -1 do
+      WriteText('collect.txt', LineEnding + Ext + ':' + LineEnding);
+      for I := 0 to World.Count - 1 do
       begin
         if TPopulation(World.List[I]).Count = 0 then Continue;
         WriteText('collect.txt', Format('%d:', [TPerson(TPopulation(World.List[I]).First).Genome[1]]) + #9 + Format('%d', [TPerson(TPopulation(World.List[I]).First).Cost]));
 
         if TPerson(TPopulation (World.List [I]).First).Genome [1] < 3 then
         begin
-          WriteText('collect.txt', Cr);
+          WriteText('collect.txt', LineEnding);
           Continue;
         end else
           if (Levels.Count > 0) and (TPerson(TPopulation(World.List[I]).First).Cost > TPerson(Levels.Last).Cost) then
           begin
-            WriteText('collect.txt', Cr);
+            WriteText('collect.txt', LineEnding);
             Continue;
           end else
           begin
-            WriteText('collect.txt', ' +' + Cr);
+            WriteText('collect.txt', ' +' + LineEnding);
             Levels.Add(TPopulation(World.List[I]).First);
           end;
       end;
 
       if Levels.Count > 0 then
       begin
-        FConfiguration.Selector('\m1');
-        FConfiguration.CurrentSection.Values[Ext + '.Size'] := IntToStr(TPerson(Levels.First).Cost);
-        FConfiguration.PutData(Ext, TPerson(Levels.First).Genome, SizeOf(TPerson(Levels.First).Genome));
-        FConfiguration.Selector('\m2');
-        FConfiguration.CurrentSection.Values[Ext + '.Size'] := IntToStr(TPerson(Levels.List[Levels.Count div 2]).Cost);
-        FConfiguration.PutData(Ext, TPerson(Levels.List [Levels.Count div 2]).Genome, SizeOf(TPerson(Levels.First).Genome));
-        FConfiguration.Selector('\m3');
-        FConfiguration.CurrentSection.Values[Ext + '.Size'] := IntToStr(TPerson(Levels.Last).Cost);
-        FConfiguration.PutData(Ext, TPerson(Levels.Last).Genome, SizeOf(TPerson(Levels.First).Genome));
+        FConfiguration.WriteString('level-1', Ext + '.Size', IntToStr(TPerson(Levels.First).Cost));
+        FConfiguration.WriteString('level-1', Ext, Hex(TPerson(Levels.First).Genome, SizeOf(TTableParameters)));
+        FConfiguration.WriteString('level-2', Ext + '.Size', IntToStr(TPerson(Levels.List[Levels.Count div 2]).Cost));
+        FConfiguration.WriteString('level-2', Ext, Hex(TPerson(Levels.List [Levels.Count div 2]).Genome, SizeOf(TTableParameters)));
+        FConfiguration.WriteString('level-3', Ext + '.Size', IntToStr(TPerson(Levels.Last).Cost));
+        FConfiguration.WriteString('level-3', Ext, Hex(TPerson(Levels.Last).Genome, SizeOf(TTableParameters)));
       end;
+      Levels.Destroy;
     end;
 
     procedure TOptimizer.CollectWorlds(const Path: string);
@@ -880,22 +929,19 @@ var
       FindClose(T);
     end;
 
-    procedure TOptimizer.CollectConfigurations(CfgName: string);
+    procedure TOptimizer.CollectConfigurations(ConfigurationName: string);
     begin
-      if CfgName = '' then
-      begin
-        CfgName := DefaultCfgName;
-      end;
+      if ConfigurationName = '' then
+        ConfigurationName := DefaultConfigFileName;
 
-      if ExtractFileExt(CfgName) = '' then
-      begin
-        CfgName := CfgName + '.ini';
-      end;
+      if ExtractFileExt(ConfigurationName) = '' then
+        ConfigurationName := ConfigurationName + '.ini';
 
-      if FileExists(SelfPath + CfgName) then
-      begin
-        FConfiguration.LoadFromFile(SelfPath + CfgName);
-      end;
+      if FileExists(SelfPath + ConfigurationName) then
+        FConfiguration.LoadFromFile(SelfPath + ConfigurationName);
+
+
+
 
       CollectWorlds(SelfPath);
 
