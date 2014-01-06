@@ -45,38 +45,69 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
+    v1.0.0 build 2176 - 2014.01.06 by Melchiorre Caruso.
 }
 
-unit bx_RangeCoder;
+unit libbx_bee_rangecoder;
 
-{$I compiler.inc}
+{$I bx_compiler.inc}
 
 interface
 
 uses
-  Bee_BufStream;
+  libbx_Stream;
 
 type
   { Array of Frequencyes }
 
   TFreq = array of longword;
 
-function  RangeEncoder_Create      (aStream: TWriteBufStream): pointer;
-procedure RangeEncoder_Destroy     (Self: pointer);
-procedure RangeEncoder_StartEncode (Self: pointer);
-procedure RangeEncoder_FinishEncode(Self: pointer);
-function  RangeEncoder_Update      (Self: pointer; const Freq: TFreq; aSymbol: longword): longword;
+type
+  { TBeeRangeEnc }
 
-function  RangeDecoder_Create      (aStream: TReadBufStream): pointer;
-procedure RangeDecoder_Destroy     (Self: pointer);
-procedure RangeDecoder_StartDecode (Self: pointer);
-procedure RangeDecoder_FinishDecode(Self: pointer);
+  PBeeRangeEnc = ^TBeeRangeEnc;
+
+  TBeeRangeEnc = packed record
+    FStream: PWriteStream;
+    FRange:  longword;
+    FLow:    longword;
+    FCode:   longword;
+    FCarry:  longword;
+    FCache:  longword;
+    FFNum:   longword;
+  end;
+
+  function  BeeRangeEnc_Create      (aStream: pointer; aStreamWrite: PStreamWrite): PBeeRangeEnc;
+  procedure BeeRangeEnc_Destroy     (Self: PBeeRangeEnc);
+  procedure BeeRangeEnc_StartEncode (Self: PBeeRangeEnc);
+  procedure BeeRangeEnc_FinishEncode(Self: PBeeRangeEnc);
+  function  BeeRangeEnc_Update      (Self: PBeeRangeEnc; const Freq: TFreq; aSymbol: longword): longword;
+
+type
+  { TBeeRangeDec }
+
+  PBeeRangeDec = ^TBeeRangeDec;
+
+  TBeeRangeDec = packed record
+    FStream: PReadStream;
+    FRange:  longword;
+    FLow:    longword;
+    FCode:   longword;
+    FCarry:  longword;
+    FCache:  longword;
+    FFNum:   longword;
+  end;
+
+  function  BeeRangeDec_Create      (aStream: pointer; aStreamRead:  PStreamRead): PBeeRangeDec;
+  procedure BeeRangeDec_Destroy     (Self: PBeeRangeDec);
+  procedure BeeRangeDec_StartDecode (Self: PBeeRangeDec);
+  procedure BeeRangeDec_FinishDecode(Self: PBeeRangeDec);
+  function  BeeRangeEnc_Update      (Self: PBeeRangeDec; const Freq: TFreq; aSymbol: longword): longword;
 
 implementation
 
 uses
-  Bee_Assembler;
+  libbx_bee_common;
 
 const
   TOP     = 1 shl 24;
@@ -84,47 +115,75 @@ const
   Thres   = 255 * longword(TOP);
   MaxFreq = TOP - 1;
 
-type
-  { TRangeCoder }
+{ TBeeRangeEnc }
 
-  TRangeCoder = packed record
-    FStream: TBufStream;
-    Range:   longword;
-    Low:     longword;
-    Code:    longword;
-    Carry:   longword;
-    Cache:   longword;
-    FFNum:   longword;
-  end;
-
-{ TRangeCoder }
-
-function TRangeCoder_Create(aStream: TWriteBufStream): pointer;
+function BeeRangeEnc_Create(aStream: pointer; aStreamWrite: PStreamWrite): PBeeRangeEnc;
 begin
-  Result := GetMem(SizeOf(TRangeCoder));
-  with TRangeCoder(Result^) do
-  begin
-    FStream := aStream;
-  end;
+  Result := GetMem(SizeOf(TBeeRangeEnc));
+  Result^.FStream := WriteStream_Create(aStream, aStreamWrite);
 end;
 
-procedure TRangeCoder_Destroy(Self: pointer);
+procedure BeeRangeEnc_Destroy(Self: PBeeRangeEnc);
 begin
+  WriteStream_Destroy(Self^.FStream);
   FreeMem(Self);
 end;
 
-procedure TRangeCoder_StartEncode(Self: pointer);
+procedure BeeRangeEnc_StartEncode(Self: PBeeRangeEnc);
 begin
-  with TRangeCoder(Self^) do
+  Self^.FRange := $FFFFFFFF;
+  Self^.FLow   := 0;
+  Self^.FFNum  := 0;
+  Self^.FCarry := 0;
+end;
+
+procedure BeeRangeEnc_ShiftLow(Self: PBeeRangeEnc);
+begin
+  if ((Self^.FLow < THRES) or (Self^.FCarry <> 0)) then
   begin
-    Range := $FFFFFFFF;
-    Low   := 0;
-    FFNum := 0;
-    Carry := 0;
+    WriteStream_Write(Self^.FStream, Self^.FCache + Self^.FCarry);
+
+    while Self^.FFNum <> 0 do
+    begin
+      WriteStream_Write(Self^.FStream, Self^.FCarry - 1);
+      Dec(Self^.FFNum);
+    end;
+    Self^.FCache := Self^.FLow shr 24;
+    Self^.FCarry := 0;
+  end else
+    Inc(Self^.FFNum);
+
+  Self^.FLow := Self^.FLow shl 8;
+end;
+
+procedure BeeRangeEnc_Encode(Self: PBeeRangeEnc; CumFreq: longword; Freq: longword; TotFreq: longword);
+var
+  Tmp: longword;
+begin
+  Tmp   := Self^.FLow;
+  Low   := Low + MulDiv(Range, CumFreq, TotFreq);
+  Carry := Carry + longword(Low < Tmp);
+  Range := MulDiv(Range, Freq, TotFreq);
+  while Range < TOP do
+  begin
+    Range := Range shl 8;
+    ShiftLow;
   end;
 end;
 
-procedure TRangeCoder_StartDecode(Self: pointer);
+
+procedure BeeRangeEnc_FinishEncode(Self: PBeeRangeEnc);
+var
+  I: longword;
+begin
+  with TRangeCoder(Self^) do
+  begin
+    for I := 0 to NUM do ShiftLow;
+  end;
+end;
+
+
+procedure BeeRangeDec_StartDecode(Self: pointer);
 var
   I: longword;
 begin
@@ -135,59 +194,12 @@ begin
   end;
 end;
 
-procedure TRangeCoder_ShiftLow(Self: pointer);
-var
-  Value: byte;
-begin
-  with TRangeCoder(Self^) do
-  begin
-    if (Low < Thres) or (Carry <> 0) then
-    begin
-      Value := Cache + Carry;
-      FStream.Write(@Value, 1);
-      while FFNum <> 0 do
-      begin
-        FStream.Write(Carry - 1);
-        Dec(FFNum);
-      end;
-      Cache := Low shr 24;
-      Carry := 0;
-    end else
-      Inc(FFNum);
-
-    Low := Low shl 8;
-  end;
-end;
-
-procedure TRangeCoder_FinishEncode(Self: pointer);
-var
-  I: longword;
-begin
-  with TRangeCoder(Self^) do
-  begin
-    for I := 0 to NUM do ShiftLow;
-  end;
-end;
-
 procedure TRangeCoder_FinishDecode(Self: pointer);
 begin
   { nothing to do }
 end;
 
-procedure TRangeCoder_Encode(Self: TRangeCoder; CumFreq, Freq, TotFreq: longword);
-var
-  Tmp: longword;
-begin
-  Tmp   := Low;
-  Low   := Low + MulDiv(Range, CumFreq, TotFreq);
-  Carry := Carry + longword(Low < Tmp);
-  Range := MulDiv(Range, Freq, TotFreq);
-  while Range < TOP do
-  begin
-    Range := Range shl 8;
-    ShiftLow;
-  end;
-end;
+
 
 
 

@@ -1846,7 +1846,7 @@ begin
       CurrentItem.FCompressionLevel := ExtractCompressionLevel(FCompressionParams);
       // compression aux level
       Include(CurrentItem.FCompressionFlags, acfCompressionLevelAux);
-      CurrentItem.FCompressionLevelAux := ExtractCompressionAuxLevel(FCompressionParams);
+      CurrentItem.FCompressionLevelAux := ExtractCompressionLevelAux(FCompressionParams);
       // compression block
       Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
       CurrentItem.FCompressionBlock := ExtractCompressionBlock(FCompressionParams);

@@ -177,9 +177,9 @@ type
 
   function ExtractCompressionMethod(const Params: string): longword;
   function ExtractCompressionLevel(const Params: string): longword;
-  function ExtractCompressionAuxLevel(Params: string): longword;
+  function ExtractCompressionLevelAux(Params: string): longword;
   function ExtractCompressionFilter(const Params: string): string;
-  function ExtractCompressionAuxFilter(const Params: string): string;
+  function ExtractCompressionFilterAux(const Params: string): string;
   function ExtractCompressionBlock(Params: string): qword;
   function ExtractCompressionConfiguration(const Params: string): string;
   function ExtractEncryptionMethod(const Params: string): longword;
@@ -331,7 +331,7 @@ begin
   end;
 end;
 
-function ExtractCompressionAuxLevel(Params: string): longword;
+function ExtractCompressionLevelAux(Params: string): longword;
 begin
   case ExtractCompressionMethod(Params) of
     0:
@@ -368,7 +368,7 @@ begin
     Result := '';
 end;
 
-function ExtractCompressionAuxFilter(const Params: string): string;
+function ExtractCompressionFilterAux(const Params: string): string;
 begin
   if Pos(char(0) + 'AF', UpCase(Params)) > 0 then
     Result := ExtractStr(Params, char(0) + 'AF')
@@ -562,9 +562,9 @@ begin
   // check ...
   ExtractCompressionMethod       (FSwitchC);
   ExtractCompressionLevel        (FSwitchC);
-  ExtractCompressionAuxLevel     (FSwitchC);
+  ExtractCompressionLevelAux     (FSwitchC);
   ExtractCompressionFilter       (FSwitchC);
-  ExtractCompressionAuxFilter    (FSwitchC);
+  ExtractCompressionFilterAux    (FSwitchC);
   ExtractCompressionBlock        (FSwitchC);
   ExtractCompressionConfiguration(FSwitchC);
 

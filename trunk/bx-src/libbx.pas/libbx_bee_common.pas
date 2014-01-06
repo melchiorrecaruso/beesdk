@@ -27,9 +27,9 @@
     v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
 }
 
-unit Bee_Assembler;
+unit libbx_bee_common;
 
-{$I bee_compiler.inc}
+{$I bx_compiler.inc}
 
 interface
 
@@ -111,4 +111,4 @@ asm
   DIV     C
 end;
 
-end.
+end.
