@@ -134,7 +134,9 @@ uses
   {$IFDEF LIBBX}
   bx_LibLink,
   {$ELSE}
-  to do ...
+  libbx_Stream,
+
+
   {$ENDIF}
   bx_Messages,
   bx_Stream,

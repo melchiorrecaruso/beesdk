@@ -16,7 +16,8 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Contains:
+{
+  Contains:
 
   Modifyed:
 }
@@ -33,130 +34,132 @@ const
   DEFAULT_BUFFER_CAPACITY = 4096;
 
 type
-  /* TReadStream struct/methods implemetation */
+  { I/O functions }
 
+  PStreamRead  = function(Stream: pointer; Data: PByte; Count: longint): longint;
+  PStreamWrite = function(Stream: pointer; Data: PByte; Count: longint): longint;
+
+type
+  { TReadStream struct/methods }
+
+  PReadStream = ^TReadStream;
   TReadStream = packed record
-          Stream: pointer;
-      StreamRead: PStreamRead;    
-      BufferSize: longint;
+    Stream: pointer;
+    StreamRead: PStreamRead;
+    BufferSize: longint;
     BufferReaded: longint;
-          Buffer: array[0.. DefaultBufferCapacity - 1] of byte;
+    Buffer: array[0.. DEFAULT_BUFFER_CAPACITY - 1] of byte;
   end;
-  PReadStream =^TReadStream;
 
-  function ReadStream_Create(aStream: pointer; aStreamRead: PStreamRead): PReadStream;
-  procedure ReadStream_Destroy(Self: PReadStream);
+  function  ReadStream_Create(aStream: pointer; aStreamRead: PStreamRead): PReadStream;
+  procedure ReadStream_Destroy    (Self: PReadStream);
   procedure ReadStream_ClearBuffer(Self: PReadStream);
-  procedure ReadStream_FillBuffer(Self: PReadStream);
-  function ReadStream_Read(Self: PReadStream);
+  procedure ReadStream_FillBuffer (Self: PReadStream);
+  function  ReadStream_Read       (Self: PReadStream): byte;
 
-/* TWriteStream struct/methods implemetation */
+type
+  { TWriteStream struct/methods }
 
-  TWriteStream = packed record
-         Stream: pointer;
-    StreamWrite: PStreamWrite;    
-     BufferSize: longint;   
-         Buffer: array[0.. DefaultBufferCapacity - 1] of byte;
-  end;
   PWriteStream = ^TWriteStream;
+  TWriteStream = packed record
+    Stream: pointer;
+    StreamWrite: PStreamWrite;    
+    BufferSize: longint;
+    Buffer: array[0.. DEFAULT_BUFFER_CAPACITY - 1] of byte;
+  end;
 
-  function WriteStream_Create(aStream: pointer; aStreamWrite: PStreamWrite) PWriteStream;
-  procedure WriteStream_Destroy(Self PWriteStream);
-  procedure WriteStream_ClearBuffer(Self PWriteStream);
-  procedure WriteStream_FlushBuffer(Self PWriteStream);
-  procedure WriteStream_Write(Self PWriteStream, Data: byte)
+  function  WriteStream_Create(aStream: pointer; aStreamWrite: PStreamWrite): PWriteStream;
+  procedure WriteStream_Destroy    (Self: PWriteStream);
+  procedure WriteStream_ClearBuffer(Self: PWriteStream);
+  procedure WriteStream_FlushBuffer(Self: PWriteStream);
+  procedure WriteStream_Write      (Self: PWriteStream; Data: byte);
 
 implementation
 
 { TReadStream methods }
 
-function TReadStream_Create(aStream: pointer; aStreamRead: PStreamRead): PReadStream;
+function ReadStream_Create(aStream: pointer; aStreamRead: PStreamRead): PReadStream;
 begin
-  Result       := GetMem(sizeof(TReadStream));
+  Result := GetMem(sizeof(TReadStream));
   Result^.Stream       := aStream;
   Result^.StreamRead   := aStreamRead;
-
   Result^.BufferSize   := 0;
   Result^.BufferReaded := 0;
 end;
 
-procedure TReadStream_Destroy(Self: PReadStream);
+procedure ReadStream_Destroy(Self: PReadStream);
 begin
   FreeMem(Self);
 end;
 
 procedure ReadStream_ClearBuffer(Self: PReadStream);
 begin
-  Self
-
+  Self^.BufferReaded := 0;
+  Self^.BufferSize   := 0;
 end;
 
-
-
-
-
-procedure TReadStream.FillBuffer;
+procedure ReadStream_FillBuffer(Self: PReadStream);
 begin
-  FBufferSize   := FOnFillEvent(FHandle, FBuffer[0], DefaultBufferCapacity);
-  FBufferReaded := 0;
+  Self^.BufferSize   := Self^.StreamRead(Self^.Stream, @Self^.Buffer[0], DEFAULT_BUFFER_CAPACITY);
+  Self^.BufferReaded := 0;
 end;
 
-procedure TReadStream.FlushBuffer;
+function ReadStream_Read(Self: PReadStream): byte;
 begin
-  FBufferSize   := 0;
-  FBufferReaded := 0;
-end;
-
-function TReadStream.Read: byte;
-begin
-  if FBufferReaded < FBufferSize then
+  if Self^.BufferReaded < Self^.BufferSize then
   begin
-    Result := FBuffer[FBufferReaded];
-    Inc(FBufferReaded);
+    Result := Self^.Buffer[Self^.BufferReaded];
+    Inc(Self^.BufferReaded);
   end else
   begin
-    FillBuffer;
-    if FBufferReaded < FBufferSize then
+    ReadStream_FillBuffer(Self);
+    if Self^.BufferReaded < Self^.BufferSize then
     begin
-      Result := FBuffer[FBufferReaded];
-      Inc(FBufferReaded);
+      Result := Self^.Buffer[Self^.BufferReaded];
+      Inc(Self^.BufferReaded);
     end;
   end;
 end;
 
-{ TWriteStream class}
+{ TWriteStream methods}
 
-constructor TWriteStream.Create(Handle: pointer; OnFlushEvent: TFlushEvent);
+function WriteStream_Create(aStream: pointer; aStreamWrite: PStreamWrite): PWriteStream;
 begin
-  inherited Create(Handle);
-  FOnFlushEvent := OnFlushEvent;
+  Result := GetMem(sizeof(TWriteStream));
+  Result^.Stream      := aStream;
+  Result^.StreamWrite := aStreamWrite;
+  Result^.BufferSize  := 0;
 end;
 
-destructor TWriteStream.Destroy;
+procedure WriteStream_Destroy(Self: PWriteStream);
 begin
-  FlushBuffer;
-  FOnFlushEvent := nil;
-  inherited Destroy;
+  WriteStream_FlushBuffer(Self);
+  FreeMem(Self);
 end;
 
-procedure TWriteStream.FlushBuffer;
+procedure WriteStream_ClearBuffer(Self: PWriteStream);
 begin
-  if FBufferSize <> 0 then
+  Self^.BufferSize := 0;
+end;
+
+procedure WriteStream_FlushBuffer(Self: PWriteStream);
+begin
+  if Self^.BufferSize <> 0 then
   begin
-    FOnFlushEvent(FHandle, FBuffer[0], FBufferSize);
-    FBufferSize := 0;
+    Self^.StreamWrite(Self^.Stream, @Self^.Buffer[0], Self^.BufferSize);
+    Self^.BufferSize := 0;
   end;
 end;
 
-procedure TWriteStream.Write(Data: byte);
+procedure WriteStream_Write(Self: PWriteStream; Data: byte);
 begin
-  if FBufferSize = DefaultBufferCapacity then
+  if Self^.BufferSize = DEFAULT_BUFFER_CAPACITY then
   begin
-    FlushBuffer;
+    WriteStream_FlushBuffer(Self);
   end;
-  FBuffer[FBufferSize] := Data;
-  Inc(FBufferSize);
+  Self^.Buffer[Self^.BufferSize] := Data;
+  Inc(Self^.BufferSize);
 end;
 
 end.
-
+
