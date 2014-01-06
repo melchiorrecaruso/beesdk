@@ -45,7 +45,7 @@ inline void ReadStream_FillBuffer(PReadStream Self)
 
 inline uint8_t ReadStream_Read(PReadStream Self)
 {
-  uint8_t result = 0;
+  uint8_t result;
   if (Self->BufferReaded < Self->BufferSize)
   {
     result = Self->Buffer[Self->BufferReaded];
@@ -77,13 +77,13 @@ PWriteStream WriteStream_Create(void *aStream, PStreamWrite aStreamWrite)
   PWriteStream Self = malloc(sizeof(struct TWriteStream));
   Self->Stream      = aStream;
   Self->StreamWrite = aStreamWrite;
-
   Self->BufferSize  = 0;
   return Self;
 }
 
 void WriteStream_Destroy(PWriteStream Self)
 {
+  WriteStream_FlushBuffer(Self);
   free(Self);
 }
 
