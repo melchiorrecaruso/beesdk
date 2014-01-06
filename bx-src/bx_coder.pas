@@ -135,6 +135,7 @@ uses
   bx_LibLink,
   {$ELSE}
   libbx_Stream,
+  libbx_bee_RangeCoder,
 
 
   {$ENDIF}

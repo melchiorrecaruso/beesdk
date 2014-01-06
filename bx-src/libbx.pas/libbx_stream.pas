@@ -43,6 +43,7 @@ type
   { TReadStream struct/methods }
 
   PReadStream = ^TReadStream;
+
   TReadStream = packed record
     Stream: pointer;
     StreamRead: PStreamRead;
@@ -61,6 +62,7 @@ type
   { TWriteStream struct/methods }
 
   PWriteStream = ^TWriteStream;
+
   TWriteStream = packed record
     Stream: pointer;
     StreamWrite: PStreamWrite;    

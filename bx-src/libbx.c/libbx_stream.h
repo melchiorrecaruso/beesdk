@@ -26,7 +26,12 @@
 #ifndef LIBBX_STREAM_H
 #define LIBBX_STREAM_H
 
-#include "libbx_bee_common.h"
+#include <stdint.h>
+
+// I/O functions //
+
+typedef int32_t (*PStreamRead ) (void*, void*, int32_t);
+typedef int32_t (*PStreamWrite) (void*, void*, int32_t);
 
 /* TReadStream struct/methods implementation */
 
