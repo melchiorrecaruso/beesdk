@@ -160,38 +160,38 @@ procedure BeeRangeEnc_Encode(Self: PBeeRangeEnc; CumFreq: longword; Freq: longwo
 var
   Tmp: longword;
 begin
-  Tmp   := Self^.FLow;
-  Low   := Low + MulDiv(Range, CumFreq, TotFreq);
-  Carry := Carry + longword(Low < Tmp);
-  Range := MulDiv(Range, Freq, TotFreq);
-  while Range < TOP do
+  Tmp := Self^.FLow;
+  Self^.FLow   := Self^.FLow + MulDiv(Self^.FRange, CumFreq, TotFreq);
+  Self^.FCarry := Self^.FCarry + longword(Self^.FLow < Tmp);
+  Self^.FRange := MulDiv(Self^.FRange, Freq, TotFreq);
+  while Self^.FRange < TOP do
   begin
-    Range := Range shl 8;
-    ShiftLow;
+    Self^.FRange := Self^.FRange shl 8;
+    BeeRangeEnc_ShiftLow(Self);
   end;
 end;
-
 
 procedure BeeRangeEnc_FinishEncode(Self: PBeeRangeEnc);
-var
-  I: longword;
 begin
-  with TRangeCoder(Self^) do
-  begin
-    for I := 0 to NUM do ShiftLow;
-  end;
+  BeeRangeEnc_ShiftLow(Self);
+  BeeRangeEnc_ShiftLow(Self);
+  BeeRangeEnc_ShiftLow(Self);
+  BeeRangeEnc_ShiftLow(Self);
+  BeeRangeEnc_ShiftLow(Self);
 end;
 
-
-procedure BeeRangeDec_StartDecode(Self: pointer);
-var
-  I: longword;
+procedure BeeRangeDec_StartDecode(Self: PBeeRangeDec);
 begin
-  TRangeCoder_StartEncode(Self);
-  with TRangeCoder(Self^) do
-  begin
-    // for I := 0 to NUM do Code := Code shl 8 + FStream.Read;
-  end;
+  Self^.FRange := $FFFFFFFF;
+  Self^.FLow   := 0;
+  Self^.FFNum  := 0;
+  Self^.FCarry := 0;
+
+  Self^.FCode := Self^.FCode shl 8 + ReadStream_Read(Self^.FStream);
+  Self^.FCode := Self^.FCode shl 8 + ReadStream_Read(Self^.FStream);
+  Self^.FCode := Self^.FCode shl 8 + ReadStream_Read(Self^.FStream);
+  Self^.FCode := Self^.FCode shl 8 + ReadStream_Read(Self^.FStream);
+  Self^.FCode := Self^.FCode shl 8 + ReadStream_Read(Self^.FStream);
 end;
 
 procedure TRangeCoder_FinishDecode(Self: pointer);
@@ -201,26 +201,9 @@ end;
 
 
 
+////////// ------------ ////////////////
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function TRangeCoder.UpdateSymbol(Self: TRangeCoder; const Freq: TFreq; aSymbol: longword): longword;
+function BeeRangeDec_UpdateSymbol(Self: TRangeCoder; const Freq: TFreq; aSymbol: longword): longword;
 var
   CumFreq, TotFreq, I: longword;
 begin
@@ -301,4 +284,4 @@ begin
   FStream.Write (aValue, 1);
 end;
 
-end.
+end.

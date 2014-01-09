@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2013 Melchiorre Caruso
+  Copyright (C) 2013 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,6 @@
 
 unit libbx_Stream;
 
-{$I bx_compiler.inc}
-
 interface
 
 const
@@ -36,8 +34,8 @@ const
 type
   { I/O functions }
 
-  PStreamRead  = function(Stream: pointer; Data: PByte; Count: longint): longint;
-  PStreamWrite = function(Stream: pointer; Data: PByte; Count: longint): longint;
+  PStreamRead  = function(Stream: Pointer; Data: PByte; Count: longint): longint;
+  PStreamWrite = function(Stream: Pointer; Data: PByte; Count: longint): longint;
 
 type
   { TReadStream struct/methods }
@@ -45,14 +43,14 @@ type
   PReadStream = ^TReadStream;
 
   TReadStream = packed record
-    Stream: pointer;
+    Stream: Pointer;
     StreamRead: PStreamRead;
     BufferSize: longint;
     BufferReaded: longint;
     Buffer: array[0.. DEFAULT_BUFFER_CAPACITY - 1] of byte;
   end;
 
-  function  ReadStream_Create(aStream: pointer; aStreamRead: PStreamRead): PReadStream;
+  function  ReadStream_Create(aStream: Pointer; aStreamRead: PStreamRead): PReadStream;
   procedure ReadStream_Destroy    (Self: PReadStream);
   procedure ReadStream_ClearBuffer(Self: PReadStream);
   procedure ReadStream_FillBuffer (Self: PReadStream);
@@ -64,13 +62,13 @@ type
   PWriteStream = ^TWriteStream;
 
   TWriteStream = packed record
-    Stream: pointer;
+    Stream: Pointer;
     StreamWrite: PStreamWrite;    
     BufferSize: longint;
     Buffer: array[0.. DEFAULT_BUFFER_CAPACITY - 1] of byte;
   end;
 
-  function  WriteStream_Create(aStream: pointer; aStreamWrite: PStreamWrite): PWriteStream;
+  function  WriteStream_Create(aStream: Pointer; aStreamWrite: PStreamWrite): PWriteStream;
   procedure WriteStream_Destroy    (Self: PWriteStream);
   procedure WriteStream_ClearBuffer(Self: PWriteStream);
   procedure WriteStream_FlushBuffer(Self: PWriteStream);
@@ -80,13 +78,13 @@ implementation
 
 { TReadStream methods }
 
-function ReadStream_Create(aStream: pointer; aStreamRead: PStreamRead): PReadStream;
+function ReadStream_Create(aStream: Pointer; aStreamRead: PStreamRead): PReadStream;
 begin
-  Result := GetMem(sizeof(TReadStream));
-  Result^.Stream       := aStream;
-  Result^.StreamRead   := aStreamRead;
-  Result^.BufferSize   := 0;
-  Result^.BufferReaded := 0;
+  ReadStream_Create := GetMem(sizeof(TReadStream));
+  ReadStream_Create^.Stream       := aStream;
+  ReadStream_Create^.StreamRead   := aStreamRead;
+  ReadStream_Create^.BufferSize   := 0;
+  ReadStream_Create^.BufferReaded := 0;
 end;
 
 procedure ReadStream_Destroy(Self: PReadStream);
@@ -110,14 +108,14 @@ function ReadStream_Read(Self: PReadStream): byte;
 begin
   if Self^.BufferReaded < Self^.BufferSize then
   begin
-    Result := Self^.Buffer[Self^.BufferReaded];
+    ReadStream_Read := Self^.Buffer[Self^.BufferReaded];
     Inc(Self^.BufferReaded);
   end else
   begin
     ReadStream_FillBuffer(Self);
     if Self^.BufferReaded < Self^.BufferSize then
     begin
-      Result := Self^.Buffer[Self^.BufferReaded];
+      ReadStream_Read := Self^.Buffer[Self^.BufferReaded];
       Inc(Self^.BufferReaded);
     end;
   end;
@@ -125,12 +123,12 @@ end;
 
 { TWriteStream methods}
 
-function WriteStream_Create(aStream: pointer; aStreamWrite: PStreamWrite): PWriteStream;
+function WriteStream_Create(aStream: Pointer; aStreamWrite: PStreamWrite): PWriteStream;
 begin
-  Result := GetMem(sizeof(TWriteStream));
-  Result^.Stream      := aStream;
-  Result^.StreamWrite := aStreamWrite;
-  Result^.BufferSize  := 0;
+  WriteStream_Create := GetMem(sizeof(TWriteStream));
+  WriteStream_Create^.Stream      := aStream;
+  WriteStream_Create^.StreamWrite := aStreamWrite;
+  WriteStream_Create^.BufferSize  := 0;
 end;
 
 procedure WriteStream_Destroy(Self: PWriteStream);
@@ -164,4 +162,4 @@ begin
 end;
 
 end.
-
+
