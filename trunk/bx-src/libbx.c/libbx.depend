@@ -66,16 +66,16 @@
 1385296541 source:c:\repository\beesdk\bx-src\libbx.c\libbx_bee_common.c
 	"libbx_bee_common.h"
 
-1385296541 c:\repository\beesdk\bx-src\libbx.c\libbx_bee_common.h
+1389033341 c:\repository\beesdk\bx-src\libbx.c\libbx_bee_common.h
 	<stdint.h>
 
-1385296541 source:c:\repository\beesdk\bx-src\libbx.c\libbx_bee_modeller.c
+1389389492 source:c:\repository\beesdk\bx-src\libbx.c\libbx_bee_modeller.c
 	<math.h>
 	<stdlib.h>
 	"libbx_bee_modeller.h"
 	"libbx_bee_rangecoder.h"
 
-1385296541 c:\repository\beesdk\bx-src\libbx.c\libbx_bee_modeller.h
+1389392106 c:\repository\beesdk\bx-src\libbx.c\libbx_bee_modeller.h
 	"libbx_bee_common.h"
 
 1387139288 c:\repository\beesdk\bx-src\libbx.c\libbx_bee_rangecoder.h
@@ -83,10 +83,10 @@
 	"libbx_stream.h"
 	"libbx_bee_common.h"
 
-1387139288 c:\repository\beesdk\bx-src\libbx.c\libbx_stream.h
-	"libbx_bee_common.h"
+1389033341 c:\repository\beesdk\bx-src\libbx.c\libbx_stream.h
+	<stdint.h>
 
-1385296541 source:c:\repository\beesdk\bx-src\libbx.c\libbx_bee_rangecoder.c
+1389384890 source:c:\repository\beesdk\bx-src\libbx.c\libbx_bee_rangecoder.c
 	"libbx_bee_rangecoder.h"
 	<stdlib.h>
 
@@ -115,7 +115,7 @@
 	<stdlib.h>
 	<memory.h>
 
-1385296541 source:c:\repository\beesdk\bx-src\libbx.c\libbx_stream.c
+1389033341 source:c:\repository\beesdk\bx-src\libbx.c\libbx_stream.c
 	"libbx_stream.h"
 	<stdlib.h>
 

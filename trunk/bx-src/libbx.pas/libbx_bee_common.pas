@@ -33,8 +33,43 @@ unit libbx_bee_common;
 
 interface
 
-procedure CopyBytes(const Source, Dest; Count: longword);
+// -------------------------------------------------------------------------- //
+//  Configuration tables type                                                 //
+// -------------------------------------------------------------------------- //
 
+const
+  TABLESIZE       = 20; // array [0..20]
+  TABLECOLS       =  2; // array [0.. 1]
+  TABLEPARAMETERS = 42; // array [0..42]
+
+type
+  TTableCol = array [0..TableSize] of longword;
+
+  TTable = packed record
+    Level: longword;
+    T: array [0..TableCols - 1] of TTableCol;
+  end;
+
+  TTableParameters = array [1..SizeOf(TTable) div 4] of byte;
+
+// -------------------------------------------------------------------------- //
+//  Default table parameters                                                  //
+// -------------------------------------------------------------------------- //
+
+const
+  DefaultDictionaryLevel: longword = $0003;
+  DefaultTableParameters: TTableParameters =
+    (  3, 163, 157,  65,  93, 117, 135, 109, 126, 252, 172, 252, 152, 227, 249,
+     249, 253, 196,  27,  82,  93,  74, 182, 245,  40,  67,  77, 143, 133, 135,
+     128, 155, 207, 177, 225, 251, 253, 248,  73,  35,  15, 107, 143);
+
+  EmptyTableParameters: TTableParameters =
+    (  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+       0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+       0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0);
+
+
+procedure CopyBytes(const Source, Dest; Count: longword);
 procedure FillLongword(const Data; const Count, Value: longword);
 procedure AddLongword(const Data; const Count, Value: longword);
 procedure ClearLongword(const Data; const Count: longword);
@@ -111,4 +146,4 @@ asm
   DIV     C
 end;
 
-end.
+end.

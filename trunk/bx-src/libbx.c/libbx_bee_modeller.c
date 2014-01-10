@@ -146,9 +146,8 @@ static inline void BeeModeller_Cut(PBeeModeller Self)
   J++;
 
   (*I) = Self->Root;
-
   int32_t Bound = (Self->SafeCounter * 3) / 4;
-  PNode P = NULL;
+  PNode P;
   do
   {
     P = (*I)->Up;
@@ -218,11 +217,12 @@ static inline PNode BeeModeller_Tail(PBeeModeller Self, PNode Node)
 
 static inline void BeeModeller_Account(PBeeModeller Self)
 {
-  Self->I = 0;
-  Self->Q = 0;
+  Self->I    = 0;
+  uint32_t J = 0;
+  Self->Q    = 0;
   Self->IncreaseIndex = 0;
 
-  uint32_t J = 0, K = 0;
+  uint32_t K = 0;
   do
   {
     PNode P = Self->List[Self->I];
@@ -236,7 +236,6 @@ static inline void BeeModeller_Account(PBeeModeller Self)
       {
         // Undetermined context ...
         K = P->K * (*(Self->Part))[MAXSYMBOL + 2] >> 5;
-
 		PNode Stored = P;
         P = P->Next;
         J = 1;
@@ -405,9 +404,9 @@ void BeeModeller_SetDictionaryLevel(PBeeModeller Self, uint32_t aDictLevel)
   BeeModeller_FreshFlexible(Self);
 }
 
-void BeeModeller_SetTableParameters(PBeeModeller Self, const TTableParameters *T)
+void BeeModeller_SetTableParameters(PBeeModeller Self, uint8_t *Table)
 {
-  Self->Table.Level = (uint32_t)(*T)[0] & 0xF;
+  Self->Table.Level = (uint32_t)Table[0] & 0xF;
 
   uint32_t I = 1;
   uint32_t J , K;
@@ -415,7 +414,7 @@ void BeeModeller_SetTableParameters(PBeeModeller Self, const TTableParameters *T
   for (J = 0; J <= TABLECOLS; J++)
     for (K = 0; K <= TABLESIZE; K++)
     {
-      Self->Table.T[J][K] = (int32_t)(*T)[I] + 1;
+      Self->Table.T[J][K] = (int32_t)Table[I] + 1;
       I++;
     }
 
@@ -436,11 +435,10 @@ static inline uint32_t BeeModeller_Update(PBeeModeller Self, uint32_t aSymbol, P
 {
   Self->Part = &(Self->Table.T[0]);
 
-  uint32_t result = 0;
   Self->Symbol = aSymbol >> 0x4;
   BeeModeller_Step(Self, Update);
 
-  result = Self->Symbol << 4;
+  uint32_t result = Self->Symbol << 4;
   Self->Part = &(Self->Table.T[1]);
   Self->Symbol = aSymbol & 0xF;
   BeeModeller_Step(Self, Update);

@@ -50,12 +50,15 @@
 
 unit libbx_bee_rangecoder;
 
-{$I bx_compiler.inc}
-
 interface
 
 uses
-  libbx_Stream;
+  libbx_stream;
+
+const
+  TOP     = 1 shl 24;
+  THRES   = 255 * longword(TOP);
+  MAXFREQ = TOP - 1;
 
 type
   { Array of Frequencyes }
@@ -102,18 +105,17 @@ type
   procedure BeeRangeDec_Destroy     (Self: PBeeRangeDec);
   procedure BeeRangeDec_StartDecode (Self: PBeeRangeDec);
   procedure BeeRangeDec_FinishDecode(Self: PBeeRangeDec);
-  function  BeeRangeEnc_Update      (Self: PBeeRangeDec; const Freq: TFreq; aSymbol: longword): longword;
+  function  BeeRangeDec_Update      (Self: PBeeRangeDec; const Freq: TFreq; aSymbol: longword): longword;
+
+type
+  { PBeeRangeCodUpdate definition }
+
+  PBeeRangeCodUpdate = function(Self: pointer; const Freq: TFreq; aSymbol: longword): longword;
 
 implementation
 
 uses
   libbx_bee_common;
-
-const
-  TOP     = 1 shl 24;
-  NUM     = 4;
-  Thres   = 255 * longword(TOP);
-  MaxFreq = TOP - 1;
 
 { TBeeRangeEnc }
 
@@ -180,6 +182,44 @@ begin
   BeeRangeEnc_ShiftLow(Self);
 end;
 
+function BeeRangeEnc_Update(Self: PBeeRangeEnc; const Freq: TFreq; aSymbol: longword): longword;
+var
+  CumFreq, TotFreq, I: longword;
+begin
+  // Count CumFreq...
+  CumFreq := 0; I := 0;
+  while I < aSymbol do
+  begin
+    Inc(CumFreq, Freq[I]);
+    Inc(I);
+  end;
+  // Count TotFreq...
+  TotFreq := CumFreq;
+  I := Length(Freq);
+  repeat
+    Dec(I);
+    Inc(TotFreq, Freq[I]);
+  until I = aSymbol;
+  // Encode...
+  BeeRangeEnc_Encode(Self, CumFreq, Freq[aSymbol], TotFreq);
+  // Return Result...
+  Result := aSymbol;
+end;
+
+{ TBeeRangeDec }
+
+function BeeRangeDec_Create(aStream: pointer; aStreamRead: PStreamRead): PBeeRangeDec;
+begin
+  Result := GetMem(SizeOf(TBeeRangeDec));
+  Result^.FStream := ReadStream_Create(aStream, aStreamRead);
+end;
+
+procedure BeeRangeDec_Destroy(Self: PBeeRangeDec);
+begin
+  ReadStream_Destroy(Self^.FStream);
+  FreeMem(Self);
+end;
+
 procedure BeeRangeDec_StartDecode(Self: PBeeRangeDec);
 begin
   Self^.FRange := $FFFFFFFF;
@@ -194,57 +234,28 @@ begin
   Self^.FCode := Self^.FCode shl 8 + ReadStream_Read(Self^.FStream);
 end;
 
-procedure TRangeCoder_FinishDecode(Self: pointer);
+procedure BeeRangeDec_FinishDecode(Self: PBeeRangeDec);
 begin
-  { nothing to do }
+  ReadStream_ClearBuffer(Self^.FStream);
 end;
 
-
-
-////////// ------------ ////////////////
-
-function BeeRangeDec_UpdateSymbol(Self: TRangeCoder; const Freq: TFreq; aSymbol: longword): longword;
-var
-  CumFreq, TotFreq, I: longword;
+function BeeRangeDec_GetFreq(Self: PBeeRangeDec; TotFreq: longword): longword;
 begin
-  // Count CumFreq...
-  CumFreq := 0;
-  I := CumFreq;
-  while I < aSymbol do
-  begin
-    Inc(CumFreq, Freq[I]);
-    Inc(I);
-  end;
-  // Count TotFreq...
-  TotFreq := CumFreq;
-  I := Length(Freq);
-  repeat
-    Dec(I);
-    Inc(TotFreq, Freq[I]);
-  until I = aSymbol;
-  // Encode...
-  Encode(CumFreq, Freq[aSymbol], TotFreq);
-  // Return Result...
-  Result := aSymbol;
+  Result := MulDecDiv(Self^.FCode + 1, TotFreq, Self^.FRange);
 end;
 
-procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: longword);
+procedure BeeRangeDec_Decode(Self: PBeeRangeDec; CumFreq, Freq, TotFreq: longword);
 begin
-  Code  := Code - MulDiv(Range, CumFreq, TotFreq);
-  Range := MulDiv(Range, Freq, TotFreq);
-  while Range < TOP do
+  Self^.FCode  := Self^.FCode - MulDiv(Self^.FRange, CumFreq, TotFreq);
+  Self^.FRange := MulDiv(Self^.FRange, Freq, TotFreq);
+  while Self^.FRange < TOP do
   begin
-    Code  := Code  shl 8 + FStream.Read;
-    Range := Range shl 8;
+    Self^.FCode  := Self^.FCode  shl 8 + ReadStream_Read(Self^.FStream);
+    Self^.FRange := Self^.FRange shl 8;
   end;
 end;
 
-function TRangeCoder.GetFreq(TotFreq: longword): longword;
-begin
-  Result := MulDecDiv(Code + 1, TotFreq, Range);
-end;
-
-function TSecondaryDecoder.UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword;
+function BeeRangeDec_Update(Self: PBeeRangeDec; const Freq: TFreq; aSymbol: longword): longword;
 var
   CumFreq, TotFreq, SumFreq: longword;
 begin
@@ -256,32 +267,19 @@ begin
     Inc(TotFreq, Freq[aSymbol]);
   until aSymbol = 0;
   // Count CumFreq...
-  CumFreq := GetFreq(TotFreq);
+  CumFreq := BeeRangeDec_GetFreq(Self, TotFreq);
   // Search aSymbol...
   SumFreq := 0;
-  aSymbol := SumFreq;
+  aSymbol := 0;
   while SumFreq + Freq[aSymbol] <= CumFreq do
   begin
     Inc(SumFreq, Freq[aSymbol]);
     Inc(aSymbol);
   end;
   // Finish Decode...
-  Decode(SumFreq, Freq[aSymbol], TotFreq);
+  BeeRangeDec_Decode(Self, SumFreq, Freq[aSymbol], TotFreq);
   // Return Result...
   Result := aSymbol;
-end;
-
-function TRangeCoder.InputByte: Cardinal;
-var
-  Value: Byte;
-begin
-  FStream.Read (Value, 1);
-  Result := Value;
-end;
-
-procedure TRangeCoder.OutputByte (aValue: Cardinal);
-begin
-  FStream.Write (aValue, 1);
 end;
 
 end.

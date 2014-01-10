@@ -22,7 +22,7 @@
   Modifyed:
 }
 
-unit libbx_Stream;
+unit libbx_stream;
 
 interface
 
@@ -43,11 +43,11 @@ type
   PReadStream = ^TReadStream;
 
   TReadStream = packed record
-    Stream: Pointer;
-    StreamRead: PStreamRead;
-    BufferSize: longint;
-    BufferReaded: longint;
-    Buffer: array[0.. DEFAULT_BUFFER_CAPACITY - 1] of byte;
+    FStream: Pointer;
+    FStreamRead: PStreamRead;
+    FBufferSize: longint;
+    FBufferReaded: longint;
+    FBuffer: array[0.. DEFAULT_BUFFER_CAPACITY - 1] of byte;
   end;
 
   function  ReadStream_Create(aStream: Pointer; aStreamRead: PStreamRead): PReadStream;
@@ -81,10 +81,10 @@ implementation
 function ReadStream_Create(aStream: Pointer; aStreamRead: PStreamRead): PReadStream;
 begin
   ReadStream_Create := GetMem(sizeof(TReadStream));
-  ReadStream_Create^.Stream       := aStream;
-  ReadStream_Create^.StreamRead   := aStreamRead;
-  ReadStream_Create^.BufferSize   := 0;
-  ReadStream_Create^.BufferReaded := 0;
+  ReadStream_Create^.FStream       := aStream;
+  ReadStream_Create^.FStreamRead   := aStreamRead;
+  ReadStream_Create^.FBufferSize   := 0;
+  ReadStream_Create^.FBufferReaded := 0;
 end;
 
 procedure ReadStream_Destroy(Self: PReadStream);
@@ -94,29 +94,29 @@ end;
 
 procedure ReadStream_ClearBuffer(Self: PReadStream);
 begin
-  Self^.BufferReaded := 0;
-  Self^.BufferSize   := 0;
+  Self^.FBufferReaded := 0;
+  Self^.FBufferSize   := 0;
 end;
 
 procedure ReadStream_FillBuffer(Self: PReadStream);
 begin
-  Self^.BufferSize   := Self^.StreamRead(Self^.Stream, @Self^.Buffer[0], DEFAULT_BUFFER_CAPACITY);
-  Self^.BufferReaded := 0;
+  Self^.FBufferSize   := Self^.FStreamRead(Self^.FStream, @Self^.FBuffer[0], DEFAULT_BUFFER_CAPACITY);
+  Self^.FBufferReaded := 0;
 end;
 
 function ReadStream_Read(Self: PReadStream): byte;
 begin
-  if Self^.BufferReaded < Self^.BufferSize then
+  if Self^.FBufferReaded < Self^.FBufferSize then
   begin
-    ReadStream_Read := Self^.Buffer[Self^.BufferReaded];
-    Inc(Self^.BufferReaded);
+    ReadStream_Read := Self^.FBuffer[Self^.FBufferReaded];
+    Inc(Self^.FBufferReaded);
   end else
   begin
     ReadStream_FillBuffer(Self);
-    if Self^.BufferReaded < Self^.BufferSize then
+    if Self^.FBufferReaded < Self^.FBufferSize then
     begin
-      ReadStream_Read := Self^.Buffer[Self^.BufferReaded];
-      Inc(Self^.BufferReaded);
+      ReadStream_Read := Self^.FBuffer[Self^.FBufferReaded];
+      Inc(Self^.FBufferReaded);
     end;
   end;
 end;

@@ -1,5 +1,6 @@
 {
-  Copyright (c) 2003-2013 Andrew Filinsky.
+  Copyright (c) 2003-2012 Andrew Filinsky.
+  Copyright (c) 2013 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,15 +30,14 @@
     v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
-unit Bee_Modeller;
+unit libbx_bee_modeller;
 
 interface
 
 uses
-  Math,                             { Max (), Min (), ...                      }
-  Bee_Codec,                        { TSecondaryFCodec, ...                    }
-  Bee_Assembler,                    { Low-level routines ...                   }
-  Bee_Configuration;                { TTable, TTableCol, ...                   }
+  Math,
+  libbx_bee_common,
+  libbx_bee_rangecoder;
 
 const
   BitChain  = 4;                    { Size of data portion, bit                }
@@ -62,15 +62,14 @@ type
 
   { PPM modeller }
 
-  TBaseCoder = class
-  private
-    FDictionaryLevel: longword;
-    FCodec: TSecondaryCodec;        { Secondary encoder or decoder             }
+  PBeeModeller = ^TBeeModeller;
 
+  TBeeModeller = packed record
+    FCodec: pointer;
+    FDictLevel: longword;
     Symbol: longword;
     Pos:    longword;
     LowestPos: longint;
-
     MaxCounter,                     { Maximal heap size                        }
     SafeCounter,                    { Safe heap size                           }
     Counter: longword;              { Current heap size                        }
@@ -86,148 +85,69 @@ type
     Tear: PNode;
 
     IncreaseIndex: longword;
-    I, R, Q: longword;
+    I: longword;
+    R: longword;
+    Q: longword;
 
     Freq:  TFreq;                   { Symbol frequencyes                       }
     Part:  ^TTableCol;              { Part of parameters Table                 }
     Table: TTable;                  { Parameters Table                         }
-
-    procedure Add(aSymbol: longword);
-    procedure CreateChild(Parent: PNode);
-    procedure Cut;
-    procedure Cut_Tail(I, J: PPNode);
-    function Tail(Node: PNode): PNode;
-    procedure Account;
-    procedure Step;
-  public
-    constructor Create(aCodec: TSecondaryCodec);
-    destructor Destroy; override;
-
-    procedure SetTable(const T: TTableParameters);
-    function SetDictionary(aDictionaryLevel: longword): longword;
-    procedure FreshFlexible;
-    procedure FreshSolid;
-    function UpdateModel(aSymbol: longword): longword;
   end;
+
+  function  BeeModeller_Create (aCodec: pointer): PBeeModeller;
+  procedure BeeModeller_Destroy(Self: PBeeModeller);
+
+  procedure BeeModeller_SetTableParameters(Self: PBeeModeller; Table: PByte);
+  procedure BeeModeller_SetDictionaryLevel(Self: PBeeModeller; aDictLevel: longword);
+  procedure BeeModeller_FreshFlexible     (Self: PBeeModeller);
+  procedure BeeModeller_FreshSolid        (Self: PBeeModeller);
+  function  BeeModeller_Update            (Self: PBeeModeller; aSymbol: longword; Update: PBeeRangeCodUpdate): longword;
+
+  function  BeeModeller_Encode(Self: PBeeModeller; Buffer: PByte; BufSize: longword): longword;
+  function  BeeModeller_Decode(Self: PBeeModeller; Buffer: PByte; BufSize: longword): longword;
 
 implementation
 
 { TBaseCoder }
 
-constructor TBaseCoder.Create(aCodec: TSecondaryCodec);
+function BeeModeller_Create(aCodec: pointer): PBeeModeller;
 begin
-  inherited Create;
-  FCodec := aCodec;
-  SetLength(Freq, MaxSymbol + 1);
-  SetLength(List, 16);
+  Result :=GetMem(sizeof(TBeeModeller));
+
+  Result^.FCodec     := aCodec;
+  Result^.FDictLevel := 0;
+  SetLength(Result^.Freq, MAXSYMBOL);
+
+  Result^.Heap       := nil;
+  Result^.Cuts       := nil;
+  SetLength(Result^.List, MAXSYMBOL);
 end;
 
-destructor TBaseCoder.Destroy;
+procedure BeeModeller_Destroy(Self: PBeeModeller);
 begin
-  Freq := nil;
-  Heap := nil;
-  Cuts := nil;
-  List := nil;
-  inherited Destroy;
+  Self^.Freq := nil;
+  Self^.Heap := nil;
+  Self^.Cuts := nil;
+  Self^.List := nil;
+  FreeMem(Self);
 end;
 
-procedure TBaseCoder.SetTable(const T: TTableParameters);
-var
-  I:     longint;
-  P:     ^longint;
-  aPart: ^TTableCol;
+procedure BeeModeller_Add(Self: PBeeModeller; aSymbol: longword);
 begin
-  P := @Table;
-  I := 1;
-  repeat
-    P^ := longint(T[I]) + 1;
-    Inc(P);
-    Inc(I);
-  until I > SizeOf(T);
-
-  Table.Level := Table.Level - 1;
-  Table.Level := Table.Level and $F;
-
-  for I := 0 to 1 do
-  begin
-    aPart    := @Table.T[I];
-    aPart[0] := aPart[0] + 256;
-
-    // Weight of first-encoutered deterministic symbol
-    aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32;
-    // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
-    aPart[MaxSymbol + 3] := Increment * aPart[MaxSymbol + 3] shl 2;
-    aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8;
-    // Zero-valued parameter allowed...
-    aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5]));
-    // Lowest value of interval
-  end;
+  Inc(Self^.Pos);
+  Inc(Self^.LowestPos);
+  Self^.Heap[Self^.Pos and Self^.MaxCounter].D := aSymbol;
 end;
 
-function TBaseCoder.SetDictionary(aDictionaryLevel: longword): longword;
-begin
-  if (aDictionaryLevel in [0.. 9]) and (aDictionaryLevel <> FDictionaryLevel) then
-  begin
-    FDictionaryLevel := aDictionaryLevel;
-    MaxCounter := 1 shl (17 + Min(Max(0, FDictionaryLevel), 9)) - 1;
-    SafeCounter := MaxCounter - 64;
-    Cuts := nil;
-    Heap := nil;
-    SetLength(Heap, MaxCounter + 1);
-  end;
-  FreshFlexible;
-
-  Result := FDictionaryLevel;
-end;
-
-procedure TBaseCoder.FreshFlexible;
-begin
-  Tear := nil;
-  CurrentFreeNode := @Heap[0];
-  LastFreeNode := @Heap[MaxCounter];
-  Counter := 0;
-  ListCount := 0;
-  Pos := 0;
-
-  Inc(Counter);
-  Root := CurrentFreeNode;
-  Inc(CurrentFreeNode);
-
-  Root.Next := nil;
-  Root.Up   := nil;
-  Root.K    := Increment;
-  Root.C    := 0;
-  Root.A    := 1;
-
-  LowestPos := -longint(MaxCounter);
-end;
-
-procedure TBaseCoder.FreshSolid;
-begin
-  if Counter > 1 then
-  begin
-    ListCount := 1;
-    List[0]   := Root;
-  end else
-    ListCount := 0;
-end;
-
-procedure TBaseCoder.Add(aSymbol: longword);
-begin
-  Inc(Pos);
-  Inc(LowestPos);
-  Heap[Pos and MaxCounter].D := aSymbol;
-end;
-
-procedure TBaseCoder.CreateChild(Parent: PNode);
+procedure BeeModeller_CreateChild(Self: PBeeModeller; Parent: PNode);
 var
   Result, Link: PNode;
 begin
-  Inc(Counter);
-  Result := CurrentFreeNode;
-  if Result = LastFreeNode then
+  Inc(Self^.Counter);
+  Result := Self^.CurrentFreeNode;
+  if Result = Self^.LastFreeNode then
   begin
-    Result := Tear;
+    Result := Self^.Tear;
     Link   := Result.Tear;
     if Result.Next <> nil then
     begin
@@ -239,49 +159,61 @@ begin
       Result.Up.Tear := Link;
       Link := Result.Up;
     end;
-    Tear := Link;
+    Self^.Tear := Link;
   end else
-    Inc(CurrentFreeNode);
+    Inc(Self^.CurrentFreeNode);
 
   Result.Next := Parent.Up;
   Parent.Up   := Result;
   Result.Up   := nil;
-
-  Result.A := Parent.A + 1;
-  Result.C := Heap[Parent.A and MaxCounter].D;
-  Result.K := Increment;
+  Result.A    := Parent.A + 1;
+  Result.C    := Self^.Heap[Parent.A and Self^.MaxCounter].D;
+  Result.K    := Increment;
 end;
 
-procedure TBaseCoder.Cut;
+procedure BeeModeller_Cut_Tail(Self: PBeeModeller; I, J: PPNode);
+var
+  P: PNode;
+begin
+  P := Self^.Tear;
+  repeat
+    I^.Up.Tear := P;
+    P     := I^.Up;
+    I^.Up := nil;
+    Inc(I);
+  until I = J;
+  Self^.Tear := P;
+end;
+
+procedure BeeModeller_Cut(Self: PBeeModeller);
 var
   P:     PNode;
   I, J:  PPNode;
   Bound: longint;
 begin
-  if Cuts = nil then
-    SetLength(Cuts, MaxCounter + 1);
+  if Self^.Cuts = nil then
+    SetLength(Self^.Cuts, Self^.MaxCounter + 1);
 
-  I := @Cuts[0];
+  I := @Self^.Cuts[0];
   J := I;
   Inc(J);
 
-  I^    := Root;
-  Bound := SafeCounter * 3 div 4;
-
+  I^    := Self^.Root;
+  Bound := Self^.SafeCounter * 3 div 4;
   repeat
     P := I^.Up;
     repeat
       Dec(Bound);
       if P.Up <> nil then
-        if P.A > LowestPos then
+        if P.A > Self^.LowestPos then
         begin
           J^ := P;
           Inc(J);
         end else
         begin
-          P.Up.Tear := Tear;
-          Tear      := P.Up;
-          P.Up      := nil;
+          P.Up.Tear  := Self^.Tear;
+          Self^.Tear := P.Up;
+          P.Up       := nil;
         end;
       P := P.Next;
     until P = nil;
@@ -289,117 +221,32 @@ begin
   until (I = J) or (Bound < 0);
 
   if I <> J then
-    Cut_Tail(I, J);
+    BeeModeller_Cut_Tail(Self, I, J);
 
-  Counter   := longint(SafeCounter * 3 div 4) - Bound + 1;
-  ListCount := 0;
+  Self^.Counter   := longint(Self^.SafeCounter * 3 div 4) - Bound + 1;
+  Self^.ListCount := 0;
 end;
 
-procedure TBaseCoder.Cut_Tail(I, J: PPNode);
-var
-  P: PNode;
-begin
-  P := Tear;
-  repeat
-    I^.Up.Tear := P;
-    P     := I^.Up;
-    I^.Up := nil;
-    Inc(I);
-  until I = J;
-  Tear := P;
-end;
-
-procedure TBaseCoder.Account;
-var
-  J, K:      longword;
-  P, Stored: PNode;
-begin
-  I := 0;
-  J := I;
-  Q := J;
-  IncreaseIndex := Q;
-  repeat
-    P := List[I];
-    if P.Up <> nil then
-    begin
-      P := P.Up;
-      if IncreaseIndex = 0 then
-        IncreaseIndex := I;
-
-      if P.Next <> nil then
-      begin
-        // Undetermined context ...
-        K      := P.K * Part[MaxSymbol + 2] shr 5;
-        Stored := P;
-        P      := P.Next;
-        J      := 1;
-        repeat
-          Inc(J);
-          Inc(K, P.K);
-          P := P.Next;
-        until P = nil;
-        Inc(Q, Part[J]);
-        // Account:
-        P := Stored;
-        K := R div (K + Q);
-        J := K * P.K * Part[MaxSymbol + 2] shr 5;
-
-        Dec(R, J);
-        Inc(Freq[P.C], J);
-
-        P := P.Next;
-        repeat
-          J := K * P.K;
-          
-          Dec(R, J);
-          Inc(Freq[P.C], J);
-
-          P := P.Next;
-        until P = nil;
-      end else
-      begin
-        // Determined context ...
-        K := P.K * Part[1] div Increment + 256;
-        K := (R div K) shl 8;
-        Inc(Freq[P.C], R - K);
-        R := K;
-      end;
-    end else
-    if P.A > LowestPos then
-    begin
-      // Determined context, encountered at first time ...
-      CreateChild(P);
-      K := R div Part[0] shl 8;
-      Inc(Freq[P.Up.C], R - K);
-      R := K;
-    end;
-    Inc(I);
-  until (I = ListCount) or (R <= Part[MaxSymbol + 5]);
-  ListCount := I;
-
-  // Writeln('ListCount = ', ListCount);
-end;
-
-function TBaseCoder.Tail(Node: PNode): PNode;
+function BeeModeller_Tail(Self: PBeeModeller; Node: PNode): PNode;
 var
   P: PNode;
   C: byte;
 begin
-  Node.A := Pos;
+  Node.A := Self^.Pos;
   Result := Node.Up;
 
   if Result = nil then
-    CreateChild(Node)
+    BeeModeller_CreateChild(Self, Node)
   else
   begin
-    C := Symbol;
+    C := Self^.Symbol;
     if Result.C <> C then
       repeat
         P      := Result;
         Result := Result.Next;
         if Result = nil then
         begin
-          CreateChild(Node);
+          BeeModeller_CreateChild(Self, Node);
           Break;
         end else
           if Result.C = C then
@@ -413,87 +260,251 @@ begin
   end;
 end;
 
-procedure TBaseCoder.Step; {$IFDEF FPC} inline; {$ENDIF}
+procedure BeeModeller_Account(Self: PBeeModeller);
+var
+  J, K: longword;
+  P, Stored: PNode;
+begin
+  Self^.I := 0;
+  J       := 0;
+  Self^.Q := 0;
+  Self^.IncreaseIndex := 0;
+  repeat
+    P := Self^.List[Self^.I];
+    if P.Up <> nil then
+    begin
+      P := P.Up;
+      if Self^.IncreaseIndex = 0 then
+        Self^.IncreaseIndex := Self^.I;
+
+      if P.Next <> nil then
+      begin
+        // Undetermined context ...
+        K      := P.K * Self^.Part[MaxSymbol + 2] shr 5;
+        Stored := P;
+        P      := P.Next;
+        J      := 1;
+        repeat
+          Inc(J);
+          Inc(K, P.K);
+          P := P.Next;
+        until P = nil;
+        Inc(Self^.Q, Self^.Part[J]);
+        // Account:
+        P := Stored;
+        K := Self^.R div (K + Self^.Q);
+        J := K * P.K * Self^.Part[MaxSymbol + 2] shr 5;
+
+        Dec(Self^.R, J);
+        Inc(Self^.Freq[P.C], J);
+
+        P := P.Next;
+        repeat
+          J := K * P.K;
+
+          Dec(Self^.R, J);
+          Inc(Self^.Freq[P.C], J);
+
+          P := P.Next;
+        until P = nil;
+      end else
+      begin
+        // Determined context ...
+        K := P.K * Self^.Part[1] div Increment + 256;
+        K := (Self^.R div K) shl 8;
+        Inc(Self^.Freq[P.C], Self^.R - K);
+        Self^.R := K;
+      end;
+    end else
+    if P.A > Self^.LowestPos then
+    begin
+      // Determined context, encountered at first time ...
+      BeeModeller_CreateChild(Self, P);
+      K := Self^.R div Self^.Part[0] shl 8;
+      Inc(Self^.Freq[P.Up.C], Self^.R - K);
+      Self^.R := K;
+    end;
+    Inc(Self^.I);
+  until (Self^.I = Self^.ListCount) or (Self^.R <= Self^.Part[MaxSymbol + 5]);
+  Self^.ListCount := Self^.I;
+end;
+
+procedure BeeModeller_Step(Self: PBeeModeller; UpdateSymbol: PBeeRangeCodUpdate);
 var
   I, J: longword;
   P:    PNode;
 begin
-  ClearLongword(Freq[0], MaxSymbol + 1);
-  R := MaxFreq - MaxSymbol - 1;
+  ClearLongword(Self^.Freq[0], MaxSymbol + 1);
+  Self^.R := MaxFreq - MaxSymbol - 1;
 
-  if ListCount > 0 then Account;
-
-
-
+  if Self^.ListCount > 0 then
+    BeeModeller_Account(Self);
 
   // Update aSymbol...
-  AddLongword(Freq[0], MaxSymbol + 1, R shr BitChain + 1);
+  AddLongword(Self^.Freq[0], MaxSymbol + 1, Self^.R shr BitChain + 1);
 
-  Symbol := FCodec.UpdateSymbol(Freq, Symbol);
+  Self^.Symbol := UpdateSymbol(Self^.FCodec, Self^.Freq, Self^.Symbol);
 
+  BeeModeller_Add(Self, Self^.Symbol);
 
-
-
-  Add(Symbol);
-
-
-
-  if ListCount > 0 then
+  if Self^.ListCount > 0 then
   begin
     // Update frequencies...
     I := 0;
     repeat
-      P := List[I];
-      if I = IncreaseIndex then
+      P := Self^.List[I];
+      if I = Self^.IncreaseIndex then
         Inc(P.K, Increment)             // Special case...
       else
-        Inc(P.K, Part[MaxSymbol + 4]);  // General case...
-
-      if P.K > Part[MaxSymbol + 3] then
+        Inc(P.K, Self^.Part[MaxSymbol + 4]);  // General case...
+      if P.K > Self^.Part[MaxSymbol + 3] then
         repeat
           P.K := P.K shr 1;
           P   := P.Next;
         until P = nil;
       Inc(I);
-    until I > IncreaseIndex;
+    until I > Self^.IncreaseIndex;
 
     // Update Tree...
     I := 0;
     J := I;
     repeat
-      P := Tail(List[I]);
+      P := BeeModeller_Tail(Self, Self^.List[I]);
       if P <> nil then
       begin
-        List[J] := P;
+        Self^.List[J] := P;
         Inc(J);
       end;
       Inc(I);
-    until I = ListCount;
-    ListCount := J;
+    until I = Self^.ListCount;
+    Self^.ListCount := J;
   end;
 end;
 
-function TBaseCoder.UpdateModel(aSymbol: longword): longword; {$IFDEF FPC} inline; {$ENDIF}
+procedure BeeModeller_FreshFlexible(Self: PBeeModeller);
 begin
-  Part   := @Table.T[0];
-  Symbol := aSymbol shr $4;
-  Step;
-  Result := Symbol shl 4;
-  Part   := @Table.T[1];
-  Symbol := aSymbol and $F;
-  Step;
-  Inc(Result, Symbol);
+  Self^.Tear            := nil;
+  Self^.CurrentFreeNode := @Self^.Heap[0];
+  Self^.LastFreeNode    := @Self^.Heap[Self^.MaxCounter];
+  Self^.Counter         := 0;
+  Self^.ListCount       := 0;
+  Self^.Pos             := 0;
+
+  Inc(Self^.Counter);
+  Self^.Root := Self^.CurrentFreeNode;
+  Inc(Self^.CurrentFreeNode);
+
+  Self^.Root.Next := nil;
+  Self^.Root.Up   := nil;
+  Self^.Root.K    := Increment;
+  Self^.Root.C    := 0;
+  Self^.Root.A    := 1;
+
+  Self^.LowestPos := -longint(Self^.MaxCounter);
+end;
+
+procedure BeeModeller_FreshSolid(Self: PBeeModeller);
+begin
+  if Self^.Counter > 1 then
+  begin
+    Self^.ListCount := 1;
+    Self^.List[0]   := Self^.Root;
+  end else
+    Self^.ListCount := 0;
+end;
+
+procedure BeeModeller_SetDictionaryLevel(Self: PBeeModeller; aDictLevel: longword);
+begin
+  Self^.FDictLevel  := aDictLevel;
+  Self^.MaxCounter  := (1 shl (17 + Self^.FDictLevel)) - 1;
+  Self^.SafeCounter := Self^.MaxCounter - 64;
+
+  Self^.Cuts := nil;
+  Self^.Heap := nil;
+  SetLength(Self^.Heap, Self^.MaxCounter + 1);
+
+  BeeModeller_FreshFlexible(Self);
+end;
+
+procedure BeeModeller_SetTableParameters(Self: PBeeModeller; Table: PByte);
+var
+  I:  longint;
+  P: ^longint;
+  aPart: ^TTableCol;
+begin
+  P := @Self^.Table;
+  I := 1;
+  repeat
+    P^ := longint(Table[I]) + 1;
+    Inc(P);
+    Inc(I);
+  until I > SizeOf(T);
+
+  Self^.Table.Level := Self^.Table.Level - 1;
+  Self^.Table.Level := Self^.Table.Level and $F;
+
+  for I := 0 to 1 do
+  begin
+    aPart    := @Self^.Table.T[I];
+    aPart[0] := aPart[0] + 256;
+
+    // Weight of first-encoutered deterministic symbol
+    aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32;
+    // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
+    aPart[MaxSymbol + 3] := Increment * aPart[MaxSymbol + 3] shl 2;
+    aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8;
+    // Zero-valued parameter allowed...
+    aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5]));
+    // Lowest value of interval
+  end;
+end;
+
+function BeeModeller_Update(Self: PBeeModeller; aSymbol: longword; Update: PBeeRangeCodUpdate): longword;
+begin
+  Self^.Part   := @Self^.Table.T[0];
+  Self^.Symbol := aSymbol shr $4;
+  BeeModeller_Step(Self, Update);
+
+  Result := Self^.Symbol shl 4;
+  Self^.Part := @Self^.Table.T[1];
+  Self^.Symbol := aSymbol and $F;
+  BeeModeller_Step(Self, Update);
+
+  Inc(Result, Self^.Symbol);
 
   // Reduce tree...
-  if SafeCounter < Counter then Cut;
+  if Self^.SafeCounter < Self^.Counter then
+    BeeModeller_Cut(Self);
 
   // Update NodeList...
-  if ListCount > Table.Level then
-    MoveLongwordUnchecked(List[1], List[0], ListCount - 1)
+  if Self^.ListCount > Self^.Table.Level then
+    MoveLongwordUnchecked(Self^.List[1], Self^.List[0], Self^.ListCount - 1)
   else
-    Inc(ListCount);
+    Inc(Self^.ListCount);
 
-  List[ListCount - 1] := Root;
+  Self^.List[Self^.ListCount - 1] := Self^.Root;
+end;
+
+function BeeModeller_Encode(Self: PBeeModeller; Buffer: PByte; BufSize: longword): longword;
+var
+  I: longint;
+begin
+  for I := 0 to BufSize - 1 do
+  begin
+    BeeModeller_Update(Self, Buffer[I], @BeeRangeEnc_Update);
+  end;
+  Result := BufSize;
+end;
+
+function BeeModeller_Decode(Self: PBeeModeller; Buffer: PByte; BufSize: longword): longword;
+var
+  I: longint;
+begin
+  for I := 0 to BufSize - 1 do
+  begin
+    Buffer[I] := BeeModeller_Update(Self, 0, @BeeRangeDec_Update);
+  end;
+  Result := BufSize;
 end;
 
 end.
