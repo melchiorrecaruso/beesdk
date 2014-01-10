@@ -4,7 +4,6 @@
 /* Range coder const definitions */
 
 #define TOP     16777216L
-#define NUM     4L
 #define THRES   4278190080U
 
 /* TRangeEncoder struct/methods implementation */
@@ -74,11 +73,11 @@ static inline void BeeRangeEnc_Encode(PBeeRangeEnc Self, uint32_t CumFreq,  uint
 
 void BeeRangeEnc_FinishEncode(PBeeRangeEnc Self)
 {
-  int32_t I;
-  for (I = 0; I <= NUM; I++)
-  {
-    BeeRangeEnc_ShiftLow(Self);
-  }
+  BeeRangeEnc_ShiftLow(Self);
+  BeeRangeEnc_ShiftLow(Self);
+  BeeRangeEnc_ShiftLow(Self);
+  BeeRangeEnc_ShiftLow(Self);
+  BeeRangeEnc_ShiftLow(Self);
   WriteStream_FlushBuffer(Self->FStream);
 }
 
@@ -138,11 +137,11 @@ void BeeRangeDec_StartDecode(PBeeRangeDec Self)
   Self->FFNum  = 0;
   Self->FCarry = 0;
 
-  int32_t I;
-  for (I = 0; I <= NUM; I++)
-  {
-    Self->FCode = (Self->FCode << 8) + ReadStream_Read(Self->FStream);
-  }
+  Self->FCode = (Self->FCode << 8) + ReadStream_Read(Self->FStream);
+  Self->FCode = (Self->FCode << 8) + ReadStream_Read(Self->FStream);
+  Self->FCode = (Self->FCode << 8) + ReadStream_Read(Self->FStream);
+  Self->FCode = (Self->FCode << 8) + ReadStream_Read(Self->FStream);
+  Self->FCode = (Self->FCode << 8) + ReadStream_Read(Self->FStream);
 }
 
 void BeeRangeDec_FinishDecode(PBeeRangeDec Self)
@@ -169,8 +168,8 @@ static inline void BeeRangeDec_Decode(PBeeRangeDec Self, uint32_t CumFreq, uint3
 
 inline uint32_t BeeRangeDec_Update(PBeeRangeDec Self, TFreq Freq, uint32_t aSymbol)
 {
-  uint32_t CumFreq = 0, TotFreq = 0, SumFreq = 0;
   // Count TotFreq...
+  uint32_t TotFreq = 0;
   aSymbol = TFREQSIZE;
   do
   {
@@ -179,19 +178,17 @@ inline uint32_t BeeRangeDec_Update(PBeeRangeDec Self, TFreq Freq, uint32_t aSymb
   }
   while (!(aSymbol == 0));
   // Count CumFreq...
-  CumFreq = BeeRangeDec_GetFreq(Self, TotFreq);
+  uint32_t CumFreq = BeeRangeDec_GetFreq(Self, TotFreq);
   // Search aSymbol...
-  SumFreq = 0;
+  uint32_t SumFreq = 0;
   aSymbol = 0;
   while (SumFreq + Freq[aSymbol] <= CumFreq)
   {
     SumFreq += Freq[aSymbol];
     aSymbol++;
   }
-
   // Finish Decode...
   BeeRangeDec_Decode(Self, SumFreq, Freq[aSymbol], TotFreq);
-
   // Return Result...
   return aSymbol;
 }

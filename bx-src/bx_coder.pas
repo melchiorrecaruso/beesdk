@@ -134,8 +134,9 @@ uses
   {$IFDEF LIBBX}
   bx_LibLink,
   {$ELSE}
-  libbx_Stream,
-  libbx_bee_RangeCoder,
+  libbx_stream,
+  libbx_bee_rangecoder,
+  libbx_bee_modeller,
 
 
   {$ENDIF}
@@ -343,4 +344,4 @@ begin
   end;
 end;
 
-end.
+end.
