@@ -50,6 +50,8 @@
 
 unit libbx_bee_rangecoder;
 
+{$I bx_compiler.inc}
+
 interface
 
 uses

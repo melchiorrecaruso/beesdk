@@ -131,8 +131,8 @@ type
     function Seek(const Offset: int64; Origin: longint): int64; override;
   end;
 
-  function DoFill (Stream: pointer; Data: PByte; Size: longint): longint; {$IFDEF LIBBX} cdecl; {$ENDIF} inline;
-  function DoFlush(Stream: pointer; Data: PByte; Size: longint): longint; {$IFDEF LIBBX} cdecl; {$ENDIF} inline;
+  function DoFill (Stream: pointer; Data: PByte; Size: longint): longint; {$IFNDEF BEEPAS} cdecl; {$ENDIF} inline;
+  function DoFlush(Stream: pointer; Data: PByte; Size: longint): longint; {$IFNDEF BEEPAS} cdecl; {$ENDIF} inline;
 
 implementation
 
@@ -140,12 +140,12 @@ uses
   Math,
   SysUtils;
 
-function DoFill(Stream: pointer; Data: PByte; Size: longint): longint; {$IFDEF LIBBX} cdecl; {$ENDIF} inline;
+function DoFill(Stream: pointer; Data: PByte; Size: longint): longint; {$IFNDEF BEEPAS} cdecl; {$ENDIF} inline;
 begin
   Result := TBufStream(Stream).Read(Data, Size);
 end;
 
-function DoFlush(Stream: pointer; Data: PByte; Size: longint): longint; {$IFDEF LIBBX} cdecl; {$ENDIF} inline;
+function DoFlush(Stream: pointer; Data: PByte; Size: longint): longint; {$IFNDEF BEEPAS} cdecl; {$ENDIF} inline;
 begin
   Result := TBufStream(Stream).Write(Data, Size);
 end;
@@ -453,4 +453,4 @@ begin
 end;
 
 end.
-
+
