@@ -29,7 +29,7 @@
 
 }
 
-unit bx_Configuration;
+unit bx_configuration;
 
 {$I bx_compiler.inc}
 
@@ -44,7 +44,7 @@ uses
 
 const
   TABLESIZE       = 20; // array [0..20]
-  TABLECOLS       = 2;  // array [0.. 1]
+  TABLECOLS       =  1; // array [0.. 1]
   TABLEPARAMETERS = 42; // array [0..42]
 
 type
@@ -52,10 +52,10 @@ type
 
   TTable = packed record
     Level: longword;
-    T: array [0..TABLECOLS - 1] of TTableCol;
+    T: array [0..TABLECOLS] of TTableCol;
   end;
 
-  TTableParameters = array [1..SizeOf(TTable) div 4] of byte;
+  TTableParameters = array [0..TABLEPARAMETERS] of byte;
 
 // -------------------------------------------------------------------------- //
 //  Default table parameters                                                  //

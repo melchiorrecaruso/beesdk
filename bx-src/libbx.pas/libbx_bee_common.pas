@@ -39,18 +39,18 @@ interface
 
 const
   TABLESIZE       = 20; // array [0..20]
-  TABLECOLS       =  2; // array [0.. 1]
+  TABLECOLS       =  1; // array [0.. 1]
   TABLEPARAMETERS = 42; // array [0..42]
 
 type
-  TTableCol = array [0..TableSize] of longword;
+  TTableCol = array [0..TABLESIZE] of longword;
 
   TTable = packed record
     Level: longword;
-    T: array [0..TableCols - 1] of TTableCol;
+    T: array [0..TABLECOLS] of TTableCol;
   end;
 
-  TTableParameters = array [1..SizeOf(TTable) div 4] of byte;
+  TTableParameters = array [0..TABLEPARAMETERS] of byte;
 
 // -------------------------------------------------------------------------- //
 //  Default table parameters                                                  //
