@@ -67,18 +67,18 @@ type
   PBeeModeller = ^TBeeModeller;
 
   TBeeModeller = packed record
-    FCodec: pointer;
-    FDictLevel: longword;
+    Codec: pointer;
+    DictLevel: longword;
     Symbol: longword;
-    Pos:    longword;
+    Pos: longword;
     LowestPos: longint;
-    MaxCounter,                     { Maximal heap size                        }
-    SafeCounter,                    { Safe heap size                           }
+    MaxCounter: longint;            { Maximal heap size                        }
+    SafeCounter: longint;           { Safe heap size                           }
     Counter: longword;              { Current heap size                        }
 
-    Heap:      array of TNode;
-    Cuts:      array of PNode;
-    List:      array of PNode;
+    Heap: array of TNode;
+    Cuts: array of PNode;
+    List: array of PNode;
     ListCount: longword;
 
     Root: PNode;
@@ -116,13 +116,13 @@ function BeeModeller_Create(aCodec: pointer): PBeeModeller;
 begin
   Result :=GetMem(sizeof(TBeeModeller));
 
-  Result^.FCodec     := aCodec;
-  Result^.FDictLevel := 0;
-  SetLength(Result^.Freq, MAXSYMBOL);
+  Result^.Codec     := aCodec;
+  Result^.DictLevel := 0;
+  SetLength(Result^.Freq, MAXSYMBOL + 1);
 
-  Result^.Heap       := nil;
-  Result^.Cuts       := nil;
-  SetLength(Result^.List, MAXSYMBOL);
+  Result^.Heap := nil;
+  Result^.Cuts := nil;
+  SetLength(Result^.List, MAXSYMBOL + 1);
 end;
 
 procedure BeeModeller_Destroy(Self: PBeeModeller);
@@ -345,7 +345,7 @@ begin
   // Update aSymbol...
   AddLongword(Self^.Freq[0], MaxSymbol + 1, Self^.R shr BitChain + 1);
 
-  Self^.Symbol := UpdateSymbol(Self^.FCodec, Self^.Freq, Self^.Symbol);
+  Self^.Symbol := UpdateSymbol(Self^.Codec, Self^.Freq, Self^.Symbol);
 
   BeeModeller_Add(Self, Self^.Symbol);
 
@@ -417,8 +417,8 @@ end;
 
 procedure BeeModeller_SetDictionaryLevel(Self: PBeeModeller; aDictLevel: longword);
 begin
-  Self^.FDictLevel  := aDictLevel;
-  Self^.MaxCounter  := (1 shl (17 + Self^.FDictLevel)) - 1;
+  Self^.DictLevel  := aDictLevel;
+  Self^.MaxCounter  := (1 shl (17 + Self^.DictLevel)) - 1;
   Self^.SafeCounter := Self^.MaxCounter - 64;
 
   Self^.Cuts := nil;
@@ -435,10 +435,11 @@ var
 begin
   Self^.Table.Level := longword(Table[0]) and $F;
 
+  I := 1;
   for J := 0 to TABLECOLS do
     for K := 0 to TABLESIZE do
     begin
-      Self^.Table.T[J, K] := longint(Table[I] + 1);
+      Self^.Table.T[J][K] := longint(Table[I] + 1);
       Inc(I);
     end;
 
@@ -447,7 +448,7 @@ begin
     aPart := @Self^.Table.T[I];
 
     aPart[0]             :=                       aPart[0] + 256;             // Weight of first-encoutered deterministic symbol
-    aPart[MaxSymbol + 2] :=                       aPart[MaxSymbol + 2] + 32;  // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
+    aPart[MaxSymbol + 2] :=                       aPart[MaxSymbol + 2]  + 32; // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
     aPart[MaxSymbol + 3] := Increment *           aPart[MaxSymbol + 3] shl 2; // Zero-valued parameter allowed...
     aPart[MaxSymbol + 4] :=                       aPart[MaxSymbol + 4] div 8;
     aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5]));     // Lowest value of interval

@@ -6,17 +6,10 @@
 			<Cursor1 position="0" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="libbx_stream.c" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="libbx_stream.c" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1644" topLine="36" />
+			<Cursor1 position="1409" topLine="64" />
 		</Cursor>
-		<Folding>
-			<Collapse line="67" />
-			<Collapse line="75" />
-			<Collapse line="84" />
-			<Collapse line="95" />
-			<Collapse line="104" />
-		</Folding>
 	</File>
 	<File name="libbx_bee_modeller.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
@@ -30,15 +23,8 @@
 	</File>
 	<File name="libbx_bee_modeller.c" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="9666" topLine="344" />
+			<Cursor1 position="38" topLine="55" />
 		</Cursor>
-		<Folding>
-			<Collapse line="61" />
-			<Collapse line="76" />
-			<Collapse line="85" />
-			<Collapse line="92" />
-			<Collapse line="123" />
-		</Folding>
 	</File>
 	<File name="libbx_ppmd_rangecoder.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
@@ -65,9 +51,9 @@
 			<Cursor1 position="0" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="libbx_bee_common.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="libbx_bee_common.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1235" topLine="25" />
+			<Cursor1 position="1184" topLine="31" />
 		</Cursor>
 	</File>
 	<File name="libbx_ppmd_modeller.c" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
