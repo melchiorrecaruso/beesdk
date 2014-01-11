@@ -106,7 +106,7 @@
         <TopLine Value="18"/>
         <CursorPos X="24" Y="68"/>
         <FoldState Value=" T3ja061v"/>
-        <UsageCount Value="107"/>
+        <UsageCount Value="108"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -123,11 +123,11 @@
       <Unit3>
         <Filename Value="bx-src\libbx.pas\libbx_bee_rangecoder.pas"/>
         <UnitName Value="libbx_bee_rangecoder"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="52"/>
-        <CursorPos X="22" Y="53"/>
-        <FoldState Value=" T3jb0462"/>
+        <TopLine Value="120"/>
+        <CursorPos X="45" Y="70"/>
+        <FoldState Value=" T3jb048 piYjF0C4L"/>
         <UsageCount Value="18"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -137,8 +137,8 @@
         <UnitName Value="libbx_bee_common"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="13"/>
-        <CursorPos X="3" Y="53"/>
+        <TopLine Value="36"/>
+        <CursorPos X="18" Y="43"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -146,11 +146,12 @@
       <Unit5>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
         <UnitName Value="libbx_bee_modeller"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="37"/>
-        <CursorPos X="22" Y="35"/>
-        <FoldState Value=" T3lH0e123 T6lI03f"/>
+        <TopLine Value="430"/>
+        <CursorPos X="133" Y="431"/>
+        <FoldState Value=" T3lH0e12313 T6lI03="/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -158,10 +159,10 @@
       <Unit6>
         <Filename Value="bx-src\bx_configuration.pas"/>
         <UnitName Value="bx_Configuration"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="44"/>
-        <CursorPos X="49" Y="50"/>
+        <TopLine Value="41"/>
+        <CursorPos X="43" Y="45"/>
         <UsageCount Value="15"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -179,11 +180,10 @@
       </Unit7>
       <Unit8>
         <Filename Value="bx-src\bx_compiler.inc"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="11"/>
-        <CursorPos X="3" Y="33"/>
+        <TopLine Value="12"/>
+        <CursorPos X="56" Y="20"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -194,7 +194,7 @@
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="121"/>
-        <CursorPos X="24" Y="133"/>
+        <CursorPos X="97" Y="129"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -214,123 +214,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="494" Column="55" TopLine="481"/>
+        <Caret Line="507" Column="21" TopLine="468"/>
       </Position1>
       <Position2>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="507" Column="21" TopLine="468"/>
+        <Caret Line="503" Column="10" TopLine="486"/>
       </Position2>
       <Position3>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="503" Column="10" TopLine="486"/>
+        <Caret Line="505" Column="5" TopLine="470"/>
       </Position3>
       <Position4>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="505" Column="5" TopLine="470"/>
+        <Caret Line="505" Column="45" TopLine="470"/>
       </Position4>
       <Position5>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="505" Column="45" TopLine="470"/>
+        <Caret Line="504" Column="58" TopLine="446"/>
       </Position5>
       <Position6>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="504" Column="58" TopLine="446"/>
+        <Caret Line="505" Column="8" TopLine="446"/>
       </Position6>
       <Position7>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="505" Column="8" TopLine="446"/>
+        <Caret Line="416" Column="23" TopLine="407"/>
       </Position7>
       <Position8>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="416" Column="23" TopLine="407"/>
+        <Caret Line="101" Column="85" TopLine="78"/>
       </Position8>
       <Position9>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="101" Column="85" TopLine="78"/>
+        <Caret Line="505" Column="5" TopLine="446"/>
       </Position9>
       <Position10>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="505" Column="5" TopLine="446"/>
+        <Caret Line="470" Column="51" TopLine="327"/>
       </Position10>
       <Position11>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="470" Column="51" TopLine="327"/>
+        <Caret Line="495" Column="59" TopLine="478"/>
       </Position11>
       <Position12>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="495" Column="59" TopLine="478"/>
+        <Caret Line="505" Column="57" TopLine="478"/>
       </Position12>
       <Position13>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="505" Column="57" TopLine="478"/>
+        <Caret Line="505" Column="84" TopLine="478"/>
       </Position13>
       <Position14>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="505" Column="84" TopLine="478"/>
+        <Caret Line="494" Column="80" TopLine="478"/>
       </Position14>
       <Position15>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="494" Column="80" TopLine="478"/>
+        <Caret Line="505" Column="64" TopLine="478"/>
       </Position15>
       <Position16>
-        <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="505" Column="64" TopLine="478"/>
-      </Position16>
-      <Position17>
         <Filename Value="bx-src\bx_coder.pas"/>
         <Caret Line="193" Column="77" TopLine="180"/>
+      </Position16>
+      <Position17>
+        <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
+        <Caret Line="100" Column="67" TopLine="86"/>
       </Position17>
       <Position18>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="100" Column="67" TopLine="86"/>
+        <Caret Line="465" Column="71" TopLine="415"/>
       </Position18>
       <Position19>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="465" Column="71" TopLine="415"/>
+        <Caret Line="100" Column="76" TopLine="88"/>
       </Position19>
       <Position20>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="100" Column="76" TopLine="88"/>
+        <Caret Line="438" Column="24" TopLine="416"/>
       </Position20>
       <Position21>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="438" Column="24" TopLine="416"/>
+        <Caret Line="436" Column="9" TopLine="416"/>
       </Position21>
       <Position22>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="436" Column="9" TopLine="416"/>
+        <Caret Line="435" Column="44" TopLine="429"/>
       </Position22>
       <Position23>
         <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="435" Column="44" TopLine="429"/>
+        <Caret Line="451" Column="106" TopLine="442"/>
       </Position23>
       <Position24>
-        <Filename Value="bx-src\libbx.pas\libbx_bee_modeller.pas"/>
-        <Caret Line="451" Column="106" TopLine="442"/>
+        <Filename Value="bx-src\bx_coder.pas"/>
+        <Caret Line="183" Column="54" TopLine="176"/>
       </Position24>
       <Position25>
         <Filename Value="bx-src\bx_coder.pas"/>
-        <Caret Line="183" Column="54" TopLine="176"/>
+        <Caret Line="270" Column="41" TopLine="266"/>
       </Position25>
       <Position26>
         <Filename Value="bx-src\bx_coder.pas"/>
-        <Caret Line="270" Column="41" TopLine="266"/>
+        <Caret Line="268" Column="33" TopLine="251"/>
       </Position26>
       <Position27>
         <Filename Value="bx-src\bx_coder.pas"/>
-        <Caret Line="268" Column="33" TopLine="251"/>
+        <Caret Line="137" Column="3" TopLine="122"/>
       </Position27>
       <Position28>
         <Filename Value="bx-src\bx_coder.pas"/>
-        <Caret Line="137" Column="3" TopLine="122"/>
+        <Caret Line="134" Column="58" TopLine="121"/>
       </Position28>
       <Position29>
         <Filename Value="bx-src\bx_coder.pas"/>
-        <Caret Line="134" Column="58" TopLine="121"/>
+        <Caret Line="141" Column="1" TopLine="124"/>
       </Position29>
       <Position30>
-        <Filename Value="bx-src\bx_coder.pas"/>
-        <Caret Line="141" Column="1" TopLine="124"/>
+        <Filename Value="bx-src\bx_stream.pas"/>
+        <Caret Line="133" Column="24" TopLine="121"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -354,18 +354,10 @@
       </SyntaxOptions>
     </Parsing>
     <CodeGeneration>
-      <SmartLinkUnit Value="True"/>
       <Optimizations>
-        <OptimizationLevel Value="3"/>
+        <OptimizationLevel Value="0"/>
       </Optimizations>
     </CodeGeneration>
-    <Linking>
-      <Debugging>
-        <GenerateDebugInfo Value="False"/>
-        <UseLineInfoUnit Value="False"/>
-      </Debugging>
-      <LinkSmart Value="True"/>
-    </Linking>
     <Other>
       <Verbosity>
         <ShowNotes Value="False"/>
