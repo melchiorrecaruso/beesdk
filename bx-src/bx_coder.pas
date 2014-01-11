@@ -129,20 +129,87 @@ type
 implementation
 
 uses
-  bx_Common,
-  bx_Configuration,
-  {$IFDEF LIBBX}
-  bx_LibLink,
-  {$ELSE}
-  libbx_stream,
-  libbx_bee_rangecoder,
-  libbx_bee_modeller,
+  bx_common,
+  bx_configuration,
+  bx_messages,
+  {$IFDEF BEEPAS} libbx_bee_modeller, {$ENDIF}
+  {$IFDEF BEEPAS} libbx_bee_rangecoder, {$ENDIF}
+  {$IFDEF BEEPAS} libbx_stream, {$ENDIF}
+  bx_stream;
 
+{$IFDEF MSWINDOWS}
+  {$linklib libmsvcrt}
+{$ENDIF}
 
-  {$ENDIF}
-  bx_Messages,
-  bx_Stream,
-  SysUtils;
+{$IFDEF MAC}
+  {$linklib libmsvcrt}
+{$ENDIF}
+
+{$IFDEF UNIX}
+  {$linklib libc}
+  {$linklib libm}
+{$ENDIF}
+
+{$link libbx.c\libbx_stream.o}
+// bee coder link
+{$IFNDEF BEEPAS}
+  {$link libbx.c\libbx_bee_common.o}
+  {$link libbx.c\libbx_bee_modeller.o}
+  {$link libbx.c\libbx_bee_rangecoder.o}
+{$ENDIF}
+// ppmd coder link
+{$link libbx.c\libbx_ppmd_common.o}
+{$link libbx.c\libbx_ppmd_modeller.o}
+{$link libbx.c\libbx_ppmd_rangecoder.o}
+
+type
+  TStreamRead  = function(Stream: pointer; Data: PByte; Count: longint): longint;
+  TStreamWrite = function(Stream: pointer; Data: PByte; Count: longint): longint;
+
+{$IFNDEF BEEPAS}
+// bee interface
+function  BeeRangeEnc_Create       (aStream: pointer; aStreamWrite: TStreamWrite): pointer; cdecl; external;
+procedure BeeRangeEnc_Destroy      (Self: pointer); cdecl; external;
+procedure BeeRangeEnc_StartEncode  (Self: pointer); cdecl; external;
+procedure BeeRangeEnc_FinishEncode (Self: pointer); cdecl; external;
+function  BeeRangeEnc_Update       (Self: pointer; Freq: pointer; aSymbol: longword): longword; cdecl; external;
+
+function  BeeRangeDec_Create       (aStream: pointer; aStreamRead: TStreamRead): pointer; cdecl; external;
+procedure BeeRangeDec_Destroy      (Self: pointer); cdecl; external;
+procedure BeeRangeDec_StartDecode  (Self: pointer); cdecl; external;
+procedure BeeRangeDec_FinishDecode (Self: pointer); cdecl; external;
+
+function  BeeModeller_Create       (aCoder: pointer): pointer; cdecl; external;
+procedure BeeModeller_Destroy      (Self :pointer); cdecl; external;
+
+procedure BeeModeller_SetTableParameters(Self: pointer; TableParapeters: pointer); cdecl; external;
+procedure BeeModeller_SetDictionaryLevel(Self: pointer; DictLevel: longword); cdecl; external;
+procedure BeeModeller_FreshFlexible     (Self: pointer); cdecl; external;
+procedure BeeModeller_FreshSolid        (Self: pointer); cdecl; external;
+
+function  BeeModeller_Encode       (Self: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
+function  BeeModeller_Decode       (Self: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
+{$ENDIF}
+
+// ppmd interface
+function  PpmdRangeEnc_Create      (aStream: pointer; aStreamWrite: TStreamWrite): pointer; cdecl; external;
+procedure PpmdRangeEnc_Destroy     (Self: pointer); cdecl; external;
+procedure PpmdRangeEnc_StartEncode (Self: pointer); cdecl; external;
+procedure PpmdRangeEnc_FinishEncode(Self: pointer); cdecl; external;
+
+function  PpmdRangeDec_Create      (aStream: pointer; aStreamRead: TStreamRead): pointer; cdecl; external;
+procedure PpmdRangeDec_Destroy     (Self: pointer); cdecl; external;
+procedure PpmdRangeDec_StartDecode (Self: pointer); cdecl; external;
+procedure PpmdRangeDec_FinishDecode(Self: pointer); cdecl; external;
+
+function  PpmdModeller_Create: pointer; cdecl; external;
+procedure PpmdModeller_Destroy     (Self: pointer); cdecl; external;
+
+procedure PpmdModeller_SetMemSize  (Self: pointer; MemSize: longword); cdecl; external;
+procedure PpmdModeller_SetModelOrd (Self: pointer; ModelOrd: longword); cdecl; external;
+
+function  PpmdModeller_Encode      (Self: pointer; RangeEnc: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
+function  PpmdModeller_Decode      (Self: pointer; RangeEnc: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
 
 /// TCoder abstract class
 

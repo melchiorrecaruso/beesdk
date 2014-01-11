@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="release" />
+	<File name="libbx_ppmd_modeller.c" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
+	</File>
 	<File name="libbx_stream.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="0" topLine="0" />
@@ -20,7 +25,7 @@
 	</File>
 	<File name="libbx_bee_modeller.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="918" topLine="17" />
+			<Cursor1 position="918" topLine="15" />
 		</Cursor>
 	</File>
 	<File name="libbx_bee_rangecoder.c" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -28,9 +33,9 @@
 			<Cursor1 position="266" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="libbx_bee_modeller.c" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="libbx_bee_modeller.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="9609" topLine="92" />
+			<Cursor1 position="9694" topLine="179" />
 		</Cursor>
 		<Folding>
 			<Collapse line="61" />
@@ -38,8 +43,6 @@
 			<Collapse line="85" />
 			<Collapse line="92" />
 			<Collapse line="123" />
-			<Collapse line="137" />
-			<Collapse line="185" />
 			<Collapse line="218" />
 			<Collapse line="293" />
 			<Collapse line="360" />
@@ -72,14 +75,9 @@
 			<Cursor1 position="0" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="libbx_bee_common.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="libbx_bee_common.h" open="1" top="1" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="54" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="libbx_ppmd_modeller.c" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
+			<Cursor1 position="54" topLine="3" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

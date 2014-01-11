@@ -32,6 +32,8 @@
 
 unit libbx_bee_modeller;
 
+{$I bx_compiler.inc}
+
 interface
 
 uses
@@ -428,34 +430,27 @@ end;
 
 procedure BeeModeller_SetTableParameters(Self: PBeeModeller; Table: PByte);
 var
-  I:  longint;
-  P: ^longint;
+  I, J, K:  longint;
   aPart: ^TTableCol;
 begin
-  P := @Self^.Table;
-  I := 1;
-  repeat
-    P^ := longint(Table[I]) + 1;
-    Inc(P);
-    Inc(I);
-  until I > SizeOf(T);
+  Self^.Table.Level := longword(Table[0]) and $F;
 
-  Self^.Table.Level := Self^.Table.Level - 1;
-  Self^.Table.Level := Self^.Table.Level and $F;
+  for J := 0 to TABLECOLS do
+    for K := 0 to TABLESIZE do
+    begin
+      Self^.Table.T[J, K] := longint(Table[I] + 1);
+      Inc(I);
+    end;
 
   for I := 0 to 1 do
   begin
-    aPart    := @Self^.Table.T[I];
-    aPart[0] := aPart[0] + 256;
+    aPart := @Self^.Table.T[I];
 
-    // Weight of first-encoutered deterministic symbol
-    aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32;
-    // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
-    aPart[MaxSymbol + 3] := Increment * aPart[MaxSymbol + 3] shl 2;
-    aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8;
-    // Zero-valued parameter allowed...
-    aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5]));
-    // Lowest value of interval
+    aPart[0]             :=                       aPart[0] + 256;             // Weight of first-encoutered deterministic symbol
+    aPart[MaxSymbol + 2] :=                       aPart[MaxSymbol + 2] + 32;  // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
+    aPart[MaxSymbol + 3] := Increment *           aPart[MaxSymbol + 3] shl 2; // Zero-valued parameter allowed...
+    aPart[MaxSymbol + 4] :=                       aPart[MaxSymbol + 4] div 8;
+    aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5]));     // Lowest value of interval
   end;
 end;
 

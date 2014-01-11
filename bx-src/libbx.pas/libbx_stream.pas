@@ -24,6 +24,8 @@
 
 unit libbx_stream;
 
+{$I bx_compiler.inc}
+
 interface
 
 const
