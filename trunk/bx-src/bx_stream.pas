@@ -377,9 +377,9 @@ begin
 
   // Cipher initialization ...
   case FCipherMethod of
-    0: if not (FCipher is TCipher          ) then FreeAndNil(FCipher);
-    1: if not (FCipher is TBlowFishEnCipher) then FreeAndNil(FCipher);
-    2: if not (FCipher is TIdeaEnCipher    ) then FreeAndNil(FCipher);
+    0: if (FCipher is TCipher          ) = FALSE then FreeAndNil(FCipher);
+    1: if (FCipher is TBlowFishEnCipher) = FALSE then FreeAndNil(FCipher);
+    2: if (FCipher is TIdeaEnCipher    ) = FALSE then FreeAndNil(FCipher);
     else SetExitStatus(esCaseError);
   end;
 
@@ -395,9 +395,9 @@ begin
 
   // Coder initialization ..
   case FCoderMethod of
-    0: if not (FCoder is TStoreCoder ) then FreeAndNil(FCoder);
-    1: if not (FCoder is TBeeEncoder ) then FreeAndNil(FCoder);
-    2: if not (FCoder is TPpmdEnCoder) then FreeAndNil(FCoder);
+    0: if (FCoder is TStoreCoder ) = FALSE then FreeAndNil(FCoder);
+    1: if (FCoder is TBeeEncoder ) = FALSE then FreeAndNil(FCoder);
+    2: if (FCoder is TPpmdEncoder) = FALSE then FreeAndNil(FCoder);
     else SetExitStatus(esCaseError);
   end;
 
