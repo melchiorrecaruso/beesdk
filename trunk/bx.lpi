@@ -90,7 +90,6 @@
         <Filename Value="bx.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BX"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="50"/>
@@ -115,8 +114,8 @@
         <UnitName Value="bx_Coder"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="157"/>
-        <CursorPos X="8" Y="152"/>
+        <TopLine Value="265"/>
+        <CursorPos X="43" Y="272"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -145,10 +144,11 @@
       <Unit5>
         <Filename Value="bx-src\bx_application.pas"/>
         <UnitName Value="bx_application"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="111"/>
-        <CursorPos X="30" Y="136"/>
+        <TopLine Value="1"/>
+        <CursorPos X="20" Y="26"/>
         <UsageCount Value="14"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -187,7 +187,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="bx-src\bx_coder.pas"/>
         <Caret Line="181" Column="64" TopLine="153"/>
@@ -304,6 +304,10 @@
         <Filename Value="bx.lpr"/>
         <Caret Line="55" Column="93" TopLine="20"/>
       </Position29>
+      <Position30>
+        <Filename Value="bx.lpr"/>
+        <Caret Line="84" Column="1" TopLine="50"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -313,7 +317,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="bx-src;$(ProjOutDir)"/>
-      <Libraries Value="bx-src/libbx.c;C:/MinGW32/lib/"/>
+      <Libraries Value="C:/TDM-GCC-32/lib/"/>
       <OtherUnitFiles Value="bx-src;bx-src/libbx.pas"/>
       <UnitOutputDirectory Value="../temp"/>
     </SearchPaths>
