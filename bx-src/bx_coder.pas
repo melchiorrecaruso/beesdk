@@ -270,14 +270,10 @@ begin
   inherited Create(Stream);
   FCoder    := BeeRangeEnc_Create(Stream, @DoFlush);
   FModeller := BeeModeller_Create(FCoder);
-
-  Writeln('CREATE', longint(FModeller));
 end;
 
 destructor TBeeEncoder.Destroy;
 begin
-  Writeln('DESTROY ', longint(FModeller));
-
   BeeModeller_Destroy(FModeller);
   BeeRangeEnc_Destroy(FCoder);
   inherited Destroy;

@@ -25,6 +25,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-fexpensive-optimizations" />
 			<Add option="-O3" />
 			<Add option="-Wfatal-errors" />
 			<Add option="-Wextra" />
