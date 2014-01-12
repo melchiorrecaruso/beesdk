@@ -115,7 +115,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="6"/>
+        <TopLine Value="226"/>
         <CursorPos X="66" Y="277"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
@@ -182,7 +182,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="420"/>
         <CursorPos X="106" Y="426"/>
-        <FoldState Value=" T3/Q0R0U p0ue0{61b"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -351,7 +350,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="bx-src;$(ProjOutDir)"/>
-      <Libraries Value="C:/TDM-GCC-32/lib/"/>
+      <Libraries Value="C:/TDM-GCC-32/lib"/>
       <OtherUnitFiles Value="bx-src;bx-src/libbx.pas"/>
       <UnitOutputDirectory Value="../temp"/>
     </SearchPaths>
@@ -408,4 +407,4 @@
     </Exceptions>
   </Debugging>
   <EditorMacros Count="0"/>
-</CONFIG>
+</CONFIG>
