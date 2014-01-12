@@ -133,7 +133,7 @@ var
 begin
   StartTime := Now;
 
-  DoMessage('The BX 1.0 B2185 archiver utility, Copyright (c) 2013 Melchiorre Caruso.');
+  DoMessage('The BX 1.0 B2192 archiver utility, Copyright (c) 2013 Melchiorre Caruso.');
   if ExitStatus = esNoError then
     case FCommandLine.Command of
       cmdA: EncodeShell;
