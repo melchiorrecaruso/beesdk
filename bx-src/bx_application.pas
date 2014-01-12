@@ -42,7 +42,6 @@ uses
   bx_commandline,
   bx_common,
   bx_dirscanner,
-  bx_filestream,
   bx_messages;
 
 type
@@ -789,4 +788,4 @@ begin
 end;
 
 end.
-
+

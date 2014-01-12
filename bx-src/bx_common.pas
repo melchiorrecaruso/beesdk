@@ -129,28 +129,24 @@ var
   FreeAvailable, TotalSpace: int64;
 begin
   if GetDiskFreeSpaceEx(PChar(ExtractFilePath(ExpandFileName(FileName))),
-     FreeAvailable, TotalSpace, nil) then
+    FreeAvailable, TotalSpace, nil) then
     Result := FreeAvailable
   else
     Result := -1;
+end;
 {$ENDIF}
 {$IFDEF UNIX}
 var
-  FStats: {$IFDEF PosixAPI}_statvfs{$ELSE}TStatFs{$ENDIF};
+  S: string;
 begin
-  Result := -1;
-  {$IF DEFINED(LibcAPI)}
-  if statfs(PAnsiChar(ExtractFilePath(FileName)), FStats) = 0 then
-    Result := int64(FStats.f_bAvail) * int64(FStats.f_bsize);
-  {$ELSEIF DEFINED(FPCUnixAPI)}
-  if fpStatFS(PAnsiChar(ExtractFilePath(FileName)), @FStats) = 0 then
-    Result := int64(FStats.bAvail) * int64(FStats.bsize);
-  {$ELSEIF DEFINED(PosixAPI)}
-  if statvfs(PAnsiChar(AbSysString(ExtractFilePath(FileName))), FStats) = 0 then
-    Result := int64(FStats.f_bavail) * int64(FStats.f_bsize);
-  {$IFEND}
-{$ENDIF}
+  S := GetCurrentDir;
+  if SetCurrentDir(ExtractFileDir(ExpandFileName(FileName))) then
+    Result := DiskFree(0)
+  else
+    Result := -1;
+  SetCurrentDir(S);
 end;
+{$ENDIF}
 
 function SizeOfFile(const FileName: string): int64;
 var
@@ -519,4 +515,4 @@ begin
   {$ENDIF}
 end;
 
-end.
+end.
