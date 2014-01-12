@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2010-2013 Melchiorre Caruso.
+  Copyright (c) 2010-2014 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@
 
   Fist release:
 
-    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
+    v1.0 build 2200 - 2014.01.12 by Melchiorre Caruso.
 
   Modifyed:
 
 }
 
-unit bx_Archiver;
+unit bx_archiver;
 
 {$I bx_compiler.inc}
 
@@ -39,12 +39,11 @@ uses
   Classes,
   DateUtils,
   SysUtils,
-  // ---
-  bx_Cipher,
-  bx_Configuration,
-  bx_DirScanner,
-  bx_FileStream,
-  bx_Stream;
+  bx_cipher,
+  bx_configuration,
+  bx_dirscanner,
+  bx_filestream,
+  bx_stream;
 
 const
   /// archive markers
@@ -757,7 +756,7 @@ end;
 procedure TArchiveCentralDirectory.Read(Stream: TFileReader);
 const
   CDFULL  = [acdfVersionNeededToRead,  acdfLastModifiedTime, acdfComment];
-  CDSFULL = [acdsfVersionNeededToRead, acdsfImagesNumber,     acdsfImageNumber];
+  CDSFULL = [acdsfVersionNeededToRead, acdsfImagesNumber,    acdsfImageNumber];
 var
   MARKER: longword;
 begin
@@ -799,7 +798,7 @@ begin
           FImagesNumber := Stream.ReadInfWord;
 
         FImageNumber  := 1;
-        if (acdsfImageNumber  in FSeekFlags) then
+        if (acdsfImageNumber in FSeekFlags) then
           FImageNumber := Stream.ReadInfWord;
 
         FImageSeek := Stream.ReadInfWord;
@@ -894,7 +893,13 @@ begin
   // [3] multi-spanning support
   if Stream.Threshold > 0 then
     if (Stream.Threshold - Stream.Seek(0, fsFromCurrent)) < 1024 then
+    begin
       Stream.CreateNewImage;
+    end;
+
+  FImagesNumber := Stream.CurrentImage;
+  if FImagesNumber <> 1 then
+    Include(FSeekFlags,  acdsfImagesNumber);
 
   FMagikSeek := Stream.Seek(0, fsFromCurrent);
   // [4] write central directory seek

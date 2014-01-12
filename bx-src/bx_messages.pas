@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2010-2013 Melchiorre Caruso.
+  Copyright (c) 2010-2014 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@
 
   Fist release:
 
-    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
+    v1.0 build 2200 - 2014.01.12 by Melchiorre Caruso.
 
   Modifyed:
 
 }
 
-unit bx_Messages;
+unit bx_messages;
 
 {$I bx_compiler.inc}
 
@@ -43,18 +43,18 @@ const
   cmOpening           = 'Opening archive %s';
   cmScanning          = 'Scanning files';
 
-  cmAdding            = 'job %d/%d Adding %s';
-  cmCopying           = 'job %d/%d Copying %s';
-  cmDecoding          = 'job %d/%d Decoding %s';
-  cmDeleting          = 'job %d/%d Deleting %s';
-  cmEncoding          = 'job %d/%d Encoding %s';
-  cmExtracting        = 'job %d/%d Extracting %s';
+  cmAdding            = '%5d/%d Adding %s';
+  cmCopying           = '%5d/%d Copying %s';
+  cmDecoding          = '%5d/%d Decoding %s';
+  cmDeleting          = '%5d/%d Deleting %s';
+  cmEncoding          = '%5d/%d Encoding %s';
+  cmExtracting        = '%5d/%d Extracting %s';
 
-  cmRenaming          = 'job %d/%d Renaming %s';
-  cmSplitting         = 'job %d/%d Splitting %s';
-  cmSwapping          = 'job %d/%d Swapping %s';
-  cmTesting           = 'job %d/%d Testing %s';
-  cmUpdating          = 'job %d/%d Updating %s';
+  cmRenaming          = '%5d/%d Renaming %s';
+  cmSplitting         = '%5d/%d Splitting %s';
+  cmSwapping          = '%5d/%d Swapping %s';
+  cmTesting           = '%5d/%d Testing %s';
+  cmUpdating          = '%5d/%d Updating %s';
 
   { ExitStatus }
 

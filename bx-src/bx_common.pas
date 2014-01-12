@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2010-2013 Melchiorre Caruso.
+  Copyright (c) 2010-2014 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
   Fist release:
 
-    v1.0 build 2185 - 2014.01.12 by Melchiorre Caruso.
+    v1.0 build 2200 - 2014.01.12 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -38,16 +38,16 @@ interface
 const
   { Default file names }
 
-  DefaultConfigFileName  = 'bx.ini';
+  DefaultConfigFileName = 'bx.ini';
 
   {$IFDEF MSWINDOWS}
-    DefaultSfxFileName   = 'bxwin.sfx';
-  {$ELSE}
-    {$IFDEF UNIX}
-      DefaultSfxFileName = 'bxlinux.sfx';
-    {$ELSE}
-      -TODO-
-    {$ENDIF}
+    DefaultSfxFileName = 'bxwin.sfx';
+  {$ENDIF}
+  {$IFDEF UNIX}
+    DefaultSfxFileName = 'bxlinux.sfx';
+  {$ENDIF}
+  {$IFDEF MAC}
+    TODO...
   {$ENDIF}
 
 function SelfName: string;
@@ -109,7 +109,8 @@ uses
 
 const
   HexaDecimals: array [0..15] of char = '0123456789ABCDEF';
-  HexValues: array ['0'..'F'] of byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15);
+  HexValues: array ['0'..'F'] of byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+    0, 0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15);
 
 function SelfName: string;
 begin
@@ -124,18 +125,6 @@ end;
 { file routines }
 
 function GetDriveFreeSpace(const FileName: string): int64;
-{$IFDEF MSWINDOWS}
-var
-  FreeAvailable, TotalSpace: int64;
-begin
-  if GetDiskFreeSpaceEx(PChar(ExtractFilePath(ExpandFileName(FileName))),
-    FreeAvailable, TotalSpace, nil) then
-    Result := FreeAvailable
-  else
-    Result := -1;
-end;
-{$ENDIF}
-{$IFDEF UNIX}
 var
   S: string;
 begin
@@ -146,7 +135,6 @@ begin
     Result := -1;
   SetCurrentDir(S);
 end;
-{$ENDIF}
 
 function SizeOfFile(const FileName: string): int64;
 var
@@ -173,7 +161,9 @@ begin
     Drive := ExtractFileDrive(FileName);
     System.Delete(Result, 1, Length(Drive));
     while Pos(PathDelim, Result) = 1 do
+    begin
       Delete(Result, 1, 1);
+    end;
   end;
 end;
 
@@ -181,15 +171,21 @@ function DeleteFilePath(const FilePath, FileName: string): string;
 begin
   Result := FileName;
   if FileNamePos(FilePath, Result) = 1 then
+  begin
     Delete(Result, 1, Length(FilePath));
+  end;
 end;
 
 function FileNameIsValid(const FileName: string): boolean;
 const
   {$IFDEF MSWINDOWS}
-  InvalidCharacters: set of char = ['\', '/', ':', '*', '?', '"', '<', '>', '|'];
-  {$ELSE}
-  InvalidCharacters: set of char = [PathDelim];
+    InvalidChars: set of char = ['\', '/', ':', '*', '?', '"', '<', '>', '|'];
+  {$ENDIF}
+  {$IFDEF UNIX}
+    InvalidChars: set of char = [PathDelim];
+  {$ENDIF}
+  {$IFDEF MAC}
+    TODO...
   {$ENDIF}
 var
   I: longint;
@@ -198,29 +194,42 @@ begin
   if Result then
     for I := 1 to Length(FileName) do
     begin
-      Result := not (FileName[I] in InvalidCharacters);
-      if Result = FALSE then Break;
+      Result := not (FileName[I] in InvalidChars);
+      if Result = FALSE then
+      begin
+        Break;
+      end;
     end;
 end;
 
 function FilePathIsValid(const FilePath: string): boolean;
-{$IFDEF MSWINDOWS}
 const
-  InvalidCharacters: set of char = ['*', '?', '"', '<', '>', '|'];
+  {$IFDEF MSWINDOWS}
+    InvalidChars: set of char = ['*', '?', '"', '<', '>', '|'];
+  {$ENDIF}
+  {$IFDEF UNIX}
+    InvalidChars: set of char = [];
+  {$ENDIF}
+  {$IFDEF MAC}
+    TODO...
+  {$ENDIF}
 var
   I: longint;
-{$ENDIF}
 begin
   Result := TRUE;
-  {$IFDEF MSWINDOWS}
   for I := 1 to Length(FilePath) do
   begin
-    Result := not (FilePath[I] in InvalidCharacters);
-    if Result = FALSE then Break;
+    Result := not (FilePath[I] in InvalidChars);
+    if Result = FALSE then
+    begin
+      Break;
+    end;
   end;
-  {$ENDIF}
+
   if Result = TRUE then
-    Result := Pos(PathDelim + PathDelim, FilePath) > 0;
+  begin
+    Result := Pos(PathDelim + PathDelim, FilePath) = 0;
+  end;
 end;
 
 function FileMaskHasWildcards(const FileMask: string): boolean;
@@ -233,7 +242,10 @@ begin
   for I := 1 to Length(FileMask) do
   begin
     Result := FileMask[I] in WildcardCharacters;
-    if Result = TRUE then Break;
+    if Result = TRUE then
+    begin
+      Break;
+    end;
   end;
 end;
 
@@ -272,16 +284,23 @@ var
   MPath: string;
   MName: string;
 begin
-  {$IFDEF FILENAMECASESENSITIVE}
-  FPath := ExtractFilePath(FileName);
-  FName := ExtractFileName(FileName);
-  MPath := ExtractFilePath(FileMask);
-  MName := ExtractFileName(FileMask);
-  {$ELSE}
-  FPath := ExtractFilePath(UpperCase(FileName));
-  FName := ExtractFileName(UpperCase(FileName));
-  MPath := ExtractFilePath(UpperCase(FileMask));
-  MName := ExtractFileName(UpperCase(FileMask));
+  {$IFDEF MSWINDOWS}
+    FPath := ExtractFilePath(UpperCase(FileName));
+    FName := ExtractFileName(UpperCase(FileName));
+    MPath := ExtractFilePath(UpperCase(FileMask));
+    MName := ExtractFileName(UpperCase(FileMask));
+  {$ENDIF}
+  {$IFDEF UNIX}
+    FPath := ExtractFilePath(FileName);
+    FName := ExtractFileName(FileName);
+    MPath := ExtractFilePath(FileMask);
+    MName := ExtractFileName(FileMask);
+  {$ENDIF}
+  {$IFDEF MAC}
+    FPath := ExtractFilePath(FileName);
+    FName := ExtractFileName(FileName);
+    MPath := ExtractFilePath(FileMask);
+    MName := ExtractFileName(FileMask);
   {$ENDIF}
 
   if ExtractFileDrive(MPath) = '' then
@@ -304,10 +323,14 @@ end;
 
 function FileNamePos(const FilePath, FileName: string): longint;
 begin
-  {$IFDEF FILENAMECASESENSITIVE}
-  Result := System.Pos(FilePath, FileName);
-  {$ELSE}
-  Result := System.Pos(UpperCase(FilePath), UpperCase(FileName));
+  {$IFDEF MSWINDOWS}
+    Result := System.Pos(UpperCase(FilePath), UpperCase(FileName));
+  {$ENDIF}
+  {$IFDEF UNIX}
+    Result := System.Pos(FilePath, FileName);
+  {$ENDIF}
+  {$IFDEF MAC}
+     Result := System.Pos(FilePath, FileName);
   {$ENDIF}
 end;
 
@@ -365,13 +388,13 @@ end;
 function FileTimeToUnix(X: longint): int64;
 begin
   {$IFDEF MSWINDOWS}
-  Result := DateTimeToUnix(DosDateTimeToDateTime(X));
-  {$ENDIF}
-  {$IFDEF MAC}
-  Result := DateTimeToUnix(MacTimeToDateTime(X));
+    Result := DateTimeToUnix(DosDateTimeToDateTime(X));
   {$ENDIF}
   {$IFDEF UNIX}
-  Result := X;
+    Result := X;
+  {$ENDIF}
+  {$IFDEF MAC}
+    Result := DateTimeToUnix(MacTimeToDateTime(X));
   {$ENDIF}
 end;
 
@@ -482,17 +505,19 @@ var
   oa, na: SigActionRec;
 {$ENDIF}
 begin
-{$IFDEF UNIX}
-  na.sa_handler := SigActionHandler(CtrlHandler);
-  FillChar(na.sa_mask, SizeOf(na.sa_mask), #0);
-  na.sa_flags    := SA_ONESHOT;
-  na.sa_restorer := nil;
-  fpSigAction(SIGINT, @na, @oa);
-{$ENDIF}
-
-{$IFDEF MSWINDOWS}
-  SetConsoleCtrlHandler(CtrlHandler, TRUE);
-{$ENDIF}
+  {$IFDEF MSWINDOWS}
+    SetConsoleCtrlHandler(CtrlHandler, TRUE);
+  {$ENDIF}
+  {$IFDEF UNIX}
+    na.sa_handler := SigActionHandler(CtrlHandler);
+    FillChar(na.sa_mask, SizeOf(na.sa_mask), #0);
+    na.sa_flags    := SA_ONESHOT;
+    na.sa_restorer := nil;
+    fpSigAction(SIGINT, @na, @oa);
+  {$ENDIF}
+  {$IFDEF MAC}
+    TODO...
+  {$ENDIF}
 end;
 
 function SetIdlePriority: boolean;
@@ -502,6 +527,9 @@ begin
   {$ENDIF}
   {$IFDEF UNIX}
     Result := FALSE;
+  {$ENDIF}
+  {$IFDEF MAC}
+    TODO...
   {$ENDIF}
 end;
 
@@ -513,6 +541,9 @@ begin
   {$IFDEF UNIX}
     Result := FALSE;
   {$ENDIF}
+  {$IFDEF MAC}
+    TODO...
+  {$ENDIF}
 end;
 
-end.
+end.

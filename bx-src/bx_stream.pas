@@ -226,7 +226,6 @@ begin
     FBufferSize := 0;
     SetExitStatus(esFillStreamError);
   end;
-
   FCipher.Update(FBuffer, FBufferSize);
 end;
 
