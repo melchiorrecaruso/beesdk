@@ -23,7 +23,7 @@
 
   Fist release:
 
-    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
+    v1.0 build 2185 - 2014.01.12 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -267,8 +267,6 @@ end;
 
 constructor TBeeEncoder.Create(Stream: pointer);
 begin
-
-
   inherited Create(Stream);
   FCoder    := BeeRangeEnc_Create(Stream, @DoFlush);
   FModeller := BeeModeller_Create(FCoder);

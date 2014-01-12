@@ -23,13 +23,13 @@
 
   Fist release:
 
-    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
+    v1.0 build 2185 - 2014.01.12 by Melchiorre Caruso.
 
   Modifyed:
 
 }
 
-unit bx_Application;
+unit bx_application;
 
 {$I bx_compiler.inc}
 
@@ -38,15 +38,12 @@ interface
 uses
   Classes,
   SysUtils,
-  // ---
-  bx_Archiver,
-  bx_CommandLine,
-  bx_Common,
-  bx_DirScanner,
-  bx_FileStream,
-  bx_Messages;
-
-
+  bx_archiver,
+  bx_commandline,
+  bx_common,
+  bx_dirscanner,
+  bx_filestream,
+  bx_messages;
 
 type
   { TBxAssumeValueOnAllQueries type }
@@ -136,7 +133,7 @@ var
 begin
   StartTime := Now;
 
-  DoMessage('The BX 1.0.0 Alpha archiver utility, Copyright (c) 2013 Melchiorre Caruso.');
+  DoMessage('The BX 1.0 B2185 archiver utility, Copyright (c) 2013 Melchiorre Caruso.');
   if ExitStatus = esNoError then
     case FCommandLine.Command of
       cmdA: EncodeShell;

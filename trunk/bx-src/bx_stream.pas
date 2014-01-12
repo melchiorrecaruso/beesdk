@@ -23,23 +23,23 @@
 
   Fist release:
 
-    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
+    v1.0 build 2185 - 2014.01.12 by Melchiorre Caruso.
 
   Modifyed:
 
 }
 
-unit bx_Stream;
+unit bx_stream;
 
 {$I bx_compiler.inc}
 
 interface
 
 uses
-  bx_Cipher,
-  bx_Coder,
-  bx_HashGen,
-  bx_Messages;
+  bx_cipher,
+  bx_coder,
+  bx_hashgen,
+  bx_messages;
 
 type
   { TBufStream abstract class }

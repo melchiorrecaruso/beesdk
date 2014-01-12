@@ -27,7 +27,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
+    v1.0.0 build 2185 - 2013.01.12 by Melchiorre Caruso.
 }
 
 unit libbx_bee_modeller;

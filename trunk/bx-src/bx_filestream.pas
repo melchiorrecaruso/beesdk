@@ -29,7 +29,7 @@
 
 }
 
-unit bx_FileStream;
+unit bx_filestream;
 
 {$I bx_compiler.inc}
 
@@ -38,9 +38,8 @@ interface
 uses
   Classes,
   SysUtils,
-  // ---
-  bx_Common,
-  bx_Stream;
+  bx_common,
+  bx_stream;
 
 type
   TFileReaderRequestImageEvent = procedure(ImageNumber: longint;

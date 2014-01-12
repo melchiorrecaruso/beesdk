@@ -45,7 +45,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-    v1.0.0 build 2176 - 2014.01.06 by Melchiorre Caruso.
+    v1.0.0 build 2185 - 2014.01.12 by Melchiorre Caruso.
 }
 
 unit libbx_bee_rangecoder;
@@ -182,6 +182,7 @@ begin
   BeeRangeEnc_ShiftLow(Self);
   BeeRangeEnc_ShiftLow(Self);
   BeeRangeEnc_ShiftLow(Self);
+  WriteStream_FlushBuffer(Self^.FStream);
 end;
 
 function BeeRangeEnc_Update(Self: PBeeRangeEnc; const Freq: TFreq; aSymbol: longword): longword;
