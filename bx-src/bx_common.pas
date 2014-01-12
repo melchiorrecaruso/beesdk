@@ -23,13 +23,13 @@
 
   Fist release:
 
-    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
+    v1.0 build 2185 - 2014.01.12 by Melchiorre Caruso.
 
   Modifyed:
 
 }
 
-unit bx_Common;
+unit bx_common;
 
 {$I bx_compiler.inc}
 
@@ -519,4 +519,4 @@ begin
   {$ENDIF}
 end;
 
-end.
+end.

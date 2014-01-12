@@ -23,22 +23,20 @@
 
   Fist release:
 
-    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
+    v1.0 build 2185 - 2014.01.12 by Melchiorre Caruso.
 
   Modifyed:
 
 }
 
-unit bx_HashGen;
+unit bx_hashgen;
 
 {$I bx_compiler.inc}
 
 interface
 
 uses
-  Crc,
-  Md5,
-  Sha1;
+  Crc, Md5, Sha1;
 
 type
   { THashGen class }
@@ -190,4 +188,4 @@ begin
   MD5Update(FCTX, Data[0], Count);
 end;
 
-end.
+end.

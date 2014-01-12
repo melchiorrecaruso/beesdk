@@ -52,7 +52,8 @@ type
     FBuffer: array[0.. DEFAULT_BUFFER_CAPACITY - 1] of byte;
   end;
 
-  function  ReadStream_Create(aStream: Pointer; aStreamRead: PStreamRead): PReadStream;
+  function  ReadStream_Create(aStream: Pointer;
+    aStreamRead: PStreamRead): PReadStream;
   procedure ReadStream_Destroy    (Self: PReadStream);
   procedure ReadStream_ClearBuffer(Self: PReadStream);
   procedure ReadStream_FillBuffer (Self: PReadStream);
@@ -70,7 +71,8 @@ type
     Buffer: array[0.. DEFAULT_BUFFER_CAPACITY - 1] of byte;
   end;
 
-  function  WriteStream_Create(aStream: Pointer; aStreamWrite: PStreamWrite): PWriteStream;
+  function  WriteStream_Create(aStream: Pointer;
+    aStreamWrite: PStreamWrite): PWriteStream;
   procedure WriteStream_Destroy    (Self: PWriteStream);
   procedure WriteStream_ClearBuffer(Self: PWriteStream);
   procedure WriteStream_FlushBuffer(Self: PWriteStream);
@@ -80,7 +82,8 @@ implementation
 
 { TReadStream methods }
 
-function ReadStream_Create(aStream: Pointer; aStreamRead: PStreamRead): PReadStream;
+function ReadStream_Create(aStream: Pointer;
+  aStreamRead: PStreamRead): PReadStream;
 begin
   ReadStream_Create := GetMem(sizeof(TReadStream));
   ReadStream_Create^.FStream       := aStream;
@@ -102,7 +105,8 @@ end;
 
 procedure ReadStream_FillBuffer(Self: PReadStream);
 begin
-  Self^.FBufferSize   := Self^.FStreamRead(Self^.FStream, @Self^.FBuffer[0], DEFAULT_BUFFER_CAPACITY);
+  Self^.FBufferSize   := Self^.FStreamRead(Self^.FStream,
+    @Self^.FBuffer[0], DEFAULT_BUFFER_CAPACITY);
   Self^.FBufferReaded := 0;
 end;
 
@@ -125,7 +129,8 @@ end;
 
 { TWriteStream methods}
 
-function WriteStream_Create(aStream: Pointer; aStreamWrite: PStreamWrite): PWriteStream;
+function WriteStream_Create(aStream: Pointer;
+  aStreamWrite: PStreamWrite): PWriteStream;
 begin
   WriteStream_Create := GetMem(sizeof(TWriteStream));
   WriteStream_Create^.Stream      := aStream;
@@ -135,7 +140,6 @@ end;
 
 procedure WriteStream_Destroy(Self: PWriteStream);
 begin
-  WriteStream_FlushBuffer(Self);
   FreeMem(Self);
 end;
 

@@ -83,7 +83,6 @@ PWriteStream WriteStream_Create(void *aStream, PStreamWrite aStreamWrite)
 
 void WriteStream_Destroy(PWriteStream Self)
 {
-  WriteStream_FlushBuffer(Self);
   free(Self);
 }
 

@@ -23,27 +23,26 @@
 
   Fist release:
 
-    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
+    v1.0 build 2185 - 2014.01.12 by Melchiorre Caruso.
 
   Modifyed:
 
 }
 
-unit bx_Cipher;
+unit bx_cipher;
 
 {$I bx_compiler.inc}
 
 interface
 
 uses
-  BlowFish,
-  Idea;
+  BlowFish, Idea;
 
 const
-  DefaultBufferSize = 4096;
+  DEFAULTBUFFERSIZE = 4096;
 
 type
-  TBuffer = array [0.. DefaultBufferSize - 1] of byte;
+  TBuffer = array [0.. DEFAULTBUFFERSIZE - 1] of byte;
 
   { TCipher abstract class }
 
@@ -250,4 +249,4 @@ begin
   end;
 end;
 
-end.
+end.

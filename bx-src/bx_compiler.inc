@@ -23,14 +23,14 @@
 
   Fist release:
 
-    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
+    v1.0 build 2185 - 2014.01.12 by Melchiorre Caruso.
 
   Modifyed:
 
 }
 
 {*$DEFINE DEBUG}
-{*$DEFINE BEEPAS}
+{$DEFINE BEEPAS}
 {$INLINE OFF}
 
 {$IFDEF MSWINDOWS}
