@@ -112,10 +112,9 @@
       <Unit2>
         <Filename Value="bx-src\bx_coder.pas"/>
         <UnitName Value="bx_Coder"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="226"/>
+        <TopLine Value="211"/>
         <CursorPos X="66" Y="277"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
@@ -123,10 +122,11 @@
       </Unit2>
       <Unit3>
         <Filename Value="bx-src\bx_compiler.inc"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="58" Y="7"/>
+        <CursorPos X="3" Y="33"/>
         <UsageCount Value="14"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
