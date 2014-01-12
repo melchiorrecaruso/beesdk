@@ -495,7 +495,7 @@ begin
 {$ENDIF}
 
 {$IFDEF MSWINDOWS}
-  // Windows.SetConsoleCtrlHandler(CtrlHandler, True);
+  SetConsoleCtrlHandler(CtrlHandler, TRUE);
 {$ENDIF}
 end;
 

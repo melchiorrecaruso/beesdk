@@ -370,8 +370,6 @@ uses
   bx_Common,
   bx_Messages;
 
-// ---
-
 function GetVersionNeededToRead(Item: TArchiveItem): longword; overload;
 begin
   Result := 100;
@@ -1213,12 +1211,14 @@ begin
     Item := FCentralDirectory.Items[I];
     if Item.FTags = [aitDecode] then
     begin
-      DoMessage(Format(cmSwapping, [I, Item.UncompressedSize, Item.FFileName]));
+      DoMessage(Format(cmSwapping, [I + 1,
+        FCentralDirectory.Count, Item.FFileName]));
       DecodeToSwap(Item);
     end else
       if Item.FTags = [aitDecode, aitUpdate] then
       begin
-        DoMessage(Format(cmDecoding, [I, Item.UncompressedSize ,Item.FFileName]));
+        DoMessage(Format(cmDecoding, [I + 1,
+          FCentralDirectory.Count, Item.FFileName]));
         DecodeToNul(Item);
       end;
   end;
@@ -1280,7 +1280,8 @@ begin
         if ExitStatus <> esNoError then Break;
 
         Item := FCentralDirectory.Items[I];
-        DoMessage(Format(cmSplitting, [I, Item.CompressedSize, Item.FileName]));
+        DoMessage(Format(cmSplitting, [I + 1,
+          FCentralDirectory.Count, Item.FileName]));
         EncodeFromArchive(Item);
       end;
       if ExitStatus = esNoError then
@@ -1299,7 +1300,9 @@ begin
   end;
 
   if ExitStatus in [esNoError, esUserAbortError] then
+  begin
     SysUtils.DeleteFile(FTempName);
+  end;
 end;
 
 procedure TArchiver.CloseArchive;
@@ -1616,12 +1619,14 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [aitUpdate] then
       begin
-        DoMessage(Format(cmExtracting, [I, Item.UnCompressedSize, Item.FExternalFileName]));
+        DoMessage(Format(cmExtracting, [I + 1,
+          FCentralDirectory.Count, Item.FExternalFileName]));
         DecodeToFile(Item);
       end else
         if Item.FTags = [aitDecode] then
         begin
-          DoMessage(Format(cmDecoding, [I, Item.UnCompressedSize, Item.FFileName]));
+          DoMessage(Format(cmDecoding, [I + 1,
+            FCentralDirectory.Count, Item.FFileName]));
           DecodeToNul(Item);
         end;
     end;
@@ -1644,12 +1649,14 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [aitUpdate] then
       begin
-        DoMessage(Format(cmTesting, [I, Item.UncompressedSize ,Item.FFileName]));
+        DoMessage(Format(cmTesting, [I + 1,
+          FCentralDirectory.Count ,Item.FFileName]));
         DecodeToNul(Item);
       end else
         if Item.FTags = [aitDecode] then
         begin
-          DoMessage(Format(cmDecoding, [I, Item.UncompressedSize, Item.FFileName]));
+          DoMessage(Format(cmDecoding, [I + 1,
+            FCentralDirectory.Count, Item.FFileName]));
           DecodeToNul(Item);
         end;
     end;
@@ -1698,19 +1705,21 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [aitUpdate] then
       begin
-        DoMessage(Format(cmRenaming, [I, Item.CompressedSize, Item.FileName]));
+        DoMessage(Format(cmRenaming, [I + 1,
+          FCentralDirectory.Count, Item.FileName]));
         EncodeFromArchive(Item);
       end else
         if Item.FTags = [] then
         begin
-          DoMessage(Format(cmCopying, [I, Item.CompressedSize, Item.FileName]));
+          DoMessage(Format(cmCopying, [I + 1,
+            FCentralDirectory.Count, Item.FileName]));
           EncodeFromArchive(Item);
         end;
     end;
     if ExitStatus = esNoError then
       FCentralDirectory.Write(FTempWriter);
-    if ExitStatus = esNoError then
-      FIsNeededToSave := TRUE;
+
+    FIsNeededToSave := TRUE;
   end;
 end;
 
@@ -1785,7 +1794,8 @@ begin
       Item := FCentralDirectory.Items[I];
       if aitUpdate in Item.FTags then
       begin
-        DoMessage(Format(cmDeleting, [I, Item.CompressedSize, Item.FileName]));
+        DoMessage(Format(cmDeleting, [I + 1,
+          FCentralDirectory.Count, Item.FileName]));
         FCentralDirectory.Delete(I);
       end;
     end;
@@ -1797,19 +1807,21 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [] then
       begin
-        DoMessage(Format(cmCopying, [I, Item.CompressedSize, Item.FileName]));
+        DoMessage(Format(cmCopying, [I + 1,
+          FCentralDirectory.Count, Item.FileName]));
         EncodeFromArchive(Item);
       end else
         if Item.FTags = [aitDecode] then
         begin
-          DoMessage(Format(cmEncoding, [I, Item.UncompressedSize, Item.FileName]));
+          DoMessage(Format(cmEncoding, [I + 1,
+            FCentralDirectory.Count, Item.FileName]));
           EncodeFromSwap(Item);
         end;
     end;
     if ExitStatus = esNoError then
       FCentralDirectory.Write(FTempWriter);
-    if ExitStatus = esNoError then
-      FIsNeededToSave := TRUE;
+
+    FIsNeededToSave := TRUE;
   end;
 end;
 
@@ -1977,30 +1989,34 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [] then
       begin
-        DoMessage(Format(cmCopying, [I, Item.CompressedSize, Item.FileName]));
+        DoMessage(Format(cmCopying, [I + 1,
+          FCentralDirectory.Count, Item.FileName]));
         EncodeFromArchive(Item);
       end else
         if Item.FTags = [aitUpdate] then
         begin
-          DoMessage(Format(cmAdding, [I, Item.UncompressedSize, Item.FileName]));
+          DoMessage(Format(cmAdding, [I + 1,
+            FCentralDirectory.Count, Item.FileName]));
           EncodeFromFile(Item);
         end else
           if Item.FTags = [aitDecode] then
           begin
-            DoMessage(Format(cmEncoding, [I, Item.UncompressedSize, Item.FileName]));
+            DoMessage(Format(cmEncoding, [I + 1,
+              FCentralDirectory.Count, Item.FileName]));
             EncodeFromSwap(Item);
           end else
           begin
-            DoMessage(Format(cmUpdating, [I, Item.UncompressedSize, Item.FileName]));
+            DoMessage(Format(cmUpdating, [I + 1,
+              FCentralDirectory.Count, Item.FileName]));
             EncodeFromFile(Item);
           end;
     end;
     if ExitStatus = esNoError then
       FCentralDirectory.Write(FTempWriter);
-    if ExitStatus = esNoError then
-      FIsNeededToSave := TRUE;
+
+    FIsNeededToSave := TRUE;
   end;
 end;
 
 end.
-
+

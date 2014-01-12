@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2010-2013 Melchiorre Caruso.
+  Copyright (c) 2010-2014 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
   Fist release:
 
-    v1.0 build 2185 - 2014.01.12 by Melchiorre Caruso.
+    v1.0 build 2192 - 2014.01.12 by Melchiorre Caruso.
 
   Modifyed:
 
