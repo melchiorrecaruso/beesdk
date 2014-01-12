@@ -149,17 +149,17 @@ uses
   {$linklib libm}
 {$ENDIF}
 
-{$link libbx.c\libbx_stream.o}
+{$link libbx_stream.o}
 // bee coder link
 {$IFNDEF BEEPAS}
-  {$link libbx.c\libbx_bee_common.o}
-  {$link libbx.c\libbx_bee_modeller.o}
-  {$link libbx.c\libbx_bee_rangecoder.o}
+  {$link libbx_bee_common.o}
+  {$link libbx_bee_modeller.o}
+  {$link libbx_bee_rangecoder.o}
 {$ENDIF}
 // ppmd coder link
-{$link libbx.c\libbx_ppmd_common.o}
-{$link libbx.c\libbx_ppmd_modeller.o}
-{$link libbx.c\libbx_ppmd_rangecoder.o}
+{$link libbx_ppmd_common.o}
+{$link libbx_ppmd_modeller.o}
+{$link libbx_ppmd_rangecoder.o}
 
 type
   TStreamRead  = function(Stream: pointer; Data: PByte; Count: longint): longint;
