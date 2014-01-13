@@ -1,5 +1,5 @@
 {
-  Copyright (C) 2013 Melchiorre Caruso
+  Copyright (C) 2012-2014 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,11 @@
 {
   Contains:
 
+   Buffered stream class.
+
   Modifyed:
+
+    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
 }
 
 unit libbx_stream;

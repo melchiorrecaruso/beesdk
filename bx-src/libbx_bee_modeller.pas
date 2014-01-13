@@ -1,6 +1,6 @@
 {
-  Copyright (c) 2003-2012 Andrew Filinsky.
-  Copyright (c) 2013 Melchiorre Caruso.
+  Copyright (c) 2003-2011 Andrew Filinsky;
+  Copyright (c) 2012-2014 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 { Contains:
 
-    TBaseCoder class, PPM modeller;
+    BaseCoder class, PPM modeller;
 
   Modifyed:
 
@@ -27,7 +27,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-    v1.0.0 build 2185 - 2013.01.12 by Melchiorre Caruso.
+    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
 }
 
 unit libbx_bee_modeller;

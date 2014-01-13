@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2010-2014 Melchiorre Caruso.
+  Copyright (c) 2012-2014 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,13 +19,11 @@
 {
   Contains:
 
-    TArchiver class.
-
-  Fist release:
-
-    v1.0 build 2200 - 2014.01.12 by Melchiorre Caruso.
+    Archiver class.
 
   Modifyed:
+
+    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
 
 }
 
@@ -40,10 +38,10 @@ uses
   DateUtils,
   SysUtils,
   bx_cipher,
-  bx_configuration,
   bx_dirscanner,
   bx_filestream,
-  bx_stream;
+  bx_stream,
+  libbx_bee_common;
 
 const
   /// archive markers
@@ -590,8 +588,8 @@ begin
   Stream.WriteInfWord(longword(FFlags));
   if (aifVersionNeededToRead in FFlags) then Stream.WriteInfWord(FVersionNeededToRead);
   if (aifUncompressedSize    in FFlags) then Stream.WriteInfWord(FUncompressedSize);
-  if (aifLastModifiedTime    in FFlags) then Stream.WriteInfWord(FLastModifiedTime);
-  if (aifLastStoredTime      in FFlags) then Stream.WriteInfWord(FLastStoredTime);
+  if (aifLastModifiedTime    in FFlags) then Stream.WriteInfWord(FileTimeToUnix(FLastModifiedTime));
+  if (aifLastStoredTime      in FFlags) then Stream.WriteInfWord(FileTimeToUnix(FLastStoredTime));
   if (aifAttributes          in FFlags) then Stream.WriteInfWord(FAttributes);
   if (aifComment             in FFlags) then Stream.WriteInfString(FComment);
   /// data descriptor property ///
@@ -960,7 +958,7 @@ end;
 
 // TArchiver # ENCODE/DECODE #
 
-procedure TArchiver.xxcode(Reader: TBufStream; Writer: TBufStream; const Size: int64); inline;
+procedure TArchiver.xxcode(Reader: TBufStream; Writer: TBufStream; const Size: int64);
 var
   Buffer: TBuffer;
   Count_: int64;

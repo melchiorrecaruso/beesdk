@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2010-2014 Melchiorre Caruso.
+  Copyright (c) 2012-2014 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,11 +21,9 @@
 
     Bx archiver shell.
 
-  Fist release:
-
-    v1.0 build 2200 - 2014.01.12 by Melchiorre Caruso.
-
   Modifyed:
+
+    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
 
 }
 
@@ -132,7 +130,7 @@ var
 begin
   StartTime := Now;
 
-  DoMessage('The BX 1.0 archiver utility, Copyright (c) 2014 Melchiorre Caruso.');
+  DoMessage('The BX 1.0.0 archiver utility, Copyright (c) 2014 Melchiorre Caruso.');
   if ExitStatus = esNoError then
     case FCommandLine.Command of
       cmdA: EncodeShell;
@@ -239,7 +237,7 @@ begin
     end;
     umUpdate: begin
       if FileExists(Item.ExternalFileName) = TRUE then
-        if Item.LastModifiedTime > FileTimeToUnix(FileAge(Item.ExternalFileName)) then
+        if Item.LastModifiedTime > FileAge(Item.ExternalFileName) then
         begin
           Item.Tag;
         end;
@@ -249,7 +247,7 @@ begin
       begin
         Item.Tag;
       end else
-        if Item.LastModifiedTime > FileTimeToUnix(FileAge(Item.ExternalFileName)) then
+        if Item.LastModifiedTime > FileAge(Item.ExternalFileName) then
         begin
           Item.Tag;
         end;
@@ -738,7 +736,7 @@ begin
         if Item.UncompressedSize > 0 then
           DoMessage(Format(   '       Size/Packed/Ratio: %s/%s/%s', [SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize),
                                                                        RatioToStr(Item.CompressedSize, Item.UncompressedSize)]));
-        DoMessage(Format(     '      Last modified time: %s',       [FileTimeToString(Item.LastModifiedTime)]));
+        DoMessage(Format(     '      Last modified time: %s',       [bx_common.FileTimeToString(Item.LastModifiedTime)]));
         DoMessage(Format(     '              Attributes: %s',       [AttrToStr(Item.Attributes)]));
         if Item.Comment <> '' then
           DoMessage(Format(   '                 Comment: %s',       [Item.Comment]));
@@ -766,7 +764,7 @@ begin
         if ExitStatus <> esNoError then Break;
         Item := TArchiveItem(ItemToList.Items[I]);
         DoMessage(Format('%16s %7s %12s %12s %s', [
-          bx_Common.FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
+          bx_common.FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
           SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize), Item.FileName]));
       end;
       DoMessage('---------- -------- ------- ------------ ------------ ---------------------');
