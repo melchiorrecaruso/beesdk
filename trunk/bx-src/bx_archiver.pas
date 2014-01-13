@@ -492,8 +492,8 @@ begin
   FFlags  := TArchiveItemFlags(longword(Stream.ReadInfWord));
   if (aifVersionNeededToRead in FFlags) then FVersionNeededToRead := Stream.ReadInfWord;
   if (aifUncompressedSize    in FFlags) then FUncompressedSize    := Stream.ReadInfWord;
-  if (aifLastModifiedTime    in FFlags) then FLastModifiedTime    := Stream.ReadInfWord;
-  if (aifLastStoredTime      in FFlags) then FLastStoredTime      := Stream.ReadInfWord;
+  if (aifLastModifiedTime    in FFlags) then FLastModifiedTime    := UnixToFileTime(Stream.ReadInfWord);
+  if (aifLastStoredTime      in FFlags) then FLastStoredTime      := UnixToFileTime(Stream.ReadInfWord);
   if (aifAttributes          in FFlags) then FAttributes          := Stream.ReadInfWord;
   if (aifComment             in FFlags) then FComment             := Stream.ReadInfString;
   /// data descryptor property ///
