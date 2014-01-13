@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2010-2013 Melchiorre Caruso.
+  Copyright (c) 2012-2014 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,17 +19,15 @@
 {
   Contains:
 
-    TCommandLineParser class.
-
-  Fist release:
-
-    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
+    Command line class.
 
   Modifyed:
 
+    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
+
 }
 
-unit bx_CommandLine;
+unit bx_commandline;
 
 {$I bx_compiler.inc}
 
@@ -1114,4 +1112,4 @@ begin
 end;
 
 end.
-
+

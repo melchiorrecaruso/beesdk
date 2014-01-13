@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2010-2014 Melchiorre Caruso.
+  Copyright (c) 2012-2014 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,17 +19,15 @@
 {
   Contains:
 
-    TCoder classes;
-
-  Fist release:
-
-    v1.0 build 2192 - 2014.01.12 by Melchiorre Caruso.
+    Coder class.
 
   Modifyed:
 
+    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
+
 }
 
-unit bx_Coder;
+unit bx_coder;
 
 {$I bx_compiler.inc}
 
@@ -130,11 +128,11 @@ implementation
 
 uses
   bx_common,
-  bx_configuration,
   bx_messages,
   {$IFDEF BEEPAS} libbx_bee_modeller, {$ENDIF}
   {$IFDEF BEEPAS} libbx_bee_rangecoder, {$ENDIF}
-  bx_stream;
+  bx_stream,
+  libbx_bee_common;
 
 {$IFDEF MSWINDOWS}
   {$linklib libmsvcrt}

@@ -1,5 +1,6 @@
 {
-  Copyright (c) 2003-2013 Andrew Filinsky.
+  Copyright (c) 2003-2011 Andrew Filinsky;
+  Copyright (c) 2012-2014 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,13 +19,14 @@
 
 { Contains:
 
-    Assembly routines.
+    Various helper routines.
 
   Modifyed:
 
-    v0.7.9 build 0383 - 2007.06.27 by Andrew Filinsky;
+    v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
+    v0.7.9 build 0312 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
+    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
 }
 
 unit libbx_bee_common;
@@ -32,6 +34,9 @@ unit libbx_bee_common;
 {$I bx_compiler.inc}
 
 interface
+
+uses
+  IniFiles;
 
 // -------------------------------------------------------------------------- //
 //  Configuration tables type                                                 //
@@ -77,6 +82,13 @@ procedure MoveLongwordUnchecked(const Source, Dest; Count: longword);
 
 function MulDiv(A, B, C: longword): longword;
 function MulDecDiv(A, B, C: longword): longword;
+
+// -------------------------------------------------------------------------- //
+//  Configuration class                                                       //
+// -------------------------------------------------------------------------- //
+
+type
+  TConfiguration = class(TIniFile);
 
 implementation
 

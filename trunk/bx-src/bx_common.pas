@@ -1,5 +1,6 @@
 {
-  Copyright (c) 2010-2014 Melchiorre Caruso.
+  Copyright (c) 2003-2011 Andrew Filinsky;
+  Copyright (c) 2012-2014 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,12 +22,16 @@
 
     Various helper routines.
 
-  Fist release:
-
-    v1.0 build 2200 - 2014.01.12 by Melchiorre Caruso.
-
   Modifyed:
 
+    v0.7.8 build 0150 - 2005.06.27 by Andrew Filinsky;
+    v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
+    v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
+    v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
+    v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
+    v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
+
+    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
 }
 
 unit bx_common;
@@ -80,6 +85,7 @@ function DateTimeToString(X: TDateTime; const Format: string): string; overload;
 function FileTimeToString(X: longint): string; overload;
 function FileTimeToString(X: longint; const Format: string): string; overload;
 function FileTimeToUnix(X: longint): int64;
+function UnixToFileTime(X: int64): longint;
 function TimeDifference(X: double): string;
 function TimeToStr(T: longint): string;
 
@@ -387,15 +393,12 @@ end;
 
 function FileTimeToUnix(X: longint): int64;
 begin
-  {$IFDEF MSWINDOWS}
-    Result := DateTimeToUnix(DosDateTimeToDateTime(X));
-  {$ENDIF}
-  {$IFDEF UNIX}
-    Result := X;
-  {$ENDIF}
-  {$IFDEF MAC}
-    Result := DateTimeToUnix(MacTimeToDateTime(X));
-  {$ENDIF}
+  Result := DateTimeToUnix(FileDateToDateTime(X));
+end;
+
+function UnixToFileTime(X: int64): longint;
+begin
+  Result := DateTimeToFileDate(UnixToDateTime(X));
 end;
 
 function TimeDifference(X: double): string;

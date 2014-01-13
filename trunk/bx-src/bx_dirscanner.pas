@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2010-2013 Melchiorre Caruso.
+  Copyright (c) 2012-2014 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,17 +19,15 @@
 {
   Contains:
 
-    TDirScanner class.
-
-  First release:
-
-    v1.0 build 2165 - 2013.12.26 by Melchiorre Caruso.
+    Directory scanner class.
 
   Modifyed:
 
+    v1.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
+
 }
 
-unit bx_DirScanner;
+unit bx_dirscanner;
 
 {$I bx_compiler.inc}
 
@@ -82,7 +80,7 @@ type
 implementation
 
 uses
-  bx_Common,
+  bx_common,
   DateUtils;
 
 { TDirScannerItem class }
@@ -92,7 +90,7 @@ begin
   inherited Create;
   FFileName := RecPath + Rec.Name;
   FFileSize := Rec.Size;
-  FFileTime := DateTimeToUnix(FileDateToDateTime(Rec.Time));
+  FFileTime := Rec.Time;
   FFileAttr := Rec.Attr;
 end;
 
@@ -235,4 +233,4 @@ begin
 end;
 
 end.
-
+

@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2010-2014 Melchiorre Caruso.
+  Copyright (c) 2012-2014 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,13 +19,11 @@
 {
   Contains:
 
-    TFileStream classes.
-
-  Fist release:
-
-    v1.0 build 2200 - 2014.01.12 by Melchiorre Caruso.
+    File stream class.
 
   Modifyed:
+
+    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
 
 }
 
@@ -373,6 +371,7 @@ var
 begin
   FlushBuffer;
   FileClose(FHandle);
+  SysUtils.DeleteFile(GetImageName(FCurrentImage));
   if RenameFile(FFileName, GetImageName(FCurrentImage)) = FALSE then
     SetExitStatus(esRenameTempError);
 
