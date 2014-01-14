@@ -41,7 +41,7 @@ struct TReadStream {
     PStreamRead StreamRead;
        int32_t BufferSize;
        int32_t BufferReaded;
-       uint8_t Buffer[DEFAULT_BUFFER_CAPACITY];
+       uint8_t Buffer[DEFAULT_BUFFER_CAPACITY - 1];
 };
 
 PReadStream ReadStream_Create(void *aStream, PStreamRead aStreamRead)
@@ -98,7 +98,7 @@ struct TWriteStream {
          void *Stream;
   PStreamWrite StreamWrite;
          int32_t BufferSize;
-         uint8_t Buffer[DEFAULT_BUFFER_CAPACITY];
+         uint8_t Buffer[DEFAULT_BUFFER_CAPACITY - 1];
 };
 
 PWriteStream WriteStream_Create(void *aStream, PStreamWrite aStreamWrite)
