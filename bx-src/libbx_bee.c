@@ -32,7 +32,6 @@
 */
 
 #include <math.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include "libbx_stream.h"
 

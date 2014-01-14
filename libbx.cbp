@@ -14,14 +14,11 @@
 				<Option compiler="gcc" />
 				<Option projectCompilerOptionsRelation="0" />
 				<Compiler>
-					<Add option="-O3" />
 					<Add option="-Wfatal-errors" />
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
+					<Add option="-g" />
 				</Compiler>
-				<Linker>
-					<Add option="-s" />
-				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
