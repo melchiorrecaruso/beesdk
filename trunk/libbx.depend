@@ -204,7 +204,7 @@
 	"libbx_stream.h"
 	"libbx_bee_common.h"
 
-1389033341 c:\repository\beesdk\bx-src\libbx_stream.h
+1389650943 c:\repository\beesdk\bx-src\libbx_stream.h
 	<stdint.h>
 
 1389532985 source:c:\repository\beesdk\bx-src\libbx_bee_rangecoder.c
@@ -219,16 +219,16 @@
 	<stdlib.h>
 	<memory.h>
 
-1385296541 c:\repository\beesdk\bx-src\libbx_ppmd_modeller.h
+1389650943 c:\repository\beesdk\bx-src\libbx_ppmd_modeller.h
 	"libbx_ppmd_rangecoder.h"
 	"libbx_stream.h"
 	"stdint.h"
 
-1387139288 c:\repository\beesdk\bx-src\libbx_ppmd_rangecoder.h
+1389650943 c:\repository\beesdk\bx-src\libbx_ppmd_rangecoder.h
 	"libbx_stream.h"
 	"stdint.h"
 
-1387139288 c:\repository\beesdk\bx-src\libbx_ppmd_common.h
+1389650943 c:\repository\beesdk\bx-src\libbx_ppmd_common.h
 
 1385296541 source:c:\repository\beesdk\bx-src\libbx_ppmd_rangecoder.c
 	"libbx_ppmd_rangecoder.h"
@@ -238,5 +238,21 @@
 
 1389533201 source:c:\repository\beesdk\bx-src\libbx_stream.c
 	"libbx_stream.h"
+	<stdlib.h>
+
+1389734617 source:c:\repository\beesdk\bx-src\libbx_bee.c
+	<math.h>
+	<stdint.h>
+	<stdlib.h>
+
+1389735969 source:c:\repository\beesdk\bx-src\libbx_ppmd.c
+	<memory.h>
+	<stdint.h>
+	<stdlib.h>
+	"libbx_bee.c"
+
+1389734617 c:\repository\beesdk\bx-src\libbx_bee.c
+	<math.h>
+	<stdint.h>
 	<stdlib.h>
 

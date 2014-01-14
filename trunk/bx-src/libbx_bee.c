@@ -1,19 +1,330 @@
-#include <math.h>
-#include <stdlib.h>
+/*
+  Copyright (c) 2012-2014 Melchiorre Caruso
 
-#include "libbx_bee_modeller.h"
-#include "libbx_bee_rangecoder.h"
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the free software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT any WARRANTY; WITHOUT even the implied WARRANTY of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License FOR more details.
+
+  you should have received A copy of the GNU General Public License
+  along with This program; if not, write to the free software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+
+/*
+  Contains:
+
+    BEE compression library.
+
+    Original source code at http://www.compression.ru/fa/ (public domain).
+
+  Translated:
+
+    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
+
+  Modifyed:
+
+*/
+
+#include <math.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include "libbx_stream.h"
+
+// ------------------------------------------------------------------ //
+//  Table parameters                                                  //
+// ------------------------------------------------------------------ //
+
+#define TABLESIZE       20  // array [0..20]
+#define TABLECOLS        1  // array [0.. 1]
+#define TABLEPARAMETERS 42  // array [0..42]
+
+typedef uint32_t TTableCol[TABLESIZE + 1];
+
+struct TTable{
+  uint32_t Level;
+  TTableCol T[TABLECOLS + 1];
+};
+
+typedef uint8_t TTableParameters[TABLEPARAMETERS + 1];
+
+//  Default table parameters
+
+static const TTableParameters DefaultTableParameters = {
+    3, 163, 157,  65,  93, 117, 135, 109, 126, 252, 172, 252, 152,
+  227, 249, 249, 253, 196,  27,  82,  93,  74, 182, 245,  40,  67,
+   77, 143, 133, 135, 128, 155, 207, 177, 225, 251, 253, 248,  73,
+   35,  15, 107, 143};
+
+//  Default dictionary level
+
+static const int32_t DefaultDictionaryLevel = 3;
+
+// ------------------------------------------------------------------ //
+//  Common routine                                                    //
+// ------------------------------------------------------------------ //
+
+inline uint32_t _MulDiv (uint32_t A, uint32_t B, uint32_t C)
+{
+  asm volatile (
+    "movl %1, %%eax;"
+    "mul  %2;"
+    "div  %3;"
+    "movl %%eax, %0;"
+    : "=r"(A)
+    :  "0"(A), "r"(B), "r"(C)
+    : "%eax"
+  );
+  return A;
+}
+
+inline uint32_t _MulDecDiv(uint32_t A, uint32_t B, uint32_t C)
+{
+  asm volatile (
+    "movl %1, %%eax;"
+    "mul  %2;"
+    "dec  %%eax;"
+    "div  %3;"
+    "movl %%eax, %0;"
+    : "=r"(A)
+    :  "0"(A), "r"(B), "r"(C)
+    : "%eax"
+  );
+  return A;
+}
+
+// ------------------------------------------------------------------ //
+//  Range Coder                                                       //
+// ------------------------------------------------------------------ //
+
+#define MAXFREQ   16777215L
+#define TFREQSIZE 16L
+
+#define TOP       16777216L
+#define THRES     4278190080U
+
+// Array of frequencyes
+
+typedef uint32_t *TFreq;
+
+// BeeRangeEncoder structure
+
+struct TBeeRangeEnc {
+  PWriteStream FStream;
+      uint32_t FRange;
+      uint32_t FLow;
+      uint32_t FCode;
+      uint32_t FCarry;
+      uint32_t FCache;
+      uint32_t FFNum;
+};
+
+typedef struct TBeeRangeEnc *PBeeRangeEnc;
+
+// BeeRangeDecoder structure
+
+struct TBeeRangeDec {
+  PReadStream FStream;
+    uint32_t FRange;
+    uint32_t FLow;
+    uint32_t FCode;
+    uint32_t FCarry;
+    uint32_t FCache;
+    uint32_t FFNum;
+};
+
+typedef struct TBeeRangeDec *PBeeRangeDec;
+
+/* BeeRangeCoder_Update definition */
+
+typedef uint32_t (*PRangeCod_Update) (void*, uint32_t*, uint32_t);
+
+// BeeRangeEncoder routines
+
+PBeeRangeEnc BeeRangeEnc_Create(void *aStream, PStreamWrite aStreamWrite)
+{
+  PBeeRangeEnc Self = malloc(sizeof(struct TBeeRangeEnc));
+  Self->FStream     = WriteStream_Create(aStream, aStreamWrite);
+  return Self;
+}
+
+void BeeRangeEnc_Destroy(PBeeRangeEnc Self)
+{
+  WriteStream_Destroy(Self->FStream);
+  free(Self);
+}
+
+void BeeRangeEnc_StartEncode(PBeeRangeEnc Self)
+{
+  Self->FRange = 0xFFFFFFFF;
+  Self->FLow   = 0;
+  Self->FFNum  = 0;
+  Self->FCarry = 0;
+}
+
+static inline void BeeRangeEnc_ShiftLow(PBeeRangeEnc Self)
+{
+  if ((Self->FLow < THRES) || (Self->FCarry != 0))
+  {
+    WriteStream_Write(Self->FStream, Self->FCache + Self->FCarry);
+
+    while (Self->FFNum != 0)
+    {
+      WriteStream_Write(Self->FStream, Self->FCarry - 1);
+      Self->FFNum--;
+    }
+    Self->FCache = Self->FLow >> 24;
+    Self->FCarry = 0;
+  } else
+    Self->FFNum++;
+
+  Self->FLow <<= 8;
+}
+
+static inline void BeeRangeEnc_Encode(PBeeRangeEnc Self, uint32_t CumFreq,  uint32_t Freq,  uint32_t TotFreq)
+{
+  uint32_t Tmp = Self->FLow;
+  Self->FLow   += _MulDiv(Self->FRange, CumFreq, TotFreq);
+  Self->FCarry += (uint32_t)(Self->FLow < Tmp);
+  Self->FRange  = _MulDiv(Self->FRange, Freq, TotFreq);
+  while (Self->FRange < TOP)
+  {
+    Self->FRange <<= 8;
+    BeeRangeEnc_ShiftLow(Self);
+  }
+}
+
+void BeeRangeEnc_FinishEncode(PBeeRangeEnc Self)
+{
+  BeeRangeEnc_ShiftLow(Self);
+  BeeRangeEnc_ShiftLow(Self);
+  BeeRangeEnc_ShiftLow(Self);
+  BeeRangeEnc_ShiftLow(Self);
+  BeeRangeEnc_ShiftLow(Self);
+  WriteStream_FlushBuffer(Self->FStream);
+}
+
+inline uint32_t BeeRangeEnc_Update(PBeeRangeEnc Self, TFreq Freq, uint32_t aSymbol)
+{
+  // Count CumFreq...
+  uint32_t CumFreq = 0, I = 0;
+  while (I < aSymbol)
+  {
+    CumFreq += Freq[I];
+    I++;
+  }
+  // Count TotFreq...
+  uint32_t TotFreq = CumFreq;
+  I = TFREQSIZE;
+  do
+  {
+    I--;
+    TotFreq += Freq[I];
+  }
+  while (!(I == aSymbol));
+  // Encode...
+  BeeRangeEnc_Encode(Self, CumFreq, Freq[aSymbol], TotFreq);
+  // Return result...
+  return aSymbol;
+}
+
+// BeeRangeDecoder routines
+
+PBeeRangeDec BeeRangeDec_Create(void *aStream, PStreamRead aStreamRead)
+{
+  PBeeRangeDec Self = malloc(sizeof(struct TBeeRangeDec));
+  Self->FStream     = ReadStream_Create(aStream, aStreamRead);
+  return Self;
+}
+
+void BeeRangeDec_Destroy(PBeeRangeDec Self)
+{
+  ReadStream_Destroy(Self->FStream);
+  free(Self);
+}
+
+void BeeRangeDec_StartDecode(PBeeRangeDec Self)
+{
+  Self->FRange = 0xFFFFFFFF;
+  Self->FLow   = 0;
+  Self->FFNum  = 0;
+  Self->FCarry = 0;
+
+  Self->FCode = (Self->FCode << 8) + ReadStream_Read(Self->FStream);
+  Self->FCode = (Self->FCode << 8) + ReadStream_Read(Self->FStream);
+  Self->FCode = (Self->FCode << 8) + ReadStream_Read(Self->FStream);
+  Self->FCode = (Self->FCode << 8) + ReadStream_Read(Self->FStream);
+  Self->FCode = (Self->FCode << 8) + ReadStream_Read(Self->FStream);
+}
+
+void BeeRangeDec_FinishDecode(PBeeRangeDec Self)
+{
+  ReadStream_ClearBuffer(Self->FStream);
+}
+
+inline uint32_t BeeRangeDec_GetFreq(PBeeRangeDec Self, uint32_t TotFreq)
+{
+  return _MulDecDiv(Self->FCode + 1, TotFreq, Self->FRange);
+}
+
+static inline void BeeRangeDec_Decode(PBeeRangeDec Self, uint32_t CumFreq, uint32_t Freq, uint32_t TotFreq)
+{
+  Self->FCode -= _MulDiv(Self->FRange, CumFreq, TotFreq);
+  Self->FRange = _MulDiv(Self->FRange,    Freq, TotFreq);
+
+  while (Self->FRange < TOP)
+  {
+    Self->FCode = (Self->FCode << 8) + ReadStream_Read(Self->FStream);
+    Self->FRange <<= 8;
+  }
+}
+
+inline uint32_t BeeRangeDec_Update(PBeeRangeDec Self, TFreq Freq, uint32_t aSymbol)
+{
+  // Count TotFreq...
+  uint32_t TotFreq = 0;
+  aSymbol = TFREQSIZE;
+  do
+  {
+    aSymbol--;
+    TotFreq += Freq[aSymbol];
+  }
+  while (!(aSymbol == 0));
+  // Count CumFreq...
+  uint32_t CumFreq = BeeRangeDec_GetFreq(Self, TotFreq);
+  // Search aSymbol...
+  uint32_t SumFreq = 0;
+  aSymbol = 0;
+  while (SumFreq + Freq[aSymbol] <= CumFreq)
+  {
+    SumFreq += Freq[aSymbol];
+    aSymbol++;
+  }
+  // Finish Decode...
+  BeeRangeDec_Decode(Self, SumFreq, Freq[aSymbol], TotFreq);
+  // Return Result...
+  return aSymbol;
+}
+
+// ------------------------------------------------------------------ //
+//  Modeller                                                          //
+// ------------------------------------------------------------------ //
 
 #define BITCHAIN   4             // Size of data portion, bit
 #define MAXSYMBOL 15             // Size of source alphabet, symbols
 #define INCREMENT  8             // Increment of symbol frequency
 
-/* PPM modeller's node information */
+// PPM modeller's node information
 
 struct TNode{
-  uint16_t K;               // frequency of This symbol
-   uint8_t C;               // This symbol itself
-   uint8_t D;               // Used FOR incoming data storage
+  uint16_t K;                    // frequency of This symbol
+   uint8_t C;                    // This symbol itself
+   uint8_t D;                    // Used FOR incoming data storage
 
   union {
    int32_t A;                    // source address
@@ -26,7 +337,7 @@ struct TNode{
 typedef struct TNode *PNode;     // Pointer to
 typedef PNode *PPNode;           // Array of nodes...
 
-/* TBaseCoder PPM modeller struct/methods implementation */
+// TBaseCoder PPM modeller structure
 
 struct TBeeModeller {
           void *Codec;
@@ -53,10 +364,14 @@ struct TBeeModeller {
        uint32_t R;
        uint32_t Q;
 
-          TFreq Freq;             // symbol frequencyes
-     TTableCol *Part;             // Part of parameters Table
+          TFreq Freq;            // symbol frequencyes
+     TTableCol *Part;            // Part of parameters Table
   struct TTable Table;           // parameters Table
 };
+
+typedef struct TBeeModeller *PBeeModeller;
+
+// TBaseCoder PPM modeller routines
 
 PBeeModeller BeeModeller_Create(void *aCodec)
 {

@@ -1,3 +1,32 @@
+/*
+  Copyright (c) 2012-2014 Melchiorre Caruso
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the free software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT any WARRANTY; WITHOUT even the implied WARRANTY of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License FOR more details.
+
+  you should have received A copy of the GNU General Public License
+  along with This program; if not, write to the free software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+
+/*
+  Contains:
+
+    Common buffered stream.
+
+  Modifyed:
+
+    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
+
+*/
+
 #include "libbx_stream.h"
 #include <stdlib.h>
 
@@ -45,7 +74,7 @@ inline void ReadStream_FillBuffer(PReadStream Self)
 
 inline uint8_t ReadStream_Read(PReadStream Self)
 {
-  uint8_t result;
+  uint8_t result = 0;
   if (Self->BufferReaded < Self->BufferSize)
   {
     result = Self->Buffer[Self->BufferReaded];

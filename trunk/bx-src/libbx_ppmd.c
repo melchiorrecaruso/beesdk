@@ -1,7 +1,248 @@
-#include "libbx_ppmd_modeller.h"
-#include "libbx_ppmd_common.h"
-#include <stdlib.h>
+/*
+  Copyright (c) 2012-2014 Melchiorre Caruso
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the free software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT any WARRANTY; WITHOUT even the implied WARRANTY of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License FOR more details.
+
+  you should have received A copy of the GNU General Public License
+  along with This program; if not, write to the free software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+
+/*
+  Contains:
+
+    PPMD compression library.
+
+    Original source code at http://www.7-zip.org/sdk.html (public domain).
+
+  Modifyed:
+
+    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
+
+*/
+
 #include <memory.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include "libbx_stream.h"
+
+#define TRUE  1
+#define FALSE 0
+
+// ------------------------------------------------------------------ //
+//  Range Coder                                                       //
+// ------------------------------------------------------------------ //
+
+#define kTopValue (1 << 24)
+
+// PpmdRangeEncoder structure
+
+struct TPpmdRangeEnc {
+      uint64_t Low;
+      uint32_t Range;
+       uint8_t Cache;
+      uint64_t CacheSize;
+  PWriteStream Stream;
+};
+
+typedef struct TPpmdRangeEnc *PPpmdRangeEnc;
+
+// PpmdRangeDecoder structure
+
+struct TPpmdRangeDec {
+     uint32_t Range;
+     uint32_t Code;
+  PReadStream Stream;
+};
+
+typedef struct TPpmdRangeDec *PPpmdRangeDec;
+
+// PpmdRangeEncoder routines
+
+void PpmdRangeEnc_Init(PPpmdRangeEnc Self)
+{
+  Self->Low       = 0;
+  Self->Range     = 0xFFFFFFFF;
+  Self->Cache     = 0;
+  Self->CacheSize = 1;
+}
+
+static void PpmdRangeEnc_ShiftLow(PPpmdRangeEnc Self)
+{
+  if ((uint32_t)Self->Low < (uint32_t)0xFF000000 || (unsigned)(Self->Low >> 32) != 0)
+  {
+    uint8_t temp = Self->Cache;
+    do
+    {
+      WriteStream_Write(Self->Stream, (uint8_t)(temp + (uint8_t)(Self->Low >> 32)));
+      temp = 0xFF;
+    }
+    while(--Self->CacheSize != 0);
+    Self->Cache = (uint8_t)((uint32_t)Self->Low >> 24);
+  }
+  Self->CacheSize++;
+  Self->Low = (uint32_t)Self->Low << 8;
+}
+
+void PpmdRangeEnc_Encode(PPpmdRangeEnc Self, uint32_t start, uint32_t size, uint32_t total)
+{
+  Self->Low += start * (Self->Range /= total);
+  Self->Range *= size;
+  while (Self->Range < kTopValue)
+  {
+    Self->Range <<= 8;
+    PpmdRangeEnc_ShiftLow(Self);
+  }
+}
+
+void PpmdRangeEnc_EncodeBit_0(PPpmdRangeEnc Self, uint32_t size0)
+{
+  Self->Range = (Self->Range >> 14) * size0;
+  while (Self->Range < kTopValue)
+  {
+    Self->Range <<= 8;
+    PpmdRangeEnc_ShiftLow(Self);
+  }
+}
+
+void PpmdRangeEnc_EncodeBit_1(PPpmdRangeEnc Self, uint32_t size0)
+{
+  uint32_t newBound = (Self->Range >> 14) * size0;
+  Self->Low += newBound;
+  Self->Range -= newBound;
+  while (Self->Range < kTopValue)
+  {
+    Self->Range <<= 8;
+    PpmdRangeEnc_ShiftLow(Self);
+  }
+}
+
+void PpmdRangeEnc_FlushData(PPpmdRangeEnc Self)
+{
+  unsigned i;
+  for (i = 0; i < 5; i++)
+    PpmdRangeEnc_ShiftLow(Self);
+}
+
+PPpmdRangeEnc PpmdRangeEnc_Create (void *aStream, PStreamWrite aStreamWrite)
+{
+  PPpmdRangeEnc Self = malloc(sizeof(struct TPpmdRangeEnc));
+  Self->Stream = WriteStream_Create(aStream, aStreamWrite);
+  return Self;
+};
+
+void PpmdRangeEnc_Destroy(PPpmdRangeEnc Self)
+{
+  WriteStream_Destroy(Self->Stream);
+  free(Self);
+};
+
+void PpmdRangeEnc_StartEncode(PPpmdRangeEnc Self)
+{
+  PpmdRangeEnc_Init(Self);
+};
+
+void PpmdRangeEnc_FinishEncode(PPpmdRangeEnc Self)
+{
+  PpmdRangeEnc_FlushData(Self);
+  WriteStream_FlushBuffer(Self->Stream);
+};
+
+// PpmdRangeDecoder routines
+
+#define PpmdRangeDec_IsFinishedOK(Self) ((Self)->Code == 0)
+
+int PpmdRangeDec_Init(PPpmdRangeDec Self)
+{
+  unsigned i;
+  Self->Code  = 0;
+  Self->Range = 0xFFFFFFFF;
+  if (ReadStream_Read(Self->Stream) != 0)
+    return FALSE;
+  for (i = 0; i < 4; i++)
+    Self->Code = (Self->Code << 8) | ReadStream_Read(Self->Stream);
+  return (Self->Code < 0xFFFFFFFF);
+}
+
+uint32_t PpmdRangeDec_GetThreshold(PPpmdRangeDec Self, uint32_t total)
+{
+  return (Self->Code) / (Self->Range /= total);
+}
+
+static void PPmdRangeDec_Normalize(PPpmdRangeDec Self)
+{
+  if (Self->Range < kTopValue)
+  {
+    Self->Code = (Self->Code << 8) | ReadStream_Read(Self->Stream);
+    Self->Range <<= 8;
+    if (Self->Range < kTopValue)
+    {
+      Self->Code = (Self->Code << 8) | ReadStream_Read(Self->Stream);
+      Self->Range <<= 8;
+    }
+  }
+}
+
+void PpmdRangeDec_Decode(PPpmdRangeDec Self, uint32_t start, uint32_t size)
+{
+  Self->Code  -= start * Self->Range;
+  Self->Range *= size;
+  PPmdRangeDec_Normalize(Self);
+}
+
+uint32_t PpmdRangeDec_DecodeBit(PPpmdRangeDec Self, uint32_t size0)
+{
+  uint32_t newBound = (Self->Range >> 14) * size0;
+  uint32_t symbol;
+  if (Self->Code < newBound)
+  {
+    symbol = 0;
+    Self->Range = newBound;
+  }
+  else
+  {
+    symbol = 1;
+    Self->Code -= newBound;
+    Self->Range -= newBound;
+  }
+  PPmdRangeDec_Normalize(Self);
+  return symbol;
+}
+
+PPpmdRangeDec PpmdRangeDec_Create (void *aStream, PStreamRead aStreamRead)
+{
+  PPpmdRangeDec Self = malloc(sizeof(struct TPpmdRangeDec));
+  Self->Stream = ReadStream_Create(aStream, aStreamRead);
+  return Self;
+};
+
+void PpmdRangeDec_Destroy(PPpmdRangeDec Self)
+{
+  ReadStream_Destroy(Self->Stream);
+  free(Self);
+};
+
+void PpmdRangeDec_StartDecode(PPpmdRangeDec Self)
+{
+  PpmdRangeDec_Init(Self);
+};
+
+void PpmdRangeDec_FinishDecode(PPpmdRangeDec Self)
+{
+  ReadStream_ClearBuffer(Self->Stream);
+};
+
+// ------------------------------------------------------------------ //
+//  PPMD modeller                                                     //
+// ------------------------------------------------------------------ //
 
 #define PPMD_32BIT
 
@@ -98,12 +339,12 @@ typedef
   #endif
   TPpmdVoidRef;
 
-/* SEE-contexts for PPM-contexts with masked symbols */
+// SEE-contexts for PPM-contexts with masked symbols
 
 typedef struct {
-  uint16_t Summ;   /* Freq */
-   uint8_t Shift;  /* Speed of Freq change; low Shift is for fast change */
-   uint8_t Count;  /* Count to next change of Shift */
+  uint16_t Summ;   // Freq
+   uint8_t Shift;  // Speed of Freq change; low Shift is for fast change
+   uint8_t Count;  // Count to next change of Shift
 } TPpmdSee;
 
 #define PpmdSee_Update(Self)  if ((Self)->Shift < PPMD_PERIOD_BITS && --(Self)->Count == 0) \
@@ -113,7 +354,7 @@ struct TPpmdModeller {
   TPpmdContext *MinContext, *MaxContext;
   TPpmdState *FoundState;
   unsigned OrderFall, InitEsc, PrevSuccess, MaxOrder, HiBitsFlag;
-   int32_t RunLength, InitRL; /* must be 32-bit at least */
+   int32_t RunLength, InitRL; // must be 32-bit at least
 
   uint32_t Size;
   uint32_t GlueCount;
@@ -127,6 +368,8 @@ struct TPpmdModeller {
   TPpmdSee DummySee, See[25][16];
   uint16_t BinSumm[128][64];
 };
+
+typedef struct TPpmdModeller *PPpmdModeller;
 
 #ifdef PPMD_32BIT
   #define Ppmd_GetPtr(Self, ptr)(ptr)
@@ -268,7 +511,7 @@ static void PpmdModeller_GlueFreeBlocks(PPpmdModeller Self)
 
   Self->GlueCount = 255;
 
-  /* create doubly-linked list of free blocks */
+  // create doubly-linked list of free blocks
   for (i = 0; i < PPMD_NUM_INDEXES; i++)
   {
     uint16_t nu = I2U(i);
@@ -290,7 +533,7 @@ static void PpmdModeller_GlueFreeBlocks(PPpmdModeller Self)
   if (Self->LoUnit != Self->HiUnit)
     ((TPpmdNode *)Self->LoUnit)->Stamp = 1;
 
-  /* Glue free blocks */
+  // Glue free blocks
   while (n != head)
   {
     TPpmdNode *node = NODE(n);
@@ -308,7 +551,7 @@ static void PpmdModeller_GlueFreeBlocks(PPpmdModeller Self)
     n = node->Next;
   }
 
-  /* Fill lists of free blocks */
+  // Fill lists of free blocks
   for (n = NODE(head)->Next; n != head;)
   {
     TPpmdNode *node = NODE(n);
@@ -448,8 +691,8 @@ void PpmdModeller_Init(PPpmdModeller Self, unsigned maxOrder)
   Self->MaxOrder = maxOrder;
   PpmdModeller_RestartModel(Self);
   Self->DummySee.Shift = PPMD_PERIOD_BITS;
-  Self->DummySee.Summ  =  0; /* unused */
-  Self->DummySee.Count = 64; /* unused */
+  Self->DummySee.Summ  =  0; // unused
+  Self->DummySee.Count = 64; // unused
 }
 
 static CTX_PTR PpmdModeller_CreateSuccessors(PPpmdModeller Self, uint8_t skip)
@@ -1085,4 +1328,3 @@ inline int32_t PpmdModeller_Decode(PPpmdModeller Self, PPpmdRangeDec RangeDec, u
   }
   return I;
 };
-

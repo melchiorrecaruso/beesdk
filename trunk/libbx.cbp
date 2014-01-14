@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="release">
-				<Option output="./libbx" prefix_auto="1" extension_auto="1" />
+				<Option output="./bx" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="./" />
 				<Option type="2" />
@@ -33,30 +33,12 @@
 		<Linker>
 			<Add option="-s" />
 		</Linker>
-		<Unit filename="bx-src/libbx_bee_common.c">
+		<Unit filename="bx-src/libbx_bee.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="bx-src/libbx_bee_common.h" />
-		<Unit filename="bx-src/libbx_bee_modeller.c">
+		<Unit filename="bx-src/libbx_ppmd.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="bx-src/libbx_bee_modeller.h" />
-		<Unit filename="bx-src/libbx_bee_rangecoder.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="bx-src/libbx_bee_rangecoder.h" />
-		<Unit filename="bx-src/libbx_ppmd_common.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="bx-src/libbx_ppmd_common.h" />
-		<Unit filename="bx-src/libbx_ppmd_modeller.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="bx-src/libbx_ppmd_modeller.h" />
-		<Unit filename="bx-src/libbx_ppmd_rangecoder.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="bx-src/libbx_ppmd_rangecoder.h" />
 		<Unit filename="bx-src/libbx_stream.c">
 			<Option compilerVar="CC" />
 		</Unit>
