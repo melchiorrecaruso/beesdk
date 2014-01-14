@@ -574,7 +574,7 @@ end;
 
 function CompareCustomSearchRec(P1, P2: pointer): longint;
 begin
-  Result := AnsiCompareFileName(
+  Result := AnsiCompareText(
     ExtractFileExt(TDirScannerItem(P1).FileName),
     ExtractFileExt(TDirScannerItem(P2).FileName));
 
