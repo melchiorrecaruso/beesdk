@@ -114,8 +114,9 @@
         <UnitName Value="bx_application"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="755"/>
-        <CursorPos X="74" Y="782"/>
+        <TopLine Value="498"/>
+        <CursorPos X="37" Y="576"/>
+        <FoldState Value=" T3j30S5 pibja0{92 pk5mH03[J4YjA0F1J"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -126,8 +127,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="482"/>
-        <CursorPos X="100" Y="493"/>
+        <TopLine Value="1863"/>
+        <CursorPos X="25" Y="1880"/>
         <UsageCount Value="19"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -199,7 +200,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="bx-src\bx_common.pas"/>
         <Caret Line="393" Column="10" TopLine="377"/>
@@ -316,6 +317,10 @@
         <Filename Value="bx-src\bx_archiver.pas"/>
         <Caret Line="594" Column="83" TopLine="584"/>
       </Position29>
+      <Position30>
+        <Filename Value="bx-src\bx_archiver.pas"/>
+        <Caret Line="493" Column="100" TopLine="482"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

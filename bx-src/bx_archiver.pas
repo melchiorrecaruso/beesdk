@@ -1877,7 +1877,7 @@ begin
       else
         CurrentFileExt := ExtractCompressionFilter(FCompressionParams);
       // compression block option
-      if AnsiCompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
+      if AnsiCompareText(CurrentFileExt, PreviousFileExt) = 0 then
       begin
         Dec(CurrentBlock, CurrentItem.FExternalFileSize);
         if CurrentBlock < 0 then
