@@ -147,6 +147,7 @@ uses
   TODO...
 {$ENDIF}
 
+{$link libbx_stream.o}
 // bee coder link
 {$IFNDEF BEEPAS}
   {$link libbx_bee.o}

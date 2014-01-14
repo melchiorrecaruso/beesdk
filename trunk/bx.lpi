@@ -90,7 +90,6 @@
         <Filename Value="bx.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BX"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="50"/>
@@ -107,7 +106,7 @@
         <TopLine Value="18"/>
         <CursorPos X="24" Y="68"/>
         <FoldState Value=" T3ja061v"/>
-        <UsageCount Value="131"/>
+        <UsageCount Value="132"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -201,10 +200,11 @@
       <Unit10>
         <Filename Value="bx-src\bx_coder.pas"/>
         <UnitName Value="bx_coder"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="133"/>
-        <CursorPos X="1" Y="156"/>
+        <CursorPos X="20" Y="150"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
