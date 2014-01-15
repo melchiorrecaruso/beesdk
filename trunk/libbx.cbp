@@ -30,12 +30,30 @@
 		<Linker>
 			<Add option="-s" />
 		</Linker>
-		<Unit filename="bx-src/libbx_bee.c">
+		<Unit filename="bx-src/libbx_bee_common.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="bx-src/libbx_ppmd.c">
+		<Unit filename="bx-src/libbx_bee_common.h" />
+		<Unit filename="bx-src/libbx_bee_modeller.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="bx-src/libbx_bee_modeller.h" />
+		<Unit filename="bx-src/libbx_bee_rangecoder.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="bx-src/libbx_bee_rangecoder.h" />
+		<Unit filename="bx-src/libbx_ppmd_common.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="bx-src/libbx_ppmd_common.h" />
+		<Unit filename="bx-src/libbx_ppmd_modeller.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="bx-src/libbx_ppmd_modeller.h" />
+		<Unit filename="bx-src/libbx_ppmd_rangecoder.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="bx-src/libbx_ppmd_rangecoder.h" />
 		<Unit filename="bx-src/libbx_stream.c">
 			<Option compilerVar="CC" />
 		</Unit>

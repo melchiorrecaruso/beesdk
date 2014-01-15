@@ -23,7 +23,7 @@
 
   Modifyed:
 
-    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
+    v1.0.0 build 2210 - 2014.01.15 by Melchiorre Caruso.
 
 }
 
@@ -150,10 +150,14 @@ uses
 {$link libbx_stream.o}
 // bee coder link
 {$IFNDEF BEEPAS}
-  {$link libbx_bee.o}
+  {$link libbx_bee_common.o}
+  {$link libbx_bee_rangecoder.o}
+  {$link libbx_bee_modeller.o}
 {$ENDIF}
 // ppmd coder link
-{$link libbx_ppmd.o}
+{$link libbx_ppmd_common.o}
+{$link libbx_ppmd_rangecoder.o}
+{$link libbx_ppmd_modeller.o}
 
 type
   TStreamRead  = function(Stream: pointer; Data: PByte; Count: longint): longint;
