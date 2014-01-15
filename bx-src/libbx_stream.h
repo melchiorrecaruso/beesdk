@@ -19,11 +19,7 @@
 /*
   Contains:
 
-    Common buffered stream.
-
   Modifyed:
-
-    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
 
 */
 
@@ -32,12 +28,12 @@
 
 #include <stdint.h>
 
-// Read/Write routines
+// I/O functions //
 
 typedef int32_t (*PStreamRead ) (void*, void*, int32_t);
 typedef int32_t (*PStreamWrite) (void*, void*, int32_t);
 
-// ReadStream structure/methods */
+/* TReadStream struct/methods implementation */
 
 typedef struct TReadStream *PReadStream;
 
@@ -47,7 +43,7 @@ typedef struct TReadStream *PReadStream;
          void ReadStream_FillBuffer (PReadStream Self);
       uint8_t ReadStream_Read       (PReadStream Self);
 
-// WriteStream structure/methods
+/* TWriteStream struct/methods implementation */
 
 typedef struct TWriteStream *PWriteStream;
 
