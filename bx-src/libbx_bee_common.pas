@@ -26,7 +26,7 @@
     v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
     v0.7.9 build 0312 - 2007.02.16 by Andrew Filinsky;
 
-    v1.0.0 build 2202 - 2014.01.13 by Melchiorre Caruso.
+    v1.0.0 build 2210 - 2014.01.15 by Melchiorre Caruso.
 }
 
 unit libbx_bee_common;
