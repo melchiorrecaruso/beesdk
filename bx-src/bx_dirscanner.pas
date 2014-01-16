@@ -119,7 +119,45 @@ begin
 end;
 
 procedure TDirScanner.AddItem(const RecPath: string; const Rec: TSearchRec);
+var
+  L, M, H, I: longint;
 begin
+    L :=  0;
+    M := -2;
+    H := List.Count - 1;
+    while H >= L do
+    begin
+      M := (L + H) div 2;
+      I := Compare(THeader(List[M]), Item);
+      if I < 0 then
+        L := M + 1
+      else
+        if I > 0 then
+          H := M - 1
+        else
+          H := -2;
+    end;
+
+    if M = -2 then
+      List.Add(Item)
+    else
+      if H = -2 then
+      begin
+        List.Insert(M + 1, Item);
+      end else
+      begin
+        if I < 0 then
+          List.Insert(M + 1, Item)
+        else
+          List.Insert(M, Item);
+      end;
+  end;
+
+
+
+
+
+
   if Find(RecPath + Rec.Name) = -1 then
   begin
     FList.Add(TDirScannerItem.Create(RecPath, Rec));
