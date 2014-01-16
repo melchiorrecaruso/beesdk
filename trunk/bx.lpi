@@ -85,15 +85,15 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="10">
+    <Units Count="11">
       <Unit0>
         <Filename Value="bx.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BX"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="35" Y="26"/>
+        <TopLine Value="50"/>
+        <CursorPos X="61" Y="57"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -106,51 +106,51 @@
         <TopLine Value="18"/>
         <CursorPos X="24" Y="68"/>
         <FoldState Value=" T3ja061v"/>
-        <UsageCount Value="132"/>
+        <UsageCount Value="136"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="bx-src\bx_archiver.pas"/>
         <UnitName Value="bx_archiver"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="35" Y="26"/>
-        <UsageCount Value="20"/>
+        <TopLine Value="49"/>
+        <CursorPos X="21" Y="39"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
         <Filename Value="bx-src\bx_common.pas"/>
         <UnitName Value="bx_common"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="394"/>
         <CursorPos X="3" Y="396"/>
-        <UsageCount Value="17"/>
+        <UsageCount Value="19"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
         <Filename Value="bx-src\bx_stream.pas"/>
         <UnitName Value="bx_stream"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="117"/>
         <CursorPos X="3" Y="133"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="15"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
         <Filename Value="bx-src\bx_dirscanner.pas"/>
         <UnitName Value="bx_dirscanner"/>
-        <EditorIndex Value="5"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="33" Y="26"/>
-        <UsageCount Value="13"/>
+        <TopLine Value="114"/>
+        <CursorPos X="1" Y="122"/>
+        <UsageCount Value="15"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
@@ -161,44 +161,55 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="35" Y="26"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
         <Filename Value="bx-src\bx_cipher.pas"/>
         <UnitName Value="bx_cipher"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="35" Y="26"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="12"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
       <Unit8>
         <Filename Value="bx-src\libbx_bee_common.pas"/>
         <UnitName Value="libbx_bee_common"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="35" Y="29"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="12"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
         <Filename Value="bx-src\bx_compiler.inc"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
+        <TopLine Value="2"/>
         <CursorPos X="4" Y="27"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="12"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
+      <Unit10>
+        <Filename Value="bx-src\bx_application.pas"/>
+        <UnitName Value="bx_application"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="575"/>
+        <CursorPos X="9" Y="609"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit10>
     </Units>
-    <JumpHistory Count="19" HistoryIndex="18">
+    <JumpHistory Count="22" HistoryIndex="21">
       <Position1>
         <Filename Value="bx-src\bx_archiver.pas"/>
         <Caret Line="961" Column="88" TopLine="946"/>
@@ -275,6 +286,18 @@
         <Filename Value="bx-src\bx_stream.pas"/>
         <Caret Line="26" Column="35" TopLine="1"/>
       </Position19>
+      <Position20>
+        <Filename Value="bx-src\bx_application.pas"/>
+        <Caret Line="606" Column="5" TopLine="575"/>
+      </Position20>
+      <Position21>
+        <Filename Value="bx-src\bx_dirscanner.pas"/>
+        <Caret Line="62" Column="23" TopLine="58"/>
+      </Position21>
+      <Position22>
+        <Filename Value="bx.lpr"/>
+        <Caret Line="26" Column="35" TopLine="1"/>
+      </Position22>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -297,10 +320,17 @@
       </SyntaxOptions>
     </Parsing>
     <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
       <Optimizations>
-        <OptimizationLevel Value="0"/>
+        <OptimizationLevel Value="3"/>
       </Optimizations>
     </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <GenerateDebugInfo Value="False"/>
+      </Debugging>
+      <LinkSmart Value="True"/>
+    </Linking>
     <Other>
       <Verbosity>
         <ShowNotes Value="False"/>

@@ -604,13 +604,16 @@ begin
     for I := 0 to FCommandLine.SwitchX.Count - 1 do
       Scanner.Delete(FCommandLine.SwitchX[I], FCommandLine.SwitchRX[I]);
     Scanner.Sort(@CompareCustomSearchRec);
+
+    Writeln('TERMINATED SCAN');
+
+
     for I := 0 to Scanner.Count - 1 do
     begin
-      UpdateItem(Scanner.Items[I]);
-
       if ExitStatus <> esNoError then Break;
+      UpdateItem(Scanner.Items[I]);
     end;
-    FArchiver.UpdateTagged;
+    // FArchiver.UpdateTagged;
     FreeAndNil(Scanner);
   end;
   CloseArchive;
