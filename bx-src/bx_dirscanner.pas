@@ -122,13 +122,15 @@ procedure TDirScanner.AddItem(const RecPath: string; const Rec: TSearchRec);
 var
   L, M, H, I: longint;
 begin
-    L :=  0;
-    M := -2;
-    H := List.Count - 1;
+  if FList.Count <> 0 then
+  begin
+    L := 0;
+    H := FList.Count - 1;
     while H >= L do
     begin
       M := (L + H) div 2;
-      I := Compare(THeader(List[M]), Item);
+      I := AnsiCompareFileName(
+        TDirScannerItem(FList[M]).FFileName, RecPath + Rec.Name);
       if I < 0 then
         L := M + 1
       else
@@ -138,44 +140,42 @@ begin
           H := -2;
     end;
 
-    if M = -2 then
-      List.Add(Item)
+    if I < 0 then
+      FList.Insert(M + 1, TDirScannerItem.Create(RecPath, Rec))
     else
-      if H = -2 then
-      begin
-        List.Insert(M + 1, Item);
-      end else
-      begin
-        if I < 0 then
-          List.Insert(M + 1, Item)
-        else
-          List.Insert(M, Item);
-      end;
-  end;
+      if I > 0 then
+        FList.Insert(M, TDirScannerItem.Create(RecPath, Rec));
 
-
-
-
-
-
-  if Find(RecPath + Rec.Name) = -1 then
-  begin
+  end else
     FList.Add(TDirScannerItem.Create(RecPath, Rec));
-  end;
 end;
 
 function TDirScanner.Find(const FileName: string): longint;
 var
-  I: longint;
+  L, M, H, I: longint;
 begin
-  Result := -1;
-  for I := 0 to GetCount - 1 do
-    if AnsiCompareFileName(FileName, Items[I].FileName) = 0 then
-    begin
-      Result := I;
-      Break;
-    end;
+  L := 0;
+  H := FList.Count - 1;
+  while H >= L do
+  begin
+    M := (L + H) div 2;
+    I := AnsiCompareFileName(
+      TDirScannerItem(FList[M]).FileName, FileName);
+    if I < 0 then
+      L := M + 1
+    else
+      if I > 0 then
+        H := M - 1
+      else
+        H := -2;
+  end;
+
+  if H = -2 then
+    Result := M
+  else
+    Result := -1;
 end;
+
 
 procedure TDirScanner.Scan(const FilePath, FileMask: string; Recursive: boolean);
 var

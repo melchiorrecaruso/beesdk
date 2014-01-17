@@ -92,8 +92,8 @@
         <UnitName Value="BX"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="50"/>
-        <CursorPos X="61" Y="57"/>
+        <TopLine Value="48"/>
+        <CursorPos X="1" Y="82"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -106,7 +106,7 @@
         <TopLine Value="18"/>
         <CursorPos X="24" Y="68"/>
         <FoldState Value=" T3ja061v"/>
-        <UsageCount Value="136"/>
+        <UsageCount Value="139"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -116,7 +116,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="49"/>
         <CursorPos X="21" Y="39"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
@@ -127,7 +127,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="394"/>
         <CursorPos X="3" Y="396"/>
-        <UsageCount Value="19"/>
+        <UsageCount Value="20"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
@@ -138,19 +138,19 @@
         <WindowIndex Value="0"/>
         <TopLine Value="117"/>
         <CursorPos X="3" Y="133"/>
-        <UsageCount Value="15"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
         <Filename Value="bx-src\bx_dirscanner.pas"/>
         <UnitName Value="bx_dirscanner"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="114"/>
-        <CursorPos X="1" Y="122"/>
-        <UsageCount Value="15"/>
+        <TopLine Value="120"/>
+        <CursorPos X="32" Y="138"/>
+        <FoldState Value=" T3jC042h"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
@@ -161,7 +161,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="35" Y="26"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
@@ -172,7 +172,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="35" Y="26"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
@@ -183,7 +183,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="35" Y="29"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
@@ -193,111 +193,145 @@
         <WindowIndex Value="0"/>
         <TopLine Value="2"/>
         <CursorPos X="4" Y="27"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
         <Filename Value="bx-src\bx_application.pas"/>
         <UnitName Value="bx_application"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="575"/>
-        <CursorPos X="9" Y="609"/>
-        <UsageCount Value="12"/>
+        <CursorPos X="9" Y="612"/>
+        <FoldState Value=" T3j30S5 pibja0{911[C4YoK033="/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
     </Units>
-    <JumpHistory Count="22" HistoryIndex="21">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="bx-src\bx_archiver.pas"/>
-        <Caret Line="961" Column="88" TopLine="946"/>
-      </Position1>
-      <Position2>
         <Filename Value="bx-src\bx_stream.pas"/>
         <Caret Line="129" Column="25" TopLine="113"/>
+      </Position1>
+      <Position2>
+        <Filename Value="bx-src\bx_common.pas"/>
+        <Caret Line="350" Column="39" TopLine="323"/>
       </Position2>
       <Position3>
         <Filename Value="bx-src\bx_common.pas"/>
-        <Caret Line="350" Column="39" TopLine="323"/>
+        <Caret Line="85" Column="10" TopLine="69"/>
       </Position3>
       <Position4>
         <Filename Value="bx-src\bx_common.pas"/>
-        <Caret Line="85" Column="10" TopLine="69"/>
+        <Caret Line="86" Column="10" TopLine="69"/>
       </Position4>
       <Position5>
         <Filename Value="bx-src\bx_common.pas"/>
-        <Caret Line="86" Column="10" TopLine="69"/>
+        <Caret Line="87" Column="10" TopLine="69"/>
       </Position5>
       <Position6>
         <Filename Value="bx-src\bx_common.pas"/>
-        <Caret Line="87" Column="10" TopLine="69"/>
+        <Caret Line="375" Column="10" TopLine="359"/>
       </Position6>
       <Position7>
         <Filename Value="bx-src\bx_common.pas"/>
-        <Caret Line="375" Column="10" TopLine="359"/>
+        <Caret Line="384" Column="10" TopLine="359"/>
       </Position7>
       <Position8>
-        <Filename Value="bx-src\bx_common.pas"/>
-        <Caret Line="384" Column="10" TopLine="359"/>
-      </Position8>
-      <Position9>
         <Filename Value="bx-src\bx_archiver.pas"/>
         <Caret Line="358" Column="67" TopLine="249"/>
+      </Position8>
+      <Position9>
+        <Filename Value="bx-src\bx_dirscanner.pas"/>
+        <Caret Line="94" Column="41" TopLine="85"/>
       </Position9>
       <Position10>
         <Filename Value="bx-src\bx_dirscanner.pas"/>
-        <Caret Line="94" Column="41" TopLine="85"/>
+        <Caret Line="47" Column="6" TopLine="31"/>
       </Position10>
       <Position11>
         <Filename Value="bx-src\bx_dirscanner.pas"/>
-        <Caret Line="47" Column="6" TopLine="31"/>
+        <Caret Line="54" Column="14" TopLine="31"/>
       </Position11>
       <Position12>
-        <Filename Value="bx-src\bx_dirscanner.pas"/>
-        <Caret Line="54" Column="14" TopLine="31"/>
-      </Position12>
-      <Position13>
         <Filename Value="bx-src\bx_archiver.pas"/>
         <Caret Line="591" Column="99" TopLine="584"/>
-      </Position13>
-      <Position14>
+      </Position12>
+      <Position13>
         <Filename Value="bx-src\bx_common.pas"/>
         <Caret Line="401" Column="23" TopLine="387"/>
+      </Position13>
+      <Position14>
+        <Filename Value="bx-src\bx_archiver.pas"/>
+        <Caret Line="594" Column="83" TopLine="584"/>
       </Position14>
       <Position15>
         <Filename Value="bx-src\bx_archiver.pas"/>
-        <Caret Line="594" Column="83" TopLine="584"/>
+        <Caret Line="493" Column="100" TopLine="482"/>
       </Position15>
       <Position16>
-        <Filename Value="bx-src\bx_archiver.pas"/>
-        <Caret Line="493" Column="100" TopLine="482"/>
+        <Filename Value="bx.lpr"/>
+        <Caret Line="25" Column="15" TopLine="1"/>
       </Position16>
       <Position17>
         <Filename Value="bx.lpr"/>
-        <Caret Line="25" Column="15" TopLine="1"/>
+        <Caret Line="82" Column="1" TopLine="50"/>
       </Position17>
       <Position18>
-        <Filename Value="bx.lpr"/>
-        <Caret Line="82" Column="1" TopLine="50"/>
-      </Position18>
-      <Position19>
         <Filename Value="bx-src\bx_stream.pas"/>
         <Caret Line="26" Column="35" TopLine="1"/>
-      </Position19>
-      <Position20>
+      </Position18>
+      <Position19>
         <Filename Value="bx-src\bx_application.pas"/>
         <Caret Line="606" Column="5" TopLine="575"/>
-      </Position20>
-      <Position21>
+      </Position19>
+      <Position20>
         <Filename Value="bx-src\bx_dirscanner.pas"/>
         <Caret Line="62" Column="23" TopLine="58"/>
-      </Position21>
-      <Position22>
+      </Position20>
+      <Position21>
         <Filename Value="bx.lpr"/>
         <Caret Line="26" Column="35" TopLine="1"/>
+      </Position21>
+      <Position22>
+        <Filename Value="bx-src\bx_dirscanner.pas"/>
+        <Caret Line="122" Column="1" TopLine="120"/>
       </Position22>
+      <Position23>
+        <Filename Value="bx-src\bx_dirscanner.pas"/>
+        <Caret Line="139" Column="32" TopLine="109"/>
+      </Position23>
+      <Position24>
+        <Filename Value="bx-src\bx_dirscanner.pas"/>
+        <Caret Line="128" Column="55" TopLine="117"/>
+      </Position24>
+      <Position25>
+        <Filename Value="bx-src\bx_dirscanner.pas"/>
+        <Caret Line="144" Column="24" TopLine="126"/>
+      </Position25>
+      <Position26>
+        <Filename Value="bx-src\bx_dirscanner.pas"/>
+        <Caret Line="139" Column="42" TopLine="129"/>
+      </Position26>
+      <Position27>
+        <Filename Value="bx-src\bx_dirscanner.pas"/>
+        <Caret Line="142" Column="54" TopLine="127"/>
+      </Position27>
+      <Position28>
+        <Filename Value="bx-src\bx_dirscanner.pas"/>
+        <Caret Line="137" Column="40" TopLine="127"/>
+      </Position28>
+      <Position29>
+        <Filename Value="bx-src\bx_dirscanner.pas"/>
+        <Caret Line="176" Column="15" TopLine="146"/>
+      </Position29>
+      <Position30>
+        <Filename Value="bx.lpr"/>
+        <Caret Line="57" Column="61" TopLine="48"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
