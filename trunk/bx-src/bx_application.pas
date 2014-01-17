@@ -605,9 +605,6 @@ begin
       Scanner.Delete(FCommandLine.SwitchX[I], FCommandLine.SwitchRX[I]);
     Scanner.Sort(@CompareCustomSearchRec);
 
-    Writeln('TERMINATED SCAN');
-
-
     for I := 0 to Scanner.Count - 1 do
     begin
       if ExitStatus <> esNoError then Break;
