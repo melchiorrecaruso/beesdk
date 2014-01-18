@@ -176,7 +176,6 @@ begin
     Result := -1;
 end;
 
-
 procedure TDirScanner.Scan(const FilePath, FileMask: string; Recursive: boolean);
 var
   Error: longint;

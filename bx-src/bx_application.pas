@@ -52,6 +52,7 @@ type
   TBxApplication = class(TObject)
   private
     FArchiver: TArchiver;
+    FArchiveItemFinder: TArchiveItemFinder;
     FAssumeValueOnAllQueries: TBxAssumeValueOnAllQueries;
     FCommandLine: TCommandLineParser;
     FUpdateMethod: TUpdateMethod;
@@ -115,10 +116,13 @@ begin
     else
       FAssumeValueOnAllQueries := avNo;
   end;
+  { create archive item finder }
+  FArchiveItemFinder := TArchiveItemFinder.Create;
 end;
 
 destructor TBxApplication.Destroy;
 begin
+  FArchiveItemFinder.Destroy;
   FCommandLine.Destroy;
   FArchiver.Destroy;
   inherited Destroy;
@@ -303,6 +307,7 @@ end;
 
 procedure TBxApplication.RenameItem(Item: TArchiveItem);
 var
+  I: longint;
   RenameAs: string;
 begin
   Item.UnTag;
@@ -312,9 +317,14 @@ begin
 
     if RenameAs <> '' then
     begin
-      if FArchiver.Find(RenameAs) = nil then
+      I := FArchiveItemFinder.Find(RenameAs);
+      if I = -1 then
       begin
         Item.FileName := RenameAs;
+
+
+
+
         Item.Tag;
         Break;
       end;
@@ -337,7 +347,7 @@ var
   ItemName: string;
 begin
   ItemName := FCommandLine.SwitchCD + Rec.FileName;
-  Item     := FArchiver.Find(ItemName);
+  Item     := FArchiveItemFinder.Find(ItemName);
   // Update method...
   case FUpdateMethod of
     umAdd: begin
@@ -381,7 +391,7 @@ begin
     end;
     umAddAutoRename: begin
       Index := 0;
-      while FArchiver.Find(GenerateAltFileName(ItemName, Index)) <> nil do
+      while FArchiveItemFinder.Find(GenerateAltFileName(ItemName, Index)) <> nil do
       begin
         Inc(Index);
       end;
@@ -786,4 +796,4 @@ begin
 end;
 
 end.
-
+

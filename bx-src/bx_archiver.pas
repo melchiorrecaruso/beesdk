@@ -197,6 +197,24 @@ type
     property ExternalFileSize: int64  read FExternalFileSize write FExternalFileSize;
   end;
 
+  /// archive item finder
+  TArchiveItemFinder = class(TObject)
+  private
+    FItems: TList;
+    function GetCount: longint;
+    function GetItem(Index: longint): TArchiveItem;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure Add(Item: TArchiveItem);
+    procedure Clear;
+    procedure Delete(Index: longint);
+    function Find(const FileName: string): longint;
+  public
+    property Count: longint read GetCount;
+    property Items[Index: longint]: TArchiveItem read GetItem;
+  end;
+
   /// archive central directory
   TArchiveCentralDirectory = class(TObject)
   private
@@ -215,6 +233,7 @@ type
   private
     function GetCount: longint;
     function GetItem(Index: longint): TArchiveItem;
+
     procedure Pack;
     procedure UnPack;
   public
@@ -325,7 +344,6 @@ type
     procedure UpdateTagged;
 
     function Add(const aItemName: string): TArchiveItem;
-    function Find(const aItemName: string): TArchiveItem;
 
     procedure Suspend(Value: boolean);
     procedure Terminate;
@@ -614,14 +632,108 @@ begin
   if (aefEncryptionMethod in FEncryptionFlags) then Stream.WriteInfWord(FEncryptionMethod);
 end;
 
+// TArchiveItemFinder class
+
+constructor TArchiveItemFinder.Create;
+begin
+  inherited Create;
+  FItems := TList.Create;
+end;
+
+destructor TArchiveItemFinder.Destroy;
+begin
+  Clear;
+  FItems.Destroy;
+  inherited Destroy;
+end;
+
+procedure TArchiveItemFinder.Clear;
+begin
+  FItems.Clear;
+end;
+
+procedure TArchiveItemFinder.Delete(Index: longint);
+begin
+  FItems.Delete(Index);
+end;
+
+procedure TArchiveItemFinder.Add(Item: TArchiveItem);
+var
+  L, M, H, I: longint;
+begin
+  if FItems.Count <> 0 then
+  begin
+    L := 0;
+    H := FItems.Count - 1;
+    while H >= L do
+    begin
+      M := (L + H) div 2;
+      I := AnsiCompareFileName(
+        TArchiveItem(FItems[M]).FFileName, Item.FFileName);
+      if I < 0 then
+        L := M + 1
+      else
+        if I > 0 then
+          H := M - 1
+        else
+          H := -2;
+    end;
+
+    if I < 0 then
+      FItems.Insert(M + 1, Item)
+    else
+      if I > 0 then
+        FItems.Insert(M, Item)
+      else
+        SetExitStatus(esArchiveCDError);
+
+  end else
+    FItems.Add(Item);
+end;
+
+function TArchiveItemFinder.Find(const FileName: string): longint;
+var
+  L, M, H, I: longint;
+begin
+  L := 0;
+  H := FItems.Count - 1;
+  while H >= L do
+  begin
+    M := (L + H) div 2;
+    I := AnsiCompareFileName(
+      TArchiveItem(FItems[M]).FFileName, FileName);
+    if I < 0 then
+      L := M + 1
+    else
+      if I > 0 then
+        H := M - 1
+      else
+        H := -2;
+  end;
+
+  if H = -2 then
+    Result := M
+  else
+    Result := -1;
+end;
+
+function TArchiveItemFinder.GetCount: longint;
+begin
+  Result := FItems.Count;
+end;
+
+function TArchiveItemFinder.GetItem(Index: longint): TArchiveItem;
+begin
+  Result := TArchiveItem(FItems[Index]);
+end;
+
 // TArchiveCentralDirectory class
 
 constructor TArchiveCentralDirectory.Create;
 begin
   inherited Create;
-  FItems            := TList.Create;
-  FLastModifiedTime :=  0;
-  FComment          := '';
+  FItems := TList.Create;
+  Clear;
 end;
 
 destructor TArchiveCentralDirectory.Destroy;
@@ -636,11 +748,13 @@ var
   I: longint;
 begin
   for I := 0 to FItems.Count - 1 do
+  begin
     TArchiveItem(FItems[I]).Destroy;
+  end;
   FItems.Clear;
 
   FLastModifiedTime :=  0;
-  FComment          := '';
+  FComment := '';
 end;
 
 procedure TArchiveCentralDirectory.Pack;
@@ -737,8 +851,8 @@ begin
     if Index < FItems.Count - 1 then
       Items[Index + 1].FCompressionBlock := 0;
 
-  FreeandNil(Item);
   FItems.Delete(Index);
+  FreeandNil(Item);
 end;
 
 function TArchiveCentralDirectory.GetCount: longint;
@@ -1526,19 +1640,6 @@ begin
   begin
     FCentralDirectory.Add(Result);
   end;
-end;
-
-function TArchiver.Find(const aItemName: string): TArchiveItem;
-var
-  I: longint;
-begin
-  Result := nil;
-  for I := 0 to GetCount - 1 do
-    if AnsiCompareFileName(GetItem(I).FileName, aItemName) = 0 then
-    begin
-      Result := GetItem(I);
-      Break;
-    end;
 end;
 
 procedure TArchiver.CheckTags;
