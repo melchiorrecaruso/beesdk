@@ -52,7 +52,7 @@ type
   TBxApplication = class(TObject)
   private
     FArchiver: TArchiver;
-    FArchiveItemFinder: TArchiveItemFinder;
+    FArchiveFinder: TArchiveItemFinder;
     FAssumeValueOnAllQueries: TBxAssumeValueOnAllQueries;
     FCommandLine: TCommandLineParser;
     FUpdateMethod: TUpdateMethod;
@@ -117,12 +117,12 @@ begin
       FAssumeValueOnAllQueries := avNo;
   end;
   { create archive item finder }
-  FArchiveItemFinder := TArchiveItemFinder.Create;
+  FArchiveFinder := TArchiveItemFinder.Create;
 end;
 
 destructor TBxApplication.Destroy;
 begin
-  FArchiveItemFinder.Destroy;
+  FArchiveFinder.Destroy;
   FCommandLine.Destroy;
   FArchiver.Destroy;
   inherited Destroy;
@@ -317,7 +317,7 @@ begin
 
     if RenameAs <> '' then
     begin
-      I := FArchiveItemFinder.Find(RenameAs);
+      I := FArchiveFinder.Find(RenameAs);
       if I = -1 then
       begin
         Item.FileName := RenameAs;
@@ -347,14 +347,19 @@ var
   ItemName: string;
 begin
   ItemName := FCommandLine.SwitchCD + Rec.FileName;
-  Item     := FArchiveItemFinder.Find(ItemName);
+  Index := FArchiveFinder.Find(ItemName);
+  if Index <> -1 then
+    Item := FArchiveFinder.Items[Index]
+  else
+    Item := nil;
+
   // Update method...
   case FUpdateMethod of
     umAdd: begin
       if Item = nil then
       begin
-        Item := FArchiver.Add(ItemName);
-        Item.Tag(Rec);
+        Item := TArchiveItem.Create(ItemName);
+        FArchiveFinder.Add(FArchiver.Add(Item)).Tag(Rec);
       end;
     end;
     umReplace: begin
@@ -373,8 +378,8 @@ begin
     umAddUpdate: begin
       if Item = nil then
       begin
-        Item := FArchiver.Add(ItemName);
-        Item.Tag(Rec);
+        Item := TArchiveItem.Create(ItemName);
+        FArchiveFinder.Add(FArchiver.Add(Item)).Tag(Rec);
       end else
         if Item.LastModifiedTime < Rec.FileTime then
         begin
@@ -384,25 +389,25 @@ begin
     umAddReplace: begin
       if Item = nil then
       begin
-        Item := FArchiver.Add(ItemName);
-        Item.Tag(Rec);
+        Item := TArchiveItem.Create(ItemName);
+        FArchiveFinder.Add(FArchiver.Add(Item)).Tag(Rec);
       end else
         Item.Tag(Rec);
     end;
     umAddAutoRename: begin
       Index := 0;
-      while FArchiveItemFinder.Find(GenerateAltFileName(ItemName, Index)) <> nil do
+      while FArchiveFinder.Find(GenerateAltFileName(ItemName, Index)) <> -1 do
       begin
         Inc(Index);
       end;
-      Item := FArchiver.Add(GenerateAltFileName(ItemName, Index));
-      Item.Tag(Rec);
+      Item := TArchiveItem.Create(ItemName);
+      FArchiveFinder.Add(FArchiver.Add(Item)).Tag(Rec);
     end;
     umAddQuery: begin
       if Item = nil then
       begin
-        Item := FArchiver.Add(ItemName);
-        Item.Tag(Rec);
+        Item := TArchiveItem.Create(ItemName);
+        FArchiveFinder.Add(FArchiver.Add(Item)).Tag(Rec);
       end else
         case QueryHowToUpdate('Overwrite "' + Item.FileName + '"? ') of
           'Y': Item.Tag(Rec);
@@ -417,13 +422,13 @@ begin
       if Item = nil then
         case QueryHowToUpdate('Add "' + ItemName + '"? ') of
           'Y': begin
-            Item := FArchiver.Add(ItemName);
-            Item.Tag(Rec);
+            Item := TArchiveItem.Create(ItemName);
+            FArchiveFinder.Add(FArchiver.Add(Item)).Tag(Rec);
           end;
           'N': ;// nothing to do
           'A': begin
-            Item := FArchiver.Add(ItemName);
-            Item.Tag(Rec);
+            Item := TArchiveItem.Create(ItemName);
+            FArchiveFinder.Add(FArchiver.Add(Item)).Tag(Rec);
           end;
           'S': ;// nothing to do
           'Q': ;// nothing to do
@@ -506,8 +511,12 @@ end;
 // --- //
 
 procedure TBxApplication.OpenArchive;
+var
+  I: longint;
 begin
   FArchiver.OpenArchive(FCommandLine.ArchiveName);
+  for I := 0 to FArchiver.Count - 1 do
+    FArchiveFinder.Add(FArchiver.Items[I]);
   // archive comment
   if swtACC in FCommandLine.Options then
     FArchiver.Comment := FCommandLine.SwitchACC.Text;
@@ -542,6 +551,7 @@ end;
 
 procedure TBxApplication.CloseArchive;
 begin
+  FArchiveFinder.Clear;
   FArchiver.CloseArchive;
 end;
 
@@ -551,17 +561,17 @@ procedure TBxApplication.TagItems;
 var
   I, J: longint;
 begin
-  for I := 0 to FArchiver.Count - 1 do
+  for I := 0 to FArchiveFinder.Count - 1 do
     for J := 0 to FCommandLine.FileMasks.Count - 1 do
-      if FileNameMatch(FArchiver.Items[I].FileName,
+      if FileNameMatch(FArchiveFinder.Items[I].FileName,
         FCommandLine.FileMasks[J], FCommandLine.SwitchR[J]) then
-          FArchiver.Items[I].Tag;
+          FArchiveFinder.Items[I].Tag;
 
-  for I := 0 to FArchiver.Count - 1 do
+  for I := 0 to FArchiveFinder.Count - 1 do
     for J := 0 to FCommandLine.SwitchX.Count - 1 do
-      if FileNameMatch(FArchiver.Items[I].FileName,
+      if FileNameMatch(FArchiveFinder.Items[I].FileName,
         FCommandLine.SwitchX[J], FCommandLine.SwitchRX[J]) then
-          FArchiver.Items[I].UnTag;
+          FArchiveFinder.Items[I].UnTag;
 end;
 
 procedure TBxApplication.CustomShell;

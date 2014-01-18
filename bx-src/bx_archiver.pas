@@ -206,7 +206,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Add(Item: TArchiveItem);
+    function Add(Item: TArchiveItem): TArchiveItem;
     procedure Clear;
     procedure Delete(Index: longint);
     function Find(const FileName: string): longint;
@@ -343,7 +343,7 @@ type
     procedure TestTagged;
     procedure UpdateTagged;
 
-    function Add(const aItemName: string): TArchiveItem;
+    function Add(Item: TArchiveItem): TArchiveItem;
 
     procedure Suspend(Value: boolean);
     procedure Terminate;
@@ -657,10 +657,12 @@ begin
   FItems.Delete(Index);
 end;
 
-procedure TArchiveItemFinder.Add(Item: TArchiveItem);
+function TArchiveItemFinder.Add(Item: TArchiveItem): TArchiveItem;
 var
   L, M, H, I: longint;
 begin
+  Result := Item;
+
   if FItems.Count <> 0 then
   begin
     L := 0;
@@ -1634,11 +1636,11 @@ end;
 
 // TArchiver # TAG #
 
-function TArchiver.Add(const aItemName: string): TArchiveItem;
+function TArchiver.Add(Item: TArchiveItem): TArchiveItem;
 begin
-  Result := TArchiveItem.Create(aItemName);
+  Result := Item;
   begin
-    FCentralDirectory.Add(Result);
+    FCentralDirectory.Add(Item);
   end;
 end;
 
