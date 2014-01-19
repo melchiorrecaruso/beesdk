@@ -114,7 +114,9 @@ var
   I: longint;
 begin
   for I := 0 to FList.Count - 1 do
+  begin
     TDirScannerItem(FList[I]).Destroy;
+  end;
   FList.Clear;
 end;
 
@@ -204,9 +206,12 @@ begin
   begin
     if (Rec.Attr and faDirectory) = faDirectory then
     begin
-      if (Rec.Attr and faSymLink) = 0 then
-        if (Rec.Name <> '.') and (Rec.Name <> '..') then
+      if (Rec.Name <> '.') and (Rec.Name <> '..') then
+      begin
+        // AddItem(RecPath, Rec);
+        if (Rec.Attr and faSymLink) = 0 then
           Scan(RecPath + Rec.Name, FileMask, Recursive);
+      end;
     end else
       if FileNameMatch(RecPath + Rec.Name, FileMask, Recursive) then
       begin

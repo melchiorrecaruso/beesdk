@@ -23,7 +23,7 @@
 
   Modifyed:
 
-    v1.0.0 build 2210 - 2014.01.15 by Melchiorre Caruso.
+    v1.0.0 build 2218 - 2014.01.19 by Melchiorre Caruso.
 
 }
 
@@ -60,9 +60,9 @@ type
     { Help routines}
     function  QueryHowToRename(const Message: string): string;
     function  QueryHowToUpdate(const Message: string): char;
-    procedure ExtractItem(Item: TArchiveItem);
-    procedure RenameItem (Item: TArchiveItem);
-    procedure UpdateItem(Rec: TDirScannerItem);
+    procedure ExtractItem(Index: longint);
+    procedure RenameItem (Index: longint);
+    procedure UpdateItem (Rec: TDirScannerItem);
     { Events routines}
     procedure DoMessage(const Message: string);
     procedure DoPercentage(Percentage: longint);
@@ -72,11 +72,14 @@ type
     procedure OpenArchive;
     procedure CloseArchive;
     { shells routines}
-    procedure CustomShell;
-    procedure EncodeShell;
-    procedure RenameShell;
+    procedure DeleteShell;
+    procedure ExtractShell;
     procedure HelpShell;
     procedure ListShell;
+    procedure QuickShell;
+    procedure RenameShell;
+    procedure TestShell;
+    procedure UpdateShell;
   public
     constructor Create;
     destructor Destroy; override;
@@ -137,19 +140,21 @@ begin
   DoMessage('The BX 1.0.0 archiver utility, Copyright (c) 2014 Melchiorre Caruso.');
   if ExitStatus = esNoError then
     case FCommandLine.Command of
-      cmdA: EncodeShell;
-      cmdD: CustomShell;
-      cmdE: CustomShell;
+      cmdA: UpdateShell;
+      cmdD: DeleteShell;
+      cmdE: ExtractShell;
       cmdH: HelpShell;
       cmdL: ListShell;
-      cmdQ: CustomShell;
+      cmdQ: TestShell;
       cmdR: RenameShell;
-      cmdT: CustomShell;
-      cmdX: CustomShell;
+      cmdT: TestShell;
+      cmdX: ExtractShell;
     end;
 
   if FCommandLine.Command <> cmdH then
+  begin
     DoMessage(LineEnding + Format(GetExitMessage, [TimeDifference(StartTime)]));
+  end;
 end;
 
 procedure TBxApplication.Terminate;
@@ -213,10 +218,12 @@ begin
   end;
 end;
 
-procedure TBxApplication.ExtractItem(Item: TArchiveItem);
+procedure TBxApplication.ExtractItem(Index: longint);
 var
-  Index: longint;
+  Count: longint;
+  Item: TArchiveItem;
 begin
+  Item := FArchiveFinder.Items[Index];
   if FCommandLine.Command = cmdE then
     Item.ExternalFileName := ExtractFileName(Item.FileName)
   else
@@ -260,12 +267,12 @@ begin
       Item.Tag;
     end;
     umAddAutoRename: begin
-      Index := 0;
-      while FileExists(GenerateAltFileName(Item.ExternalFileName, Index)) = TRUE do
+      Count := 0;
+      while FileExists(GenerateAltFileName(Item.ExternalFileName, Count)) = TRUE do
       begin
-        Inc(Index);
+        Inc(Count);
       end;
-      Item.ExternalFileName := GenerateAltFileName(Item.ExternalFileName, Index);
+      Item.ExternalFileName := GenerateAltFileName(Item.ExternalFileName, Count);
       Item.Tag;
     end;
     umAddQuery: begin
@@ -279,7 +286,7 @@ begin
           'A': Item.Tag;
           'S': ;// nothing to do
           'Q': ;// nothing to do
-          else ExtractItem(Item);
+          else ExtractItem(Index);
         end;
     end;
     umQuery: begin
@@ -290,7 +297,7 @@ begin
           'A': Item.Tag;
           'S': ;// nothing to do
           'Q': ;// nothing to do
-          else ExtractItem(Item);
+          else ExtractItem(Index);
         end
       else
         case QueryHowToUpdate('Overwrite "' + Item.ExternalFileName + '"? ') of
@@ -299,17 +306,18 @@ begin
           'A': Item.Tag;
           'S': ;// nothing to do
           'Q': ;// nothing to do
-          else ExtractItem(Item);
+          else ExtractItem(Index);
         end;
     end;
   end;
 end;
 
-procedure TBxApplication.RenameItem(Item: TArchiveItem);
+procedure TBxApplication.RenameItem(Index: longint);
 var
-  I: longint;
+  Item: TArchiveItem;
   RenameAs: string;
 begin
+  Item := FArchiveFinder.Items[Index];
   Item.UnTag;
   repeat
     RenameAs := QueryHowToRename('Rename file "' +
@@ -317,15 +325,13 @@ begin
 
     if RenameAs <> '' then
     begin
-      I := FArchiveFinder.Find(RenameAs);
-      if I = -1 then
+      if FArchiveFinder.Find(RenameAs) = -1 then
       begin
         Item.FileName := RenameAs;
-
-
-
-
         Item.Tag;
+
+        FArchiveFinder.Delete(Index);
+        FArchiveFinder.Add(Item);
         Break;
       end;
     end else
@@ -342,14 +348,15 @@ end;
 
 procedure TBxApplication.UpdateItem(Rec: TDirScannerItem);
 var
-  Index: longint;
+  Count: longint;
   Item: TArchiveItem;
+  ItemIndex: longint;
   ItemName: string;
 begin
-  ItemName := FCommandLine.SwitchCD + Rec.FileName;
-  Index := FArchiveFinder.Find(ItemName);
-  if Index <> -1 then
-    Item := FArchiveFinder.Items[Index]
+  ItemName  := FCommandLine.SwitchCD + Rec.FileName;
+  ItemIndex := FArchiveFinder.Find(ItemName);
+  if ItemIndex <> -1 then
+    Item := FArchiveFinder.Items[ItemIndex]
   else
     Item := nil;
 
@@ -395,12 +402,12 @@ begin
         Item.Tag(Rec);
     end;
     umAddAutoRename: begin
-      Index := 0;
-      while FArchiveFinder.Find(GenerateAltFileName(ItemName, Index)) <> -1 do
+      Count := 0;
+      while FArchiveFinder.Find(GenerateAltFileName(ItemName, Count)) <> -1 do
       begin
-        Inc(Index);
+        Inc(Count);
       end;
-      Item := TArchiveItem.Create(ItemName);
+      Item := TArchiveItem.Create(GenerateAltFileName(ItemName, Count));
       FArchiveFinder.Add(FArchiver.Add(Item)).Tag(Rec);
     end;
     umAddQuery: begin
@@ -557,6 +564,36 @@ end;
 
 { shell procedures }
 
+function CompareFileExt(P1, P2: pointer): longint;
+begin
+  Result := AnsiCompareText(
+    ExtractFileExt(TDirScannerItem(P1).FileName),
+    ExtractFileExt(TDirScannerItem(P2).FileName));
+
+  if Result = 0 then
+  begin
+    if TDirScannerItem(P1).FileSize > TDirScannerItem(P2).FileSize then
+      Result := - 1
+    else
+      if TDirScannerItem(P1).FileSize < TDirScannerItem(P2).FileSize then
+        Result := 1;
+  end;
+end;
+
+function CompareFilePath(P1, P2: pointer): longint;
+begin
+  Result := AnsiCompareFileName(
+    ExtractFilePath(TArchiveItem(P1).FileName),
+    ExtractFilePath(TArchiveItem(P2).FileName));
+
+  if Result = 0 then
+  begin
+    Result := AnsiCompareFileName(
+      ExtractFileName(TArchiveItem(P1).FileName),
+      ExtractFileName(TArchiveItem(P2).FileName));
+  end;
+end;
+
 procedure TBxApplication.TagItems;
 var
   I, J: longint;
@@ -574,88 +611,38 @@ begin
           FArchiveFinder.Items[I].UnTag;
 end;
 
-procedure TBxApplication.CustomShell;
+procedure TBxApplication.DeleteShell;
 begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, []));
     TagItems;
-    case FCommandLine.Command of
-      cmdD: FArchiver. DeleteTagged;
-      cmdE: FArchiver.ExtractTagged;
-      cmdQ: FArchiver.   TestTagged;
-      cmdT: FArchiver.   TestTagged;
-      cmdX: FArchiver.ExtractTagged;
-    end;
+
+    FArchiver. DeleteTagged;
   end;
   CloseArchive;
 end;
 
-function CompareCustomSearchRec(P1, P2: pointer): longint;
-begin
-  Result := AnsiCompareText(
-    ExtractFileExt(TDirScannerItem(P1).FileName),
-    ExtractFileExt(TDirScannerItem(P2).FileName));
-
-  if Result = 0 then
-  begin
-    if TDirScannerItem(P1).FileSize > TDirScannerItem(P2).FileSize then
-      Result := - 1
-    else
-      if TDirScannerItem(P1).FileSize < TDirScannerItem(P2).FileSize then
-        Result := 1;
-  end;
-end;
-
-procedure TBxApplication.EncodeShell;
+procedure TBxApplication.ExtractShell;
 var
   I: longint;
-  Scanner: TDirScanner;
 begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, []));
+    TagItems;
 
-    Scanner := TDirScanner.Create;
-    for I := 0 to FCommandLine.FileMasks.Count - 1 do
-      Scanner.Add(FCommandLine.FileMasks[I], FCommandLine.SwitchR[I]);
-    for I := 0 to FCommandLine.SwitchX.Count - 1 do
-      Scanner.Delete(FCommandLine.SwitchX[I], FCommandLine.SwitchRX[I]);
-    Scanner.Sort(@CompareCustomSearchRec);
-
-    for I := 0 to Scanner.Count - 1 do
+    for I := 0 to FArchiveFinder.Count - 1 do
     begin
       if ExitStatus <> esNoError then Break;
-      UpdateItem(Scanner.Items[I]);
-    end;
-    // FArchiver.UpdateTagged;
-    FreeAndNil(Scanner);
-  end;
-  CloseArchive;
-end;
-
-procedure TBxApplication.RenameShell;
-var
-  I: longint;
-  Item: TArchiveItem;
-begin
-  OpenArchive;
-  if ExitStatus = esNoError then
-  begin
-    DoMessage(Format(cmScanning, []));
-    TagItems;
-    for I := 0 to FArchiver.Count - 1 do
-    begin
-      Item := FArchiver.Items[I];
-      if Item.Tagged then
+      if FArchiveFinder.Items[I].Tagged then
       begin
-        RenameItem(Item);
+        ExtractItem(I);
       end;
-      if ExitStatus <> esNoError then Break;
     end;
-    FArchiver. RenameTagged;
+    FArchiver.ExtractTagged;
   end;
   CloseArchive;
 end;
@@ -692,20 +679,6 @@ begin
   DoMessage('  -w: set temporary work directory');
   DoMessage('  -x: exclude filenames');
   DoMessage('  -y: assume yes on all queries' + LineEnding);
-end;
-
-function CompareFilePath(P1, P2: pointer): longint;
-begin
-  Result := AnsiCompareFileName(
-    ExtractFilePath(TArchiveItem(P1).FileName),
-    ExtractFilePath(TArchiveItem(P2).FileName));
-
-  if Result = 0 then
-  begin
-    Result := AnsiCompareFileName(
-      ExtractFileName(TArchiveItem(P1).FileName),
-      ExtractFileName(TArchiveItem(P2).FileName));
-  end;
 end;
 
 procedure TBxApplication.ListShell;
@@ -801,6 +774,86 @@ begin
     end;
     DoMessage(Format(LineEnding + 'Last modified time: %16s', [bx_Common.FileTimeToString(FArchiver.LastModifiedTime)]));
     ItemToList.Destroy;
+  end;
+  CloseArchive;
+end;
+
+procedure TBxApplication.QuickShell;
+var
+  I: longint;
+begin
+  OpenArchive;
+  if ExitStatus = esNoError then
+  begin
+    DoMessage(Format(cmScanning, []));
+    TagItems;
+
+    FArchiver.TestTagged;
+  end;
+  CloseArchive;
+end;
+
+procedure TBxApplication.RenameShell;
+var
+  I: longint;
+begin
+  OpenArchive;
+  if ExitStatus = esNoError then
+  begin
+    DoMessage(Format(cmScanning, []));
+    TagItems;
+
+    for I := 0 to FArchiveFinder.Count - 1 do
+    begin
+      if ExitStatus <> esNoError then Break;
+      if FArchiveFinder.Items[I].Tagged then
+      begin
+        RenameItem(I);
+      end;
+    end;
+    FArchiver. RenameTagged;
+  end;
+  CloseArchive;
+end;
+
+procedure TBxApplication.TestShell;
+var
+  I: longint;
+begin
+  OpenArchive;
+  if ExitStatus = esNoError then
+  begin
+    DoMessage(Format(cmScanning, []));
+    TagItems;
+
+    FArchiver.TestTagged;
+  end;
+  CloseArchive;
+end;
+
+procedure TBxApplication.UpdateShell;
+var
+  I: longint;
+  Scanner: TDirScanner;
+begin
+  OpenArchive;
+  if ExitStatus = esNoError then
+  begin
+    DoMessage(Format(cmScanning, []));
+    Scanner := TDirScanner.Create;
+    for I := 0 to FCommandLine.FileMasks.Count - 1 do
+      Scanner.Add(FCommandLine.FileMasks[I], FCommandLine.SwitchR[I]);
+    for I := 0 to FCommandLine.SwitchX.Count - 1 do
+      Scanner.Delete(FCommandLine.SwitchX[I], FCommandLine.SwitchRX[I]);
+    Scanner.Sort(@CompareFileExt);
+
+    for I := 0 to Scanner.Count - 1 do
+    begin
+      if ExitStatus <> esNoError then Break;
+      UpdateItem(Scanner.Items[I]);
+    end;
+    FArchiver.UpdateTagged;
+    FreeAndNil(Scanner);
   end;
   CloseArchive;
 end;
