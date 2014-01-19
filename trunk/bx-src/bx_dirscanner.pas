@@ -214,9 +214,10 @@ begin
       end;
     end else
       if FileNameMatch(RecPath + Rec.Name, FileMask, Recursive) then
-      begin
-        AddItem(RecPath, Rec);
-      end;
+        if (Rec.Attr and faSymLink) = 0 then
+        begin
+          AddItem(RecPath, Rec);
+        end;
 
     Error := FindNext(Rec);
   end; // end while error ...
@@ -275,4 +276,4 @@ begin
 end;
 
 end.
-
+
