@@ -750,9 +750,7 @@ var
   I: longint;
 begin
   for I := 0 to FItems.Count - 1 do
-  begin
     TArchiveItem(FItems[I]).Destroy;
-  end;
   FItems.Clear;
 
   FLastModifiedTime :=  0;
