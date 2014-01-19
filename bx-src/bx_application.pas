@@ -618,8 +618,9 @@ begin
   begin
     DoMessage(Format(cmScanning, []));
     TagItems;
-
-    FArchiver. DeleteTagged;
+    begin
+      FArchiver.DeleteTagged;
+    end;
   end;
   CloseArchive;
 end;
@@ -635,13 +636,12 @@ begin
     TagItems;
 
     for I := 0 to FArchiveFinder.Count - 1 do
-    begin
-      if ExitStatus <> esNoError then Break;
-      if FArchiveFinder.Items[I].Tagged then
-      begin
-        ExtractItem(I);
-      end;
-    end;
+      if ExitStatus = esNoError then
+        if FArchiveFinder.Items[I].Tagged then
+        begin
+          ExtractItem(I);
+        end;
+
     FArchiver.ExtractTagged;
   end;
   CloseArchive;
@@ -779,16 +779,15 @@ begin
 end;
 
 procedure TBxApplication.QuickShell;
-var
-  I: longint;
 begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, []));
     TagItems;
-
-    FArchiver.TestTagged;
+    begin
+      FArchiver.TestTagged;
+    end;
   end;
   CloseArchive;
 end;
@@ -804,29 +803,27 @@ begin
     TagItems;
 
     for I := 0 to FArchiveFinder.Count - 1 do
-    begin
-      if ExitStatus <> esNoError then Break;
-      if FArchiveFinder.Items[I].Tagged then
-      begin
-        RenameItem(I);
-      end;
-    end;
+      if ExitStatus = esNoError then
+        if FArchiveFinder.Items[I].Tagged then
+        begin
+          RenameItem(I);
+        end;
+
     FArchiver. RenameTagged;
   end;
   CloseArchive;
 end;
 
 procedure TBxApplication.TestShell;
-var
-  I: longint;
 begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, []));
     TagItems;
-
-    FArchiver.TestTagged;
+    begin
+      FArchiver.TestTagged;
+    end;
   end;
   CloseArchive;
 end;
@@ -848,10 +845,11 @@ begin
     Scanner.Sort(@CompareFileExt);
 
     for I := 0 to Scanner.Count - 1 do
-    begin
-      if ExitStatus <> esNoError then Break;
-      UpdateItem(Scanner.Items[I]);
-    end;
+      if ExitStatus = esNoError then
+      begin
+        UpdateItem(Scanner.Items[I]);
+      end;
+
     FArchiver.UpdateTagged;
     FreeAndNil(Scanner);
   end;
@@ -859,4 +857,4 @@ begin
 end;
 
 end.
-
+
