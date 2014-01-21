@@ -1159,32 +1159,60 @@ procedure TArchiver.EncodeFromFile(Item: TArchiveItem);
 var
   Source: TFileReader;
 begin
-  Source := TFileReader.Create(Item.FExternalFileName, nil);
-  Item.FImageSeek            := FTempWriter.Seek(0, fsFromCurrent);
-  Item.FImageNumber          := FTempWriter.CurrentImage;
-
-  Source.HashMethod          := Item.CheckMethod;
-  Source.CipherMethod        := 0;
-  Source.CoderMethod         := 0;
-
-  FTempWriter.HashMethod     := Item.CheckMethodAux;
-  FTempWriter.CipherMethod   := Item.EncryptionMethod;
-  FTempWriter.CipherPassword := ExtractEncryptionPassword(EncryptionParams);
-  FTempWriter.CoderMethod    := Item.CompressionMethod;
-  FTempWriter.CoderLevel     := Item.CompressionLevel;
-  FTempWriter.CoderLevelAux  := Item.CompressionLevelAux;
-  FTempWriter.CoderFilter    := Item.CompressionFilter;
-  FTempWriter.CoderFilterAux := Item.CompressionFilterAux;
-  FTempWriter.CoderBlock     := Item.CompressionBlock;
+  if (Item.FAttributes and SymLink) = 0 then
   begin
-    xxcode(Source, FTempWriter, Item.FExternalFileSize);
-  end;
-  Item.FCheckDigest          :=      Source.HashDigest;
-  Item.FCheckDigestAux       := FTempWriter.HashDigest;
-  Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FImageSeek;
-  Item.FUncompressedSize     := Item.FExternalFileSize;
+    Source := TFileReader.Create(Item.FExternalFileName, nil);
+    Item.FImageSeek            := FTempWriter.Seek(0, fsFromCurrent);
+    Item.FImageNumber          := FTempWriter.CurrentImage;
 
-  FreeAndNil(Source);
+    Source.HashMethod          := Item.CheckMethod;
+    Source.CipherMethod        := 0;
+    Source.CoderMethod         := 0;
+
+    FTempWriter.HashMethod     := Item.CheckMethodAux;
+    FTempWriter.CipherMethod   := Item.EncryptionMethod;
+    FTempWriter.CipherPassword := ExtractEncryptionPassword(EncryptionParams);
+    FTempWriter.CoderMethod    := Item.CompressionMethod;
+    FTempWriter.CoderLevel     := Item.CompressionLevel;
+    FTempWriter.CoderLevelAux  := Item.CompressionLevelAux;
+    FTempWriter.CoderFilter    := Item.CompressionFilter;
+    FTempWriter.CoderFilterAux := Item.CompressionFilterAux;
+    FTempWriter.CoderBlock     := Item.CompressionBlock;
+    begin
+      xxcode(Source, FTempWriter, Item.FExternalFileSize);
+    end;
+    Item.FCheckDigest          :=      Source.HashDigest;
+    Item.FCheckDigestAux       := FTempWriter.HashDigest;
+    Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FImageSeek;
+    Item.FUncompressedSize     := Item.FExternalFileSize;
+
+    FreeAndNil(Source);
+  end else
+  begin
+    Item.FImageSeek            := FTempWriter.Seek(0, fsFromCurrent);
+    Item.FImageNumber          := FTempWriter.CurrentImage;
+
+    FTempWriter.HashMethod     := Item.CheckMethodAux;
+    FTempWriter.CipherMethod   := Item.EncryptionMethod;   ;
+    FTempWriter.CipherPassword := '';
+    FTempWriter.CoderMethod    := 0;
+    FTempWriter.CoderLevel     := 0;
+    FTempWriter.CoderLevelAux  := 0;
+    FTempWriter.CoderFilter    := '';
+    FTempWriter.CoderFilterAux := '';
+    FTempWriter.CoderBlock     := 0;
+    begin
+      FTempWriter.WriteInfArray(ReadLink(Item.FExternalFileName));
+    end;
+    Item.FCheckDigest          :=      Source.HashDigest;
+    Item.FCheckDigestAux       := FTempWriter.HashDigest;
+    Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FImageSeek;
+    Item.FUncompressedSize     := Item.FExternalFileSize;
+
+        FreeAndNil(Source);
+
+
+  end;
 end;
 
 procedure TArchiver.DecodeToSwap(Item: TArchiveItem);
