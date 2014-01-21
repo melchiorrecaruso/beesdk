@@ -106,17 +106,18 @@
         <TopLine Value="18"/>
         <CursorPos X="24" Y="68"/>
         <FoldState Value=" T3ja061v"/>
-        <UsageCount Value="151"/>
+        <UsageCount Value="152"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="bx-src\bx_archiver.pas"/>
         <UnitName Value="bx_archiver"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="734"/>
-        <CursorPos X="89" Y="801"/>
-        <FoldState Value=" T3q003A pj3jW0Z6 pibk2048[94jI053]R0jD034]9Vk10-J"/>
+        <TopLine Value="1171"/>
+        <CursorPos X="60" Y="1196"/>
+        <FoldState Value=" T3q003A pj3jW0Z6 pibk2048[94jI053]R0jD034]9Vk10-4]RekU0R013%"/>
         <UsageCount Value="31"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -135,11 +136,10 @@
       <Unit4>
         <Filename Value="bx-src\bx_dirscanner.pas"/>
         <UnitName Value="bx_dirscanner"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="199"/>
-        <CursorPos X="49" Y="220"/>
+        <TopLine Value="196"/>
+        <CursorPos X="35" Y="212"/>
         <FoldState Value=" T3jC044120"/>
         <UsageCount Value="24"/>
         <Loaded Value="True"/>
@@ -163,7 +163,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="89"/>
         <CursorPos X="1" Y="349"/>
-        <FoldState Value=" T3j70U4 piXjW071 pj6jH0W[94RkM03[R4Z]a46]IJjd0{E3 T0pKB60111]32[763l"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -287,7 +286,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="bx-src;$(ProjOutDir)"/>
-      <Libraries Value="C:/TDM-GCC-32/lib"/>
+      <Libraries Value="C:/TDM-GCC-32/lib/"/>
       <OtherUnitFiles Value="bx-src;bx-src/libbx.pas"/>
       <UnitOutputDirectory Value="../temp"/>
     </SearchPaths>
@@ -344,4 +343,4 @@
     </Exceptions>
   </Debugging>
   <EditorMacros Count="0"/>
-</CONFIG>
+</CONFIG>
