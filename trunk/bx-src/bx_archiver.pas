@@ -34,6 +34,7 @@ unit bx_archiver;
 interface
 
 uses
+  BaseUnix,
   Classes,
   DateUtils,
   SysUtils,
@@ -1159,7 +1160,7 @@ procedure TArchiver.EncodeFromFile(Item: TArchiveItem);
 var
   Source: TFileReader;
 begin
-  if (Item.FAttributes and SymLink) = 0 then
+  if (Item.FAttributes and faSymLink) = 0 then
   begin
     Source := TFileReader.Create(Item.FExternalFileName, nil);
     Item.FImageSeek            := FTempWriter.Seek(0, fsFromCurrent);
@@ -1193,24 +1194,21 @@ begin
     Item.FImageNumber          := FTempWriter.CurrentImage;
 
     FTempWriter.HashMethod     := Item.CheckMethodAux;
-    FTempWriter.CipherMethod   := Item.EncryptionMethod;   ;
+    FTempWriter.CipherMethod   := Item.EncryptionMethod;
     FTempWriter.CipherPassword := '';
-    FTempWriter.CoderMethod    := 0;
-    FTempWriter.CoderLevel     := 0;
-    FTempWriter.CoderLevelAux  := 0;
+    FTempWriter.CoderMethod    :=  0;
+    FTempWriter.CoderLevel     :=  0;
+    FTempWriter.CoderLevelAux  :=  0;
     FTempWriter.CoderFilter    := '';
     FTempWriter.CoderFilterAux := '';
-    FTempWriter.CoderBlock     := 0;
+    FTempWriter.CoderBlock     :=  0;
     begin
-      FTempWriter.WriteInfArray(ReadLink(Item.FExternalFileName));
+      FTempWriter.WriteInfArray(fpReadLink(Item.FExternalFileName));
     end;
     Item.FCheckDigest          :=      Source.HashDigest;
     Item.FCheckDigestAux       := FTempWriter.HashDigest;
     Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FImageSeek;
     Item.FUncompressedSize     := Item.FExternalFileSize;
-
-        FreeAndNil(Source);
-
 
   end;
 end;
@@ -2151,4 +2149,4 @@ begin
 end;
 
 end.
-
+

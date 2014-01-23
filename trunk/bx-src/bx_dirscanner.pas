@@ -208,7 +208,9 @@ begin
     begin
       if (Rec.Name <> '.') and (Rec.Name <> '..') then
       begin
+        // if FileNameMatch(RecPath + Rec.Name, FileMask, Recursive) then
         // AddItem(RecPath, Rec);
+
         if (Rec.Attr and faSymLink) = 0 then
           Scan(RecPath + Rec.Name, FileMask, Recursive);
       end;
