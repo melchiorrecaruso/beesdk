@@ -34,7 +34,7 @@ unit bx_archiver;
 interface
 
 uses
-  BaseUnix,
+  {$IFDEF UNIX} BaseUnix, {$ENDIF}
   Classes,
   DateUtils,
   SysUtils,
@@ -1195,13 +1195,13 @@ begin
 
     FTempWriter.HashMethod     := Item.CheckMethodAux;
     FTempWriter.CipherMethod   := Item.EncryptionMethod;
-    FTempWriter.CipherPassword := '';
-    FTempWriter.CoderMethod    :=  0;
-    FTempWriter.CoderLevel     :=  0;
-    FTempWriter.CoderLevelAux  :=  0;
-    FTempWriter.CoderFilter    := '';
-    FTempWriter.CoderFilterAux := '';
-    FTempWriter.CoderBlock     :=  0;
+    FTempWriter.CipherPassword := ExtractEncryptionPassword(EncryptionParams);
+    FTempWriter.CoderMethod    := Item.CompressionMethod;
+    FTempWriter.CoderLevel     := Item.CompressionLevel;
+    FTempWriter.CoderLevelAux  := Item.CompressionLevelAux;
+    FTempWriter.CoderFilter    := Item.CompressionFilter;
+    FTempWriter.CoderFilterAux := Item.CompressionFilterAux;
+    FTempWriter.CoderBlock     := Item.CompressionBlock;
     begin
       FTempWriter.WriteInfArray(fpReadLink(Item.FExternalFileName));
     end;
@@ -1980,68 +1980,79 @@ begin
     CurrentItem := FCentralDirectory.Items[I];
     if CurrentItem.FVersionNeededToRead = 0 then
     begin
-      // compression method
-      Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
-      CurrentItem.FCompressionMethod := ExtractCompressionMethod(FCompressionParams);
-      // compression level
-      Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
-      CurrentItem.FCompressionLevel := ExtractCompressionLevel(FCompressionParams);
-      // compression aux level
-      Include(CurrentItem.FCompressionFlags, acfCompressionLevelAux);
-      CurrentItem.FCompressionLevelAux := ExtractCompressionLevelAux(FCompressionParams);
-      // compression block
-      Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
-      CurrentItem.FCompressionBlock := ExtractCompressionBlock(FCompressionParams);
-      // default compression table flag
-      Exclude(CurrentItem.FCompressionFlags, acfCompressionFilter);
-      CurrentItem.FCompressionFilter := '';
-      Exclude(CurrentItem.FCompressionFlags, acfCompressionFilterAux);
-      CurrentItem.FCompressionFilterAux := '';
-      // force file extension option
-      PreviousFileExt := CurrentFileExt;
-      if ExtractCompressionFilter(FCompressionParams) = '' then
-        CurrentFileExt := ExtractFileExt(CurrentItem.FExternalFileName)
-      else
-        CurrentFileExt := ExtractCompressionFilter(FCompressionParams);
-      // compression block option
-      if AnsiCompareText(CurrentFileExt, PreviousFileExt) = 0 then
+
+      if (CurrentItem.Attributes and (faDirectory or faSysLink)) > 0 then
       begin
-        Dec(CurrentBlock, CurrentItem.FExternalFileSize);
-        if CurrentBlock < 0 then
+
+
+
+      end else
+      begin
+
+        // compression method
+        Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
+        CurrentItem.FCompressionMethod := ExtractCompressionMethod(FCompressionParams);
+        // compression level
+        Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
+        CurrentItem.FCompressionLevel := ExtractCompressionLevel(FCompressionParams);
+        // compression aux level
+        Include(CurrentItem.FCompressionFlags, acfCompressionLevelAux);
+        CurrentItem.FCompressionLevelAux := ExtractCompressionLevelAux(FCompressionParams);
+        // compression block
+        Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
+        CurrentItem.FCompressionBlock := ExtractCompressionBlock(FCompressionParams);
+        // default compression table flag
+        Exclude(CurrentItem.FCompressionFlags, acfCompressionFilter);
+        CurrentItem.FCompressionFilter := '';
+        Exclude(CurrentItem.FCompressionFlags, acfCompressionFilterAux);
+        CurrentItem.FCompressionFilterAux := '';
+        // force file extension option
+        PreviousFileExt := CurrentFileExt;
+        if ExtractCompressionFilter(FCompressionParams) = '' then
+          CurrentFileExt := ExtractFileExt(CurrentItem.FExternalFileName)
+        else
+          CurrentFileExt := ExtractCompressionFilter(FCompressionParams);
+        // compression block option
+        if AnsiCompareText(CurrentFileExt, PreviousFileExt) = 0 then
+        begin
+          Dec(CurrentBlock, CurrentItem.FExternalFileSize);
+          if CurrentBlock < 0 then
+          begin
+            CurrentBlock := ExtractCompressionBlock(FCompressionParams);
+            CurrentItem.FCompressionBlock := 0;
+          end;
+        end else
         begin
           CurrentBlock := ExtractCompressionBlock(FCompressionParams);
           CurrentItem.FCompressionBlock := 0;
         end;
-      end else
-      begin
-        CurrentBlock := ExtractCompressionBlock(FCompressionParams);
-        CurrentItem.FCompressionBlock := 0;
-      end;
-      // BEE compression method
-      if CurrentItem.FCompressionMethod = 1 then
-      begin
-        Include(CurrentItem.FCompressionFlags, acfCompressionFilter);
+        // BEE compression method
+        if CurrentItem.FCompressionMethod = 1 then
+        begin
+          Include(CurrentItem.FCompressionFlags, acfCompressionFilter);
 
-        if Configuration.ValueExists('level-' + IntToStr(CurrentItem.FCompressionLevel), CurrentFileExt) = TRUE then
-          CurrentItem.FCompressionFilter :=
-            Configuration.ReadString('level-' + IntToStr(CurrentItem.FCompressionLevel), CurrentFileExt,
-              Hex(DefaultTableParameters, SizeOf(DefaultTableParameters)))
-        else
-          CurrentItem.FCompressionFilter :=
-            Configuration.ReadString('level-' + IntToStr(CurrentItem.FCompressionLevel), '.def',
-              Hex(DefaultTableParameters, SizeOf(DefaultTableParameters)));
+          if Configuration.ValueExists('level-' + IntToStr(CurrentItem.FCompressionLevel), CurrentFileExt) = TRUE then
+            CurrentItem.FCompressionFilter :=
+              Configuration.ReadString('level-' + IntToStr(CurrentItem.FCompressionLevel), CurrentFileExt,
+                Hex(DefaultTableParameters, SizeOf(DefaultTableParameters)))
+          else
+            CurrentItem.FCompressionFilter :=
+              Configuration.ReadString('level-' + IntToStr(CurrentItem.FCompressionLevel), '.def',
+                Hex(DefaultTableParameters, SizeOf(DefaultTableParameters)));
+        end;
+        // encryption method
+        CurrentItem.FEncryptionMethod    := ExtractEncryptionMethod(FEncryptionParams);
+        // check method
+        CurrentItem.FCheckMethod         := ExtractHashingMethod   (FHashingParams);
+        CurrentItem.FCheckMethodAux      := ExtractHashingAuxMethod(FHashingParams);
+        {$IFDEF DEBUG}
+
+        {$ENDIF}
       end;
-      // encryption method
-      CurrentItem.FEncryptionMethod    := ExtractEncryptionMethod(FEncryptionParams);
-      // check method
-      CurrentItem.FCheckMethod         := ExtractHashingMethod   (FHashingParams);
-      CurrentItem.FCheckMethodAux      := ExtractHashingAuxMethod(FHashingParams);
       // version needed to read
       CurrentItem.FVersionNeededToRead := GetVersionNeededToRead(CurrentItem);
-      {$IFDEF DEBUG}
-
-      {$ENDIF}
     end;
+
   end;
   FreeAndNil(Configuration);
 end;
@@ -2149,4 +2160,4 @@ begin
 end;
 
 end.
-
+
