@@ -52,8 +52,10 @@ type
     FCommand: TCommand;
     FCompressionMode: TCompressionMode;
     FPassword: string;
+    FRecursive: boolean;
     FArchiveName: string;
     FFileMasks: TStringList;
+    FExcludeMasks: TStringList;
   public
     constructor Create;
     destructor Destroy; override;
@@ -63,8 +65,10 @@ type
     property Command: TCommand read FCommand write FCommand;
     property CompressionMode: TCompressionMode read FCompressionMode write FCompressionMode;
     property Password: string read FPassword write FPassword;
+    property Recursive: boolean read FRecursive write FRecursive;
     property ArchiveName: string read FArchiveName write FArchiveName;
     property FileMasks: TStringList read FFileMasks;
+    property ExcludeMasks: TStringList read FExcludeMasks;
   end;
 
   { TParser }
@@ -134,13 +138,16 @@ begin
   FCommand         := cNone;
   FCompressionMode := cmNormal;
   FPassword        := '';
+  FRecursive       := FALSE;
   FArchiveName     := '';
   FFileMasks       := TStringList.Create;
+  FExcludeMasks    := TStringList.Create;
 end;
 
 destructor TParserCommandLine.Destroy;
 begin
   FFileMasks.Destroy;
+  FExcludeMasks.Destroy;
   inherited Destroy;
 end;
 
@@ -149,8 +156,10 @@ begin
   FCommand         := cNone;
   FCompressionMode := cmNormal;
   FPassword        := '';
+  FRecursive       := FALSE;
   FArchiveName     := '';
   FFileMasks.Clear;
+  FExcludeMasks.Clear;
 end;
 
 function TParserCommandLine.GetCommandLine: string;
@@ -181,12 +190,18 @@ begin
       end;
 
     if FPassword <> '' then
-      Result := Result + ' "-p' + FPassword + '"';
+      Result := Result + ' -p' + FPassword;
 
-    Result := Result + ' "' + FArchiveName + '"';
+    if FRecursive = TRUE then
+      Result := Result + ' -r';
+
+    for i := 0 to FExcludeMasks.Count - 1 do
+      Result := Result + ' -x' + FExcludeMasks[i];
+
+    Result := Result + ' ' + FArchiveName;
 
     for i := 0 to FFileMasks.Count - 1 do
-      Result := Result + ' "' + FFileMasks[i] + '"';
+      Result := Result + ' ' + FFileMasks[i];
   end;
 end;
 
@@ -220,7 +235,7 @@ begin
   FProcess := TProcess.Create(nil);
   try
     FMessages.Clear;
-    // ShowMessage(FPCL.GetCommandLine);
+    ShowMessage(FPCL.GetCommandLine);
 
     FProcess.CommandLine := FPCL.GetCommandLine;
     FProcess.Options := [poNoConsole, poUsePipes];

@@ -97,7 +97,7 @@
         <UnitName Value="BX"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="26"/>
+        <TopLine Value="38"/>
         <CursorPos X="37" Y="36"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -111,7 +111,7 @@
         <TopLine Value="18"/>
         <CursorPos X="24" Y="68"/>
         <FoldState Value=" T3ja061v"/>
-        <UsageCount Value="154"/>
+        <UsageCount Value="155"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -120,9 +120,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1967"/>
-        <CursorPos X="1" Y="2048"/>
-        <FoldState Value=" T3q103A pj3jW0Z6 pibk2048[94jI053]R0jD034]9Vk10-4]RekU0R013N p0tH06[c41jH0S[94GkD0m012!"/>
+        <TopLine Value="1037"/>
+        <CursorPos X="19" Y="1078"/>
+        <FoldState Value=" T3q103A pj3jW0Z6 pibk2048[94jI053]R0jD034]9Vk10-21213s"/>
         <UsageCount Value="32"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -144,8 +144,7 @@
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="196"/>
-        <CursorPos X="37" Y="200"/>
-        <FoldState Value=" T3jC044120"/>
+        <CursorPos X="41" Y="213"/>
         <UsageCount Value="25"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -155,8 +154,8 @@
         <UnitName Value="bx_coder"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="106"/>
-        <CursorPos X="35" Y="26"/>
+        <TopLine Value="26"/>
+        <CursorPos X="45" Y="37"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -168,13 +167,12 @@
         <WindowIndex Value="0"/>
         <TopLine Value="559"/>
         <CursorPos X="1" Y="349"/>
-        <FoldState Value=" T3j70U4 piXjW071 pj6jH0W1p"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="28" HistoryIndex="27">
       <Position1>
         <Filename Value="bx-src\bx_application.pas"/>
         <Caret Line="76" Column="34" TopLine="62"/>
@@ -265,36 +263,28 @@
       </Position22>
       <Position23>
         <Filename Value="bx-src\bx_archiver.pas"/>
-        <Caret Line="1112" Column="1" TopLine="1183"/>
+        <Caret Line="37" Column="37" TopLine="18"/>
       </Position23>
       <Position24>
         <Filename Value="bx-src\bx_archiver.pas"/>
-        <Caret Line="28" Column="71" TopLine="39"/>
+        <Caret Line="1205" Column="32" TopLine="1111"/>
       </Position24>
       <Position25>
         <Filename Value="bx-src\bx_archiver.pas"/>
-        <Caret Line="37" Column="37" TopLine="18"/>
+        <Caret Line="2054" Column="7" TopLine="1974"/>
       </Position25>
       <Position26>
         <Filename Value="bx-src\bx_archiver.pas"/>
-        <Caret Line="1205" Column="32" TopLine="1111"/>
+        <Caret Line="2056" Column="14" TopLine="2029"/>
       </Position26>
       <Position27>
         <Filename Value="bx-src\bx_archiver.pas"/>
-        <Caret Line="1981" Column="53" TopLine="2011"/>
+        <Caret Line="2048" Column="1" TopLine="2008"/>
       </Position27>
       <Position28>
-        <Filename Value="bx-src\bx_archiver.pas"/>
-        <Caret Line="389" Column="10" TopLine="438"/>
+        <Filename Value="bx.lpr"/>
+        <Caret Line="36" Column="37" TopLine="38"/>
       </Position28>
-      <Position29>
-        <Filename Value="bx-src\bx_archiver.pas"/>
-        <Caret Line="2054" Column="7" TopLine="1974"/>
-      </Position29>
-      <Position30>
-        <Filename Value="bx-src\bx_archiver.pas"/>
-        <Caret Line="2056" Column="14" TopLine="2029"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -304,7 +294,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="bx-src;$(ProjOutDir)"/>
-      <Libraries Value="C:/TDM-GCC-32/lib/"/>
+      <Libraries Value="C:/TDM-GCC-32/lib"/>
       <OtherUnitFiles Value="bx-src;bx-src/libbx.pas"/>
       <UnitOutputDirectory Value="../temp"/>
     </SearchPaths>
@@ -361,4 +351,4 @@
     </Exceptions>
   </Debugging>
   <EditorMacros Count="0"/>
-</CONFIG>
+</CONFIG>

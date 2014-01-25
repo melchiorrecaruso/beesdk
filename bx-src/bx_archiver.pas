@@ -1190,6 +1190,9 @@ begin
     FreeAndNil(Source);
   end else
   begin
+    halt;
+
+
     Item.FImageSeek            := FTempWriter.Seek(0, fsFromCurrent);
     Item.FImageNumber          := FTempWriter.CurrentImage;
 
@@ -1981,7 +1984,7 @@ begin
     if CurrentItem.FVersionNeededToRead = 0 then
     begin
 
-      if (CurrentItem.Attributes and (faDirectory or faSysLink)) > 0 then
+      if (CurrentItem.Attributes and (faDirectory or faSymLink)) > 0 then
       begin
 
 
@@ -2160,4 +2163,4 @@ begin
 end;
 
 end.
-
+
