@@ -130,7 +130,7 @@ implementation
 {$R *.lfm}
 
 uses
-  bx_FileScanner,
+  bx_dirscanner,
 
   bxm_AddFrm,
   bxm_AboutFrm,
@@ -484,13 +484,8 @@ end;
 procedure TMainFrm.NewButtonClick(Sender: TObject);
 var
   I: longint;
-  Scanner: TFileScanner;
 begin
-
-
-
   AddFrm := TAddFrm.Create(Self);
-
   if AddFrm.ShowModal = mrOk then
   begin
     ParserCommandLine.Clear;
@@ -504,10 +499,12 @@ begin
     ParserCommandLine.ArchiveName := AddFrm.ArchiveName;
 
     SetCurrentDir(AddFrm.Root.Text);
-    Scanner := TFileScanner.Create;
     for i := 0 to AddFrm.Files.Items.Count - 1 do
       if AddFrm.Files.Items[i].ImageIndex = 0 then
-        Scanner.Add(AddFrm.Files.Items[i].Text,
+         ParserCommandLine.FileMasks.Add(AddFrm.Files.Items[i].Text);
+
+    ParserCommandLine.
+
           AddFrm.RecurseSubdirectories.Checked);
 
     for i := 0 to AddFrm.Files.Items.Count - 1 do
@@ -516,7 +513,7 @@ begin
           AddFrm.RecurseSubdirectories.Checked);
 
     for i := 0 to Scanner.Count - 1 do
-      ParserCommandLine.FileMasks.Add(Scanner.Items[i].ItemName);
+      ParserCommandLine.FileMasks.Add(Scanner.Items[i].FileName);
     Scanner.Destroy;
 
     // START

@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 345
+  Left = 182
   Height = 453
-  Top = 187
+  Top = 191
   Width = 844
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
