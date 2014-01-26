@@ -566,9 +566,33 @@ end;
 
 function CompareFileExt(P1, P2: pointer): longint;
 begin
-  Result := AnsiCompareText(
-    ExtractFileExt(TDirScannerItem(P1).FileName),
-    ExtractFileExt(TDirScannerItem(P2).FileName));
+
+  if (TDirScannerItem(P1).FileAttr and (faDirectory or faSymLink)) =
+     (TDirScannerItem(P2).FileAttr and (faDirectory or faSymLink)) then
+  begin
+    Result := AnsiCompareText(
+      ExtractFileExt(TDirScannerItem(P1).FileName),
+      ExtractFileExt(TDirScannerItem(P2).FileName));
+  end else
+    if (TDirScannerItem(P1).FileAttr and faDirectory) > 0 then
+      Result := - 1
+    else
+      if (TDirScannerItem(P2).FileAttr and faDirectory) > 0 then
+        Result := 1
+      else
+        if (TDirScannerItem(P1).FileAttr and faSymLink) > 0 then
+          Result := - 1
+        else
+          if (TDirScannerItem(P2).FileAttr and faSymLink) > 0 then
+            Result := 1
+          else
+            Result := 0;
+
+
+  if Result = 0 then
+    Result := AnsiCompareText(
+      ExtractFileExt(TDirScannerItem(P1).FileName),
+      ExtractFileExt(TDirScannerItem(P2).FileName));
 
   if Result = 0 then
   begin
@@ -730,6 +754,7 @@ begin
           DoMessage(Format(   '       Size/Packed/Ratio: %s/%s/%s', [SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize),
                                                                        RatioToStr(Item.CompressedSize, Item.UncompressedSize)]));
         DoMessage(Format(     '      Last modified time: %s',       [bx_common.FileTimeToString(Item.LastModifiedTime)]));
+        DoMessage(Format(     '        Last stored time: %s',       [bx_common.FileTimeToString(Item.LastStoredTime)]));
         DoMessage(Format(     '              Attributes: %s',       [AttrToStr(Item.Attributes)]));
         if Item.Comment <> '' then
           DoMessage(Format(   '                 Comment: %s',       [Item.Comment]));
