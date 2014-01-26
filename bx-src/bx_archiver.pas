@@ -23,7 +23,7 @@
 
   Modifyed:
 
-    v1.0.0 build 2210 - 2014.01.15 by Melchiorre Caruso.
+    v1.0.0 build 2225 - 2014.01.26 by Melchiorre Caruso.
 
 }
 
@@ -1136,7 +1136,8 @@ begin
     begin
       xxcode(FArchiveReader, FTempWriter, Item.FCompressedSize);
     end;
-  end;
+  end else
+    SetExitStatus(esStreamTypeError);
 end;
 
 procedure TArchiver.EncodeFromSwap(Item: TArchiveItem);
@@ -1168,7 +1169,8 @@ begin
     //Item.FCheckDigestAux     := FTempWriter.HashDigest;
     Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FImageSeek;
     //Item.FUncompressedSize   := Item.FExternalFileSize;
-  end;
+  end else
+    SetExitStatus(esStreamTypeError);
 end;
 
 procedure TArchiver.EncodeFromFile(Item: TArchiveItem);
@@ -1204,15 +1206,11 @@ begin
 
     FreeAndNil(Source);
   end else
-    if (Item.FAttributes and (faDirectory)) = 0 then
+    if (Item.FAttributes and (faDirectory or faSymLink)) > 0 then
     begin
       // nothing to do
     end else
-      if (Item.FAttributes and (faSymLink)) = 0 then
-      begin
-        Item.FLink := fpReadLink(Item.FExternalFileName);
-      end else
-        SetExitStatus(esUnknowError);
+      SetExitStatus(esStreamTypeError);
 end;
 
 procedure TArchiver.DecodeToSwap(Item: TArchiveItem);
@@ -1244,13 +1242,12 @@ begin
     if Item.CheckMethod <> 0 then
       if Item.CheckDigest <> FSwapWriter.HashDigest then
         SetExitStatus(esHashError);
-  end;
+  end else
+    SetExitStatus(esStreamTypeError);
 end;
 
 procedure TArchiver.DecodeToNul(Item: TArchiveItem);
 var
-  Count_: int64;
-  Buffer: TBuffer;
   Destination: TNulBufStream;
 begin
   if (Item.Attributes and (faDirectory or faSymLink or faVolumeID)) = 0 then
@@ -1281,7 +1278,8 @@ begin
         SetExitStatus(esHashError);
       end;
     FreeAndNil(Destination);
-  end;
+  end else
+    SetExitStatus(esStreamTypeError);
 end;
 
 procedure TArchiver.DecodeToFile(Item: TArchiveItem);
@@ -1320,16 +1318,21 @@ begin
       FileSetDate(Item.FExternalFileName, Item.FLastModifiedTime);
       FileSetAttr(Item.FExternalFileName, Item.FAttributes);
     end;
+
   end else
-    if (Item.FAttributes and (faDirectory)) = 0 then
+    if (Item.FAttributes and (faDirectory)) > 0 then
     begin
-      ForceDirectories(Item.ExternalFileName);
+      if ForceDirectories(Item.ExternalFileName) = FALSE then
+        SetExitStatus(esCreateDirError);
+
     end else
-      if (Item.FAttributes and (faSymLink)) = 0 then
+      if (Item.FAttributes and (faSymLink)) > 0 then
       begin
-        fpSymLink(PChar(Item.Link), PChar(Item.ExternalFileName));
+        if fpSymLink(PChar(Item.Link), PChar(Item.ExternalFileName)) <> 0 then
+           SetExitStatus(esCreateLinkError);
+
       end else
-        SetExitStatus(esUnknowError);
+        SetExitStatus(esStreamTypeError);
 end;
 
 // TArchiver # OPEN/CLOSE ARCHIVE #
@@ -1374,12 +1377,12 @@ begin
     Item := FCentralDirectory.Items[I];
     if Item.FTags = [aitDecode] then
     begin
-      DoMessage(Format(cmSwapping, [I + 1, Item.FFileName]));
+      DoMessage(Format(cmSwapping, [Item.FFileName]));
       DecodeToSwap(Item);
     end else
       if Item.FTags = [aitDecode, aitUpdate] then
       begin
-        DoMessage(Format(cmDecoding, [I + 1, Item.FFileName]));
+        DoMessage(Format(cmDecoding, [Item.FFileName]));
         DecodeToNul(Item);
       end;
   end;
@@ -1441,7 +1444,7 @@ begin
         if ExitStatus <> esNoError then Break;
 
         Item := FCentralDirectory.Items[I];
-        DoMessage(Format(cmSplitting, [I + 1, Item.FileName]));
+        DoMessage(Format(cmSplitting, [Item.FileName]));
         EncodeFromArchive(Item);
       end;
       if ExitStatus = esNoError then
@@ -1766,12 +1769,12 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [aitUpdate] then
       begin
-        DoMessage(Format(cmExtracting, [I + 1, Item.FExternalFileName]));
+        DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
         DecodeToFile(Item);
       end else
         if Item.FTags = [aitDecode] then
         begin
-          DoMessage(Format(cmDecoding, [I + 1, Item.FFileName]));
+          DoMessage(Format(cmDecoding, [Item.FFileName]));
           DecodeToNul(Item);
         end;
     end;
@@ -1794,12 +1797,12 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [aitUpdate] then
       begin
-        DoMessage(Format(cmTesting, [I + 1, Item.FFileName]));
+        DoMessage(Format(cmTesting, [Item.FFileName]));
         DecodeToNul(Item);
       end else
         if Item.FTags = [aitDecode] then
         begin
-          DoMessage(Format(cmDecoding, [I + 1, Item.FFileName]));
+          DoMessage(Format(cmDecoding, [Item.FFileName]));
           DecodeToNul(Item);
         end;
     end;
@@ -1848,12 +1851,12 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [aitUpdate] then
       begin
-        DoMessage(Format(cmRenaming, [I + 1, Item.FileName]));
+        DoMessage(Format(cmRenaming, [Item.FileName]));
         EncodeFromArchive(Item);
       end else
         if Item.FTags = [] then
         begin
-          DoMessage(Format(cmCopying, [I + 1, Item.FileName]));
+          DoMessage(Format(cmCopying, [Item.FileName]));
           EncodeFromArchive(Item);
         end;
     end;
@@ -1935,7 +1938,7 @@ begin
       Item := FCentralDirectory.Items[I];
       if aitUpdate in Item.FTags then
       begin
-        DoMessage(Format(cmDeleting, [I + 1, Item.FileName]));
+        DoMessage(Format(cmDeleting, [Item.FileName]));
         FCentralDirectory.Delete(I);
       end;
     end;
@@ -1947,12 +1950,12 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [] then
       begin
-        DoMessage(Format(cmCopying, [I + 1, Item.FileName]));
+        DoMessage(Format(cmCopying, [Item.FileName]));
         EncodeFromArchive(Item);
       end else
         if Item.FTags = [aitDecode] then
         begin
-          DoMessage(Format(cmEncoding, [I + 1, Item.FileName]));
+          DoMessage(Format(cmEncoding, [Item.FileName]));
           EncodeFromSwap(Item);
         end;
     end;
@@ -2115,21 +2118,21 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [] then
       begin
-        DoMessage(Format(cmCopying, [I + 1, Item.FileName]));
+        DoMessage(Format(cmCopying, [Item.FileName]));
         EncodeFromArchive(Item);
       end else
         if Item.FTags = [aitUpdate] then
         begin
-          DoMessage(Format(cmAdding, [I + 1, Item.FileName]));
+          DoMessage(Format(cmAdding, [Item.FileName]));
           EncodeFromFile(Item);
         end else
           if Item.FTags = [aitDecode] then
           begin
-            DoMessage(Format(cmEncoding, [I + 1, Item.FileName]));
+            DoMessage(Format(cmEncoding, [Item.FileName]));
             EncodeFromSwap(Item);
           end else
           begin
-            DoMessage(Format(cmUpdating, [I + 1, Item.FileName]));
+            DoMessage(Format(cmUpdating, [Item.FileName]));
             EncodeFromFile(Item);
           end;
     end;

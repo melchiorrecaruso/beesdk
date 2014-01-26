@@ -23,7 +23,7 @@
 
   Modifyed:
 
-    v1.0.0 build 2210 - 2014.01.15 by Melchiorre Caruso.
+    v1.0.0 build 2225 - 2014.01.26 by Melchiorre Caruso.
 
 }
 
@@ -79,4 +79,4 @@ begin
   App := TBxApplication.Create;
   App.Execute;
   App.Destroy;
-end.
+end.

@@ -23,7 +23,7 @@
 
   Modifyed:
 
-    v1.0.0 build 2218 - 2014.01.19 by Melchiorre Caruso.
+    v1.0.0 build 2225 - 2014.01.26 by Melchiorre Caruso.
 
 }
 
@@ -733,7 +733,10 @@ begin
         DoMessage(Format(     '              Attributes: %s',       [AttrToStr(Item.Attributes)]));
         if Item.Comment <> '' then
           DoMessage(Format(   '                 Comment: %s',       [Item.Comment]));
-        DoMessage(Format(     '    Disk number/position: %u/%u',    [Item.ImageNumber, Item.ImageSeek]));
+        if Item.Link <> '' then
+          DoMessage(Format(   '                    Link: %s',       [Item.Link]));
+        if Item.UncompressedSize > 0 then
+          DoMessage(Format(     '    Disk number/position: %u/%u',    [Item.ImageNumber, Item.ImageSeek]));
         if Ord(Item.CheckMethod) <> 0 then
           DoMessage(Format(   '     Check method/digest: %s/%s',    [HashingMethodTostr(Item.CheckMethod), Item.CheckDigest]));
         if Ord(Item.CheckMethodAux) <> 0 then
