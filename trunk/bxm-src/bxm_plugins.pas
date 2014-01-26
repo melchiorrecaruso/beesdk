@@ -235,7 +235,6 @@ begin
   FProcess := TProcess.Create(nil);
   try
     FMessages.Clear;
-    ShowMessage(FPCL.GetCommandLine);
 
     FProcess.CommandLine := FPCL.GetCommandLine;
     FProcess.Options := [poNoConsole, poUsePipes];

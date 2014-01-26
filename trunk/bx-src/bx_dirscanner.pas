@@ -124,6 +124,15 @@ procedure TDirScanner.AddItem(const RecPath: string; const Rec: TSearchRec);
 var
   L, M, H, I: longint;
 begin
+  //if (Rec.Attr and faReadOnly ) > 0 then Exit;
+  //if (Rec.Attr and faHidden   ) > 0 then Exit;
+  //if (Rec.Attr and faSysFile  ) > 0 then Exit;
+  if (Rec.Attr and faVolumeId ) > 0 then Exit;
+  if (Rec.Attr and faDirectory) > 0 then Exit;
+  //if (Rec.Attr and faArchive  ) > 0 then Exit;
+  //if (Rec.Attr and faSymLink  ) > 0 then Exit;
+  //if (Rec.Attr and faAnyFile  ) > 0 then Exit;
+
   if FList.Count <> 0 then
   begin
     L := 0;
@@ -208,18 +217,18 @@ begin
     begin
       if (Rec.Name <> '.') and (Rec.Name <> '..') then
       begin
-        // if FileNameMatch(RecPath + Rec.Name, FileMask, Recursive) then
-        // AddItem(RecPath, Rec);
-
-        if (Rec.Attr and faSymLink) = 0 then
-          Scan(RecPath + Rec.Name, FileMask, Recursive);
-      end;
-    end else
-      if FileNameMatch(RecPath + Rec.Name, FileMask, Recursive) then
-        if (Rec.Attr and faSymLink) = 0 then
+        Scan(RecPath + Rec.Name, FileMask, Recursive);
+        if FileNameMatch(RecPath + Rec.Name, FileMask, Recursive) then
         begin
           AddItem(RecPath, Rec);
         end;
+
+      end;
+    end else
+      if FileNameMatch(RecPath + Rec.Name, FileMask, Recursive) then
+      begin
+        AddItem(RecPath, Rec);
+      end;
 
     Error := FindNext(Rec);
   end; // end while error ...
