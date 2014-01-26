@@ -23,7 +23,7 @@
 
   Modifyed:
 
-    v1.0 build 2210 - 2014.01.15 by Melchiorre Caruso.
+    v1.0 build 2225 - 2014.01.26 by Melchiorre Caruso.
 
 }
 
@@ -46,6 +46,7 @@ type
     FFileSize: int64;
     FFileTime: int64;
     FFileAttr: longint;
+    FFileLink: string;
   public
     constructor Create(const RecPath: string; const Rec: TSearchRec);
   public
@@ -53,6 +54,7 @@ type
     property FileSize: int64 read FFileSize;
     property FileTime: int64 read FFileTime;
     property FileAttr: longint read FFileAttr;
+    property FileLink: string read FFileLink;
   end;
 
   { TDirScanner }
@@ -81,6 +83,7 @@ implementation
 
 uses
   bx_common,
+  BaseUnix,
   DateUtils;
 
 { TDirScannerItem class }
@@ -92,6 +95,11 @@ begin
   FFileSize := Rec.Size;
   FFileTime := Rec.Time;
   FFileAttr := Rec.Attr;
+
+  if (Rec.Attr and faSymLink) > 0 then
+    FFileLink := fpReadLink(FFileName)
+  else
+    FFileLink := '';
 end;
 
 { TDirScanner class }

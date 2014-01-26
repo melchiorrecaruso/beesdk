@@ -23,7 +23,7 @@
 
   Modifyed:
 
-    v1.0.0 build 2210 - 2014.01.15 by Melchiorre Caruso.
+    v1.0.0 build 2225 - 2014.01.26 by Melchiorre Caruso.
 
 }
 
@@ -41,18 +41,18 @@ const
   cmOpening           = 'Opening archive %s';
   cmScanning          = 'Scanning files';
 
-  cmAdding            = '%5d Adding %s';
-  cmCopying           = '%5d Copying %s';
-  cmDecoding          = '%5d Decoding %s';
-  cmDeleting          = '%5d Deleting %s';
-  cmEncoding          = '%5d Encoding %s';
-  cmExtracting        = '%5d Extracting %s';
+  cmAdding            = 'Adding %s';
+  cmCopying           = 'Copying %s';
+  cmDecoding          = 'Decoding %s';
+  cmDeleting          = 'Deleting %s';
+  cmEncoding          = 'Encoding %s';
+  cmExtracting        = 'Extracting %s';
 
-  cmRenaming          = '%5d Renaming %s';
-  cmSplitting         = '%5d Splitting %s';
-  cmSwapping          = '%5d Swapping %s';
-  cmTesting           = '%5d Testing %s';
-  cmUpdating          = '%5d Updating %s';
+  cmRenaming          = 'Renaming %s';
+  cmSplitting         = 'Splitting %s';
+  cmSwapping          = 'Swapping %s';
+  cmTesting           = 'Testing %s';
+  cmUpdating          = 'Updating %s';
 
   { ExitStatus }
 
@@ -106,6 +106,9 @@ const
   esSplitStreamError  = 208;
   esRenameTempError   = 209;
   esRequestDiskError  = 210;
+  esStreamTypeError   = 211;
+  esCreateDirError    = 212;
+  esCreateLinkError   = 213;
 
   esBeeFilterError    = 231;
 
@@ -176,6 +179,9 @@ begin
     esSplitStreamError:  Result := 'Split stream error (exit code #'                + IntToStr(ExitStatus) + ') - time elapsed %s seconds.';
     esRenameTempError:   Result := 'Rename temporary archive error (exit code #'    + IntToStr(ExitStatus) + ') - time elapsed %s seconds.';
     esRequestDiskError:  Result := 'Request disk error (exit code #'                + IntToStr(ExitStatus) + ') - time elapsed %s seconds.';
+    esStreamTypeError:   Result := 'Stream type error (exit code #'                 + IntToStr(ExitStatus) + ') - time elapsed %s seconds.';
+    esCreateDirError:    Result := 'Create directory error (exit code #'            + IntToStr(ExitStatus) + ') - time elapsed %s seconds.';
+    esCreateLinkError:   Result := 'Create link error (exit code #'                 + IntToStr(ExitStatus) + ') - time elapsed %s seconds.';
 
     esUserAbortError:    Result := 'User abort error (exit code #'                  + IntToStr(ExitStatus) + ') - time elapsed %s seconds.';
     else                 Result := 'Unknow exit code (exit code #???) - time elapsed %s seconds.';
