@@ -41,18 +41,18 @@ const
   cmOpening           = 'Opening archive %s';
   cmScanning          = 'Scanning files';
 
-  cmAdding            = '%5d/%d Adding %s';
-  cmCopying           = '%5d/%d Copying %s';
-  cmDecoding          = '%5d/%d Decoding %s';
-  cmDeleting          = '%5d/%d Deleting %s';
-  cmEncoding          = '%5d/%d Encoding %s';
-  cmExtracting        = '%5d/%d Extracting %s';
+  cmAdding            = '%5d Adding %s';
+  cmCopying           = '%5d Copying %s';
+  cmDecoding          = '%5d Decoding %s';
+  cmDeleting          = '%5d Deleting %s';
+  cmEncoding          = '%5d Encoding %s';
+  cmExtracting        = '%5d Extracting %s';
 
-  cmRenaming          = '%5d/%d Renaming %s';
-  cmSplitting         = '%5d/%d Splitting %s';
-  cmSwapping          = '%5d/%d Swapping %s';
-  cmTesting           = '%5d/%d Testing %s';
-  cmUpdating          = '%5d/%d Updating %s';
+  cmRenaming          = '%5d Renaming %s';
+  cmSplitting         = '%5d Splitting %s';
+  cmSwapping          = '%5d Swapping %s';
+  cmTesting           = '%5d Testing %s';
+  cmUpdating          = '%5d Updating %s';
 
   { ExitStatus }
 
@@ -188,4 +188,4 @@ begin
     ExitStatus := aExitStatus;
 end;
 
-end.
+end.

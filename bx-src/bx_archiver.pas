@@ -76,7 +76,8 @@ type
     aifLastModifiedTime,
     aifLastStoredTime,
     aifAttributes,
-    aifComment);
+    aifComment,
+    aifLink);
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
@@ -130,6 +131,7 @@ type
     FLastStoredTime: int64;
     FAttributes: longint;
     FComment: string;
+    FLink: string;
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
@@ -173,6 +175,7 @@ type
     property LastStoredTime: int64 read FLastStoredTime;
     property Attributes: longint read FAttributes;
     property Comment: string read FComment write FComment;
+    property Link: string read FLink;
     // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
@@ -314,7 +317,7 @@ type
     function GetNextTag (Index: longint; aTags: TArchiveItemTags): longint;
     function GetNextTear(Index: longint): longint;
 
-    procedure xxcode(Reader: TBufStream; Writer: TBufStream; const Size: int64);
+    procedure xxcode(Reader: TBufStream; Writer: TBufStream; const Size: int64); overload;
     procedure EncodeFromArchive(Item: TArchiveItem);
     procedure EncodeFromSwap   (Item: TArchiveItem);
     procedure EncodeFromFile   (Item: TArchiveItem);
@@ -481,6 +484,7 @@ begin
   FLastStoredTime       :=  0;
   FAttributes           :=  0;
   FComment              := '';
+  FLink                 := '';
   /// data descriptor property ///
   FCompressedSize       :=  0;
   FImageNumber          :=  0;
@@ -515,6 +519,7 @@ begin
   if (aifLastStoredTime      in FFlags) then FLastStoredTime      := UnixToFileTime(Stream.ReadInfWord);
   if (aifAttributes          in FFlags) then FAttributes          := Stream.ReadInfWord;
   if (aifComment             in FFlags) then FComment             := Stream.ReadInfString;
+  if (aifLink                in FFlags) then FLink                := Stream.ReadInfString;
   /// data descryptor property ///
   FDataDescriptorFlags := TArchiveDataDescriptorFlags(longword(Stream.ReadInfWord));
   if (addfCompressedSize in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
@@ -549,7 +554,8 @@ begin
     aifLastModifiedTime,
     aifLastStoredTime,
     aifAttributes,
-    aifComment];
+    aifComment,
+    aifLink];
 
   FDataDescriptorFlags := [
     addfCompressedSize,
@@ -581,7 +587,7 @@ procedure TArchiveItem.Tag(Rec: TDirScannerItem);
 begin
   /// item property ///
   FLastModifiedTime := Rec.FileTime;
-  FLastStoredTime   := DateTimeToUnix(Now);
+  FLastStoredTime   := DateTimeToFileDate(Now);
   FAttributes       := Rec.FileAttr;
   /// reserved property ///
   FExternalFileName := Rec.FileName;
@@ -611,6 +617,7 @@ begin
   if (aifLastStoredTime      in FFlags) then Stream.WriteInfWord(FileTimeToUnix(FLastStoredTime));
   if (aifAttributes          in FFlags) then Stream.WriteInfWord(FAttributes);
   if (aifComment             in FFlags) then Stream.WriteInfString(FComment);
+  if (aifLink                in FFlags) then Stream.WriteInfString(FLink);
   /// data descriptor property ///
   Stream.WriteInfWord(longword(FDataDescriptorFlags));
   if (addfCompressedSize in FDataDescriptorFlags) then Stream.WriteInfWord(FCompressedSize);
@@ -779,6 +786,7 @@ begin
         if CurrentItem.FLastStoredTime       = PreviusItem.FLastStoredTime       then Exclude(CurrentItem.FFlags, aifLastStoredTime)      else Include(CurrentItem.FFlags, aifLastStoredTime);
         if CurrentItem.FAttributes           = PreviusItem.FAttributes           then Exclude(CurrentItem.FFlags, aifAttributes)          else Include(CurrentItem.FFlags, aifAttributes);
         if CurrentItem.FComment              = PreviusItem.FComment              then Exclude(CurrentItem.FFlags, aifComment)             else Include(CurrentItem.FFlags, aifComment);
+        if CurrentItem.FLink                 = PreviusItem.FLink                 then Exclude(CurrentItem.FFlags, aifLink)                else Include(CurrentItem.FFlags, aifLink);
         /// data descriptor property ///
         if CurrentItem.FCompressedSize       = PreviusItem.FCompressedSize       then Exclude(CurrentItem.FDataDescriptorFlags, addfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, addfCompressedSize);
         if CurrentItem.FImageNumber          = PreviusItem.FImageNumber          then Exclude(CurrentItem.FDataDescriptorFlags, addfImageNumber)    else Include(CurrentItem.FDataDescriptorFlags, addfImageNumber);
@@ -818,6 +826,7 @@ begin
       if not(aifLastStoredTime      in CurrentItem.FFlags) then CurrentItem.FLastStoredTime      := PreviusItem.FLastStoredTime;
       if not(aifAttributes          in CurrentItem.FFlags) then CurrentItem.FAttributes          := PreviusItem.FAttributes;
       if not(aifComment             in CurrentItem.FFlags) then CurrentItem.FComment             := PreviusItem.FComment;
+      if not(aifLink                in CurrentItem.FFlags) then CurrentItem.FLink                := PreviusItem.FLink;
       /// data descryptor property ///
       if not(addfCompressedSize in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
       if not(addfImageNumber    in CurrentItem.FDataDescriptorFlags) then CurrentItem.FImageNumber    := PreviusItem.FImageNumber;
@@ -1111,56 +1120,62 @@ end;
 
 procedure TArchiver.EncodeFromArchive(Item: TArchiveItem);
 begin
-  FArchiveReader.Seek(Item.FImageSeek, fsFromBeginning, Item.FImageNumber);
-  Item.FImageSeek             := FTempWriter.Seek(0, fsFromCurrent);
-  Item.FImageNumber           := FTempWriter.CurrentImage;
-
-  FArchiveReader.HashMethod   := 0;
-  FArchiveReader.CipherMethod := 0;
-  FArchiveReader.CoderMethod  := 0;
-
-  FTempWriter.HashMethod      := 0;
-  FTempWriter.CipherMethod    := 0;
-  FTempWriter.CoderMethod     := 0;
+  if (Item.Attributes and (faDirectory or faSymLink or faVolumeID)) = 0 then
   begin
-    xxcode(FArchiveReader, FTempWriter, Item.FCompressedSize);
+    FArchiveReader.Seek(Item.FImageSeek, fsFromBeginning, Item.FImageNumber);
+    Item.FImageSeek             := FTempWriter.Seek(0, fsFromCurrent);
+    Item.FImageNumber           := FTempWriter.CurrentImage;
+
+    FArchiveReader.HashMethod   := 0;
+    FArchiveReader.CipherMethod := 0;
+    FArchiveReader.CoderMethod  := 0;
+
+    FTempWriter.HashMethod      := 0;
+    FTempWriter.CipherMethod    := 0;
+    FTempWriter.CoderMethod     := 0;
+    begin
+      xxcode(FArchiveReader, FTempWriter, Item.FCompressedSize);
+    end;
   end;
 end;
 
 procedure TArchiver.EncodeFromSwap(Item: TArchiveItem);
 begin
-  FSwapReader.Seek(Item.FImageSeek, fsFromBeginning, Item.FImageNumber);
-  Item.FImageSeek            := FTempWriter.Seek(0, fsFromCurrent);
-  Item.FImageNumber          := FTempWriter.CurrentImage;
-
-  FSwapReader.HashMethod     := Item.CheckMethod;
-  FSwapReader.CipherMethod   := Item.EncryptionMethod;
-  FSwapReader.CipherPassword := FPassword;
-  FSwapReader.CoderMethod    := 0;
-
-  FTempWriter.HashMethod     := Item.CheckMethod;
-  FTempWriter.CipherMethod   := Item.EncryptionMethod;
-  FTempWriter.CipherPassword := FPassword;
-  FTempWriter.CoderMethod    := Item.CompressionMethod;
-  FTempWriter.CoderLevel     := Item.CompressionLevel;
-  FTempWriter.CoderLevelAux  := Item.CompressionLevelAux;
-  FTempWriter.CoderFilter    := Item.CompressionFilter;
-  FTempWriter.CoderFilterAux := Item.CompressionFilterAux;
-  FTempWriter.CoderBlock     := Item.CompressionBlock;
+  if (Item.Attributes and (faDirectory or faSymLink or faVolumeID)) = 0 then
   begin
-    xxcode(FSwapReader, FTempWriter, Item.FUnCompressedSize);
+    FSwapReader.Seek(Item.FImageSeek, fsFromBeginning, Item.FImageNumber);
+    Item.FImageSeek            := FTempWriter.Seek(0, fsFromCurrent);
+    Item.FImageNumber          := FTempWriter.CurrentImage;
+
+    FSwapReader.HashMethod     := Item.CheckMethod;
+    FSwapReader.CipherMethod   := Item.EncryptionMethod;
+    FSwapReader.CipherPassword := FPassword;
+    FSwapReader.CoderMethod    := 0;
+
+    FTempWriter.HashMethod     := Item.CheckMethod;
+    FTempWriter.CipherMethod   := Item.EncryptionMethod;
+    FTempWriter.CipherPassword := FPassword;
+    FTempWriter.CoderMethod    := Item.CompressionMethod;
+    FTempWriter.CoderLevel     := Item.CompressionLevel;
+    FTempWriter.CoderLevelAux  := Item.CompressionLevelAux;
+    FTempWriter.CoderFilter    := Item.CompressionFilter;
+    FTempWriter.CoderFilterAux := Item.CompressionFilterAux;
+    FTempWriter.CoderBlock     := Item.CompressionBlock;
+    begin
+      xxcode(FSwapReader, FTempWriter, Item.FUnCompressedSize);
+    end;
+    //Item.FCheckDigest        := FSwapReader.HashDigest;
+    //Item.FCheckDigestAux     := FTempWriter.HashDigest;
+    Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FImageSeek;
+    //Item.FUncompressedSize   := Item.FExternalFileSize;
   end;
-  //Item.FCheckDigest        := FSwapReader.HashDigest;
-  //Item.FCheckDigestAux     := FTempWriter.HashDigest;
-  Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FImageSeek;
-  //Item.FUncompressedSize   := Item.FExternalFileSize;
 end;
 
 procedure TArchiver.EncodeFromFile(Item: TArchiveItem);
 var
   Source: TFileReader;
 begin
-  if (Item.FAttributes and faSymLink) = 0 then
+  if (Item.Attributes and (faDirectory or faSymLink or faVolumeID)) = 0 then
   begin
     Source := TFileReader.Create(Item.FExternalFileName, nil);
     Item.FImageSeek            := FTempWriter.Seek(0, fsFromCurrent);
@@ -1189,60 +1204,47 @@ begin
 
     FreeAndNil(Source);
   end else
-  begin
-    halt;
-
-
-    Item.FImageSeek            := FTempWriter.Seek(0, fsFromCurrent);
-    Item.FImageNumber          := FTempWriter.CurrentImage;
-
-    FTempWriter.HashMethod     := Item.CheckMethodAux;
-    FTempWriter.CipherMethod   := Item.EncryptionMethod;
-    FTempWriter.CipherPassword := ExtractEncryptionPassword(EncryptionParams);
-    FTempWriter.CoderMethod    := Item.CompressionMethod;
-    FTempWriter.CoderLevel     := Item.CompressionLevel;
-    FTempWriter.CoderLevelAux  := Item.CompressionLevelAux;
-    FTempWriter.CoderFilter    := Item.CompressionFilter;
-    FTempWriter.CoderFilterAux := Item.CompressionFilterAux;
-    FTempWriter.CoderBlock     := Item.CompressionBlock;
+    if (Item.FAttributes and (faDirectory)) = 0 then
     begin
-      FTempWriter.WriteInfArray(fpReadLink(Item.FExternalFileName));
-    end;
-    Item.FCheckDigest          :=      Source.HashDigest;
-    Item.FCheckDigestAux       := FTempWriter.HashDigest;
-    Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FImageSeek;
-    Item.FUncompressedSize     := Item.FExternalFileSize;
-
-  end;
+      // nothing to do
+    end else
+      if (Item.FAttributes and (faSymLink)) = 0 then
+      begin
+        Item.FLink := fpReadLink(Item.FExternalFileName);
+      end else
+        SetExitStatus(esUnknowError);
 end;
 
 procedure TArchiver.DecodeToSwap(Item: TArchiveItem);
 begin
-  FArchiveReader.Seek(Item.ImageSeek, fsFromBeginning, Item.ImageNumber);
-  Item.FImageSeek   := FSwapWriter.Seek(0, fsFromCurrent);
-  Item.FImageNumber := FSwapWriter.CurrentImage;
-
-  FArchiveReader.HashMethod     := Item.CheckMethod;
-  FArchiveReader.CipherMethod   := Item.EncryptionMethod;
-  FArchiveReader.CipherPassword := FPassword;
-  FArchiveReader.CoderMethod    := Item.CompressionMethod;
-  FArchiveReader.CoderLevel     := Item.CompressionLevel;
-  FArchiveReader.CoderLevelAux  := Item.CompressionLevelAux;
-  FArchiveReader.CoderFilter    := Item.CompressionFilter;
-  FArchiveReader.CoderFilterAux := Item.CompressionFilterAux;
-  FArchiveReader.CoderBlock     := Item.CompressionBlock;
-
-  FSwapWriter.HashMethod        := Item.CheckMethod;
-  FSwapWriter.CipherMethod      := Item.EncryptionMethod;
-  FSwapWriter.CipherPassword    := FPassword;
-  FSwapWriter.CoderMethod       := 0;
+  if (Item.Attributes and (faDirectory or faSymLink or faVolumeID)) = 0 then
   begin
-    xxcode(FArchiveReader, FSwapWriter, Item.UncompressedSize);
-  end;
+    FArchiveReader.Seek(Item.ImageSeek, fsFromBeginning, Item.ImageNumber);
+    Item.FImageSeek   := FSwapWriter.Seek(0, fsFromCurrent);
+    Item.FImageNumber := FSwapWriter.CurrentImage;
 
-  if Item.CheckMethod <> 0 then
-    if Item.CheckDigest <> FSwapWriter.HashDigest then
-      SetExitStatus(esHashError);
+    FArchiveReader.HashMethod     := Item.CheckMethod;
+    FArchiveReader.CipherMethod   := Item.EncryptionMethod;
+    FArchiveReader.CipherPassword := FPassword;
+    FArchiveReader.CoderMethod    := Item.CompressionMethod;
+    FArchiveReader.CoderLevel     := Item.CompressionLevel;
+    FArchiveReader.CoderLevelAux  := Item.CompressionLevelAux;
+    FArchiveReader.CoderFilter    := Item.CompressionFilter;
+    FArchiveReader.CoderFilterAux := Item.CompressionFilterAux;
+    FArchiveReader.CoderBlock     := Item.CompressionBlock;
+
+    FSwapWriter.HashMethod        := Item.CheckMethod;
+    FSwapWriter.CipherMethod      := Item.EncryptionMethod;
+    FSwapWriter.CipherPassword    := FPassword;
+    FSwapWriter.CoderMethod       := 0;
+    begin
+      xxcode(FArchiveReader, FSwapWriter, Item.UncompressedSize);
+    end;
+
+    if Item.CheckMethod <> 0 then
+      if Item.CheckDigest <> FSwapWriter.HashDigest then
+        SetExitStatus(esHashError);
+  end;
 end;
 
 procedure TArchiver.DecodeToNul(Item: TArchiveItem);
@@ -1251,68 +1253,83 @@ var
   Buffer: TBuffer;
   Destination: TNulBufStream;
 begin
-  Destination := TNulBufStream.Create;
-  FArchiveReader.Seek(Item.FImageSeek, fsFromBeginning, Item.FImageNumber);
-
-  Destination.HashMethod        := Item.CheckMethod;
-  Destination.CipherMethod      := 0;
-  Destination.CoderMethod       := 0;
-
-  FArchiveReader.HashMethod     := 0;
-  FArchiveReader.CipherMethod   := Item.EncryptionMethod;
-  FArchiveReader.CipherPassword := FPassword;
-  FArchiveReader.CoderMethod    := Item.CompressionMethod;
-  FArchiveReader.CoderLevel     := Item.CompressionLevel;
-  FArchiveReader.CoderLevelAux  := Item.CompressionLevelAux;
-  FArchiveReader.CoderFilter    := Item.CompressionFilter;
-  FArchiveReader.CoderFilterAux := Item.CompressionFilterAux;
-  FArchiveReader.CoderBlock     := Item.CompressionBlock;
+  if (Item.Attributes and (faDirectory or faSymLink or faVolumeID)) = 0 then
   begin
-    xxcode(FArchiveReader, Destination, Item.FUncompressedSize);
-  end;
+    Destination := TNulBufStream.Create;
+    FArchiveReader.Seek(Item.FImageSeek, fsFromBeginning, Item.FImageNumber);
 
-  if Item.CheckMethod <> 0 then
-    if Item.FCheckDigest <> Destination.HashDigest then
+    Destination.HashMethod        := Item.CheckMethod;
+    Destination.CipherMethod      := 0;
+    Destination.CoderMethod       := 0;
+
+    FArchiveReader.HashMethod     := 0;
+    FArchiveReader.CipherMethod   := Item.EncryptionMethod;
+    FArchiveReader.CipherPassword := FPassword;
+    FArchiveReader.CoderMethod    := Item.CompressionMethod;
+    FArchiveReader.CoderLevel     := Item.CompressionLevel;
+    FArchiveReader.CoderLevelAux  := Item.CompressionLevelAux;
+    FArchiveReader.CoderFilter    := Item.CompressionFilter;
+    FArchiveReader.CoderFilterAux := Item.CompressionFilterAux;
+    FArchiveReader.CoderBlock     := Item.CompressionBlock;
     begin
-      SetExitStatus(esHashError);
+      xxcode(FArchiveReader, Destination, Item.FUncompressedSize);
     end;
-  FreeAndNil(Destination);
+
+    if Item.CheckMethod <> 0 then
+      if Item.FCheckDigest <> Destination.HashDigest then
+      begin
+        SetExitStatus(esHashError);
+      end;
+    FreeAndNil(Destination);
+  end;
 end;
 
 procedure TArchiver.DecodeToFile(Item: TArchiveItem);
 var
   Destination: TFileWriter;
 begin
-  Destination := TFileWriter.Create(Item.FExternalFileName, FOnRequestBlankDisk, 0);
-  FArchiveReader.Seek(Item.FImageSeek, fsFromBeginning, Item.FImageNumber);
-
-  Destination.HashMethod        := Item.CheckMethod;
-  Destination.CipherMethod      := 0;
-  Destination.CoderMethod       := 0;
-
-  FArchiveReader.HashMethod     := 0;
-  FArchiveReader.CipherMethod   := Item.EncryptionMethod;
-  FArchiveReader.CipherPassword := FPassword;
-  FArchiveReader.CoderMethod    := Item.CompressionMethod;
-  FArchiveReader.CoderLevel     := Item.CompressionLevel;
-  FArchiveReader.CoderLevelAux  := Item.CompressionLevelAux;
-  FArchiveReader.CoderFilter    := Item.CompressionFilter;
-  FArchiveReader.CoderFilterAux := Item.CompressionFilterAux;
-  FArchiveReader.CoderBlock     := Item.CompressionBlock;
+  if (Item.Attributes and (faDirectory or faSymLink or faVolumeID)) = 0 then
   begin
-    xxcode(FArchiveReader, Destination, Item.UncompressedSize);
-  end;
+    Destination := TFileWriter.Create(Item.FExternalFileName, FOnRequestBlankDisk, 0);
+    FArchiveReader.Seek(Item.FImageSeek, fsFromBeginning, Item.FImageNumber);
 
-  if Item.CheckMethod <> 0 then
-    if Item.FCheckDigest <> Destination.HashDigest then
-      SetExitStatus(esHashError);
-  FreeAndNil(Destination);
+    Destination.HashMethod        := Item.CheckMethod;
+    Destination.CipherMethod      := 0;
+    Destination.CoderMethod       := 0;
 
-  if ExitStatus = esNoError then
-  begin
-    FileSetDate(Item.FExternalFileName, Item.FLastModifiedTime);
-    FileSetAttr(Item.FExternalFileName, Item.FAttributes);
-  end;
+    FArchiveReader.HashMethod     := 0;
+    FArchiveReader.CipherMethod   := Item.EncryptionMethod;
+    FArchiveReader.CipherPassword := FPassword;
+    FArchiveReader.CoderMethod    := Item.CompressionMethod;
+    FArchiveReader.CoderLevel     := Item.CompressionLevel;
+    FArchiveReader.CoderLevelAux  := Item.CompressionLevelAux;
+    FArchiveReader.CoderFilter    := Item.CompressionFilter;
+    FArchiveReader.CoderFilterAux := Item.CompressionFilterAux;
+    FArchiveReader.CoderBlock     := Item.CompressionBlock;
+    begin
+      xxcode(FArchiveReader, Destination, Item.UncompressedSize);
+    end;
+
+    if Item.CheckMethod <> 0 then
+      if Item.FCheckDigest <> Destination.HashDigest then
+        SetExitStatus(esHashError);
+    FreeAndNil(Destination);
+
+    if ExitStatus = esNoError then
+    begin
+      FileSetDate(Item.FExternalFileName, Item.FLastModifiedTime);
+      FileSetAttr(Item.FExternalFileName, Item.FAttributes);
+    end;
+  end else
+    if (Item.FAttributes and (faDirectory)) = 0 then
+    begin
+      ForceDirectories(Item.ExternalFileName);
+    end else
+      if (Item.FAttributes and (faSymLink)) = 0 then
+      begin
+        fpSymLink(PChar(Item.Link), PChar(Item.ExternalFileName));
+      end else
+        SetExitStatus(esUnknowError);
 end;
 
 // TArchiver # OPEN/CLOSE ARCHIVE #
@@ -1357,14 +1374,12 @@ begin
     Item := FCentralDirectory.Items[I];
     if Item.FTags = [aitDecode] then
     begin
-      DoMessage(Format(cmSwapping, [I + 1,
-        FCentralDirectory.Count, Item.FFileName]));
+      DoMessage(Format(cmSwapping, [I + 1, Item.FFileName]));
       DecodeToSwap(Item);
     end else
       if Item.FTags = [aitDecode, aitUpdate] then
       begin
-        DoMessage(Format(cmDecoding, [I + 1,
-          FCentralDirectory.Count, Item.FFileName]));
+        DoMessage(Format(cmDecoding, [I + 1, Item.FFileName]));
         DecodeToNul(Item);
       end;
   end;
@@ -1426,8 +1441,7 @@ begin
         if ExitStatus <> esNoError then Break;
 
         Item := FCentralDirectory.Items[I];
-        DoMessage(Format(cmSplitting, [I + 1,
-          FCentralDirectory.Count, Item.FileName]));
+        DoMessage(Format(cmSplitting, [I + 1, Item.FileName]));
         EncodeFromArchive(Item);
       end;
       if ExitStatus = esNoError then
@@ -1752,14 +1766,12 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [aitUpdate] then
       begin
-        DoMessage(Format(cmExtracting, [I + 1,
-          FCentralDirectory.Count, Item.FExternalFileName]));
+        DoMessage(Format(cmExtracting, [I + 1, Item.FExternalFileName]));
         DecodeToFile(Item);
       end else
         if Item.FTags = [aitDecode] then
         begin
-          DoMessage(Format(cmDecoding, [I + 1,
-            FCentralDirectory.Count, Item.FFileName]));
+          DoMessage(Format(cmDecoding, [I + 1, Item.FFileName]));
           DecodeToNul(Item);
         end;
     end;
@@ -1782,14 +1794,12 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [aitUpdate] then
       begin
-        DoMessage(Format(cmTesting, [I + 1,
-          FCentralDirectory.Count ,Item.FFileName]));
+        DoMessage(Format(cmTesting, [I + 1, Item.FFileName]));
         DecodeToNul(Item);
       end else
         if Item.FTags = [aitDecode] then
         begin
-          DoMessage(Format(cmDecoding, [I + 1,
-            FCentralDirectory.Count, Item.FFileName]));
+          DoMessage(Format(cmDecoding, [I + 1, Item.FFileName]));
           DecodeToNul(Item);
         end;
     end;
@@ -1838,14 +1848,12 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [aitUpdate] then
       begin
-        DoMessage(Format(cmRenaming, [I + 1,
-          FCentralDirectory.Count, Item.FileName]));
+        DoMessage(Format(cmRenaming, [I + 1, Item.FileName]));
         EncodeFromArchive(Item);
       end else
         if Item.FTags = [] then
         begin
-          DoMessage(Format(cmCopying, [I + 1,
-            FCentralDirectory.Count, Item.FileName]));
+          DoMessage(Format(cmCopying, [I + 1, Item.FileName]));
           EncodeFromArchive(Item);
         end;
     end;
@@ -1927,8 +1935,7 @@ begin
       Item := FCentralDirectory.Items[I];
       if aitUpdate in Item.FTags then
       begin
-        DoMessage(Format(cmDeleting, [I + 1,
-          FCentralDirectory.Count, Item.FileName]));
+        DoMessage(Format(cmDeleting, [I + 1, Item.FileName]));
         FCentralDirectory.Delete(I);
       end;
     end;
@@ -1940,14 +1947,12 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [] then
       begin
-        DoMessage(Format(cmCopying, [I + 1,
-          FCentralDirectory.Count, Item.FileName]));
+        DoMessage(Format(cmCopying, [I + 1, Item.FileName]));
         EncodeFromArchive(Item);
       end else
         if Item.FTags = [aitDecode] then
         begin
-          DoMessage(Format(cmEncoding, [I + 1,
-            FCentralDirectory.Count, Item.FileName]));
+          DoMessage(Format(cmEncoding, [I + 1, Item.FileName]));
           EncodeFromSwap(Item);
         end;
     end;
@@ -1984,37 +1989,21 @@ begin
     if CurrentItem.FVersionNeededToRead = 0 then
     begin
 
-      if (CurrentItem.Attributes and (faDirectory or faSymLink)) > 0 then
+      CurrentItem.FVersionNeededToRead := GetVersionNeededToRead(CurrentItem);              // version needed to read
+      if (CurrentItem.Attributes and (faDirectory or faSymLink or faVolumeID)) = 0 then
       begin
+        CurrentItem.FCompressionMethod   := ExtractCompressionMethod  (FCompressionParams); // compression method
+        CurrentItem.FCompressionLevel    := ExtractCompressionLevel   (FCompressionParams); // compression level
+        CurrentItem.FCompressionLevelAux := ExtractCompressionLevelAux(FCompressionParams); // compression aux level
+        CurrentItem.FCompressionBlock    := ExtractCompressionBlock   (FCompressionParams); // compression block
 
-
-
-      end else
-      begin
-
-        // compression method
-        Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
-        CurrentItem.FCompressionMethod := ExtractCompressionMethod(FCompressionParams);
-        // compression level
-        Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
-        CurrentItem.FCompressionLevel := ExtractCompressionLevel(FCompressionParams);
-        // compression aux level
-        Include(CurrentItem.FCompressionFlags, acfCompressionLevelAux);
-        CurrentItem.FCompressionLevelAux := ExtractCompressionLevelAux(FCompressionParams);
-        // compression block
-        Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
-        CurrentItem.FCompressionBlock := ExtractCompressionBlock(FCompressionParams);
-        // default compression table flag
-        Exclude(CurrentItem.FCompressionFlags, acfCompressionFilter);
-        CurrentItem.FCompressionFilter := '';
-        Exclude(CurrentItem.FCompressionFlags, acfCompressionFilterAux);
-        CurrentItem.FCompressionFilterAux := '';
         // force file extension option
         PreviousFileExt := CurrentFileExt;
         if ExtractCompressionFilter(FCompressionParams) = '' then
           CurrentFileExt := ExtractFileExt(CurrentItem.FExternalFileName)
         else
           CurrentFileExt := ExtractCompressionFilter(FCompressionParams);
+
         // compression block option
         if AnsiCompareText(CurrentFileExt, PreviousFileExt) = 0 then
         begin
@@ -2029,11 +2018,10 @@ begin
           CurrentBlock := ExtractCompressionBlock(FCompressionParams);
           CurrentItem.FCompressionBlock := 0;
         end;
+
         // BEE compression method
         if CurrentItem.FCompressionMethod = 1 then
         begin
-          Include(CurrentItem.FCompressionFlags, acfCompressionFilter);
-
           if Configuration.ValueExists('level-' + IntToStr(CurrentItem.FCompressionLevel), CurrentFileExt) = TRUE then
             CurrentItem.FCompressionFilter :=
               Configuration.ReadString('level-' + IntToStr(CurrentItem.FCompressionLevel), CurrentFileExt,
@@ -2043,19 +2031,13 @@ begin
               Configuration.ReadString('level-' + IntToStr(CurrentItem.FCompressionLevel), '.def',
                 Hex(DefaultTableParameters, SizeOf(DefaultTableParameters)));
         end;
-        // encryption method
-        CurrentItem.FEncryptionMethod    := ExtractEncryptionMethod(FEncryptionParams);
-        // check method
-        CurrentItem.FCheckMethod         := ExtractHashingMethod   (FHashingParams);
-        CurrentItem.FCheckMethodAux      := ExtractHashingAuxMethod(FHashingParams);
-        {$IFDEF DEBUG}
-
-        {$ENDIF}
+        CurrentItem.FEncryptionMethod := ExtractEncryptionMethod(FEncryptionParams); // encryption method
+        CurrentItem.FCheckMethod      := ExtractHashingMethod   (FHashingParams);    // check method
+        CurrentItem.FCheckMethodAux   := ExtractHashingAuxMethod(FHashingParams);    // check method aux
       end;
-      // version needed to read
-      CurrentItem.FVersionNeededToRead := GetVersionNeededToRead(CurrentItem);
+      {$IFDEF DEBUG}
+      {$ENDIF}
     end;
-
   end;
   FreeAndNil(Configuration);
 end;
@@ -2133,25 +2115,21 @@ begin
       Item := FCentralDirectory.Items[I];
       if Item.FTags = [] then
       begin
-        DoMessage(Format(cmCopying, [I + 1,
-          FCentralDirectory.Count, Item.FileName]));
+        DoMessage(Format(cmCopying, [I + 1, Item.FileName]));
         EncodeFromArchive(Item);
       end else
         if Item.FTags = [aitUpdate] then
         begin
-          DoMessage(Format(cmAdding, [I + 1,
-            FCentralDirectory.Count, Item.FileName]));
+          DoMessage(Format(cmAdding, [I + 1, Item.FileName]));
           EncodeFromFile(Item);
         end else
           if Item.FTags = [aitDecode] then
           begin
-            DoMessage(Format(cmEncoding, [I + 1,
-              FCentralDirectory.Count, Item.FileName]));
+            DoMessage(Format(cmEncoding, [I + 1, Item.FileName]));
             EncodeFromSwap(Item);
           end else
           begin
-            DoMessage(Format(cmUpdating, [I + 1,
-              FCentralDirectory.Count, Item.FileName]));
+            DoMessage(Format(cmUpdating, [I + 1, Item.FileName]));
             EncodeFromFile(Item);
           end;
     end;

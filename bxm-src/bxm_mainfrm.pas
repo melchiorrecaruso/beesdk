@@ -493,33 +493,30 @@ begin
     ParserCommandLine.CompressionMode := TCompressionMode(
       Ord(AddFrm.CompressionMethod.ItemIndex));
 
-    if AddFrm.ArchiveWithPasswordCheck.Checked then
-      ParserCommandLine.Password := AddFrm.ArchiveWithPassword.Text;
-
     ParserCommandLine.ArchiveName := AddFrm.ArchiveName;
 
     SetCurrentDir(AddFrm.Root.Text);
-    for i := 0 to AddFrm.Files.Items.Count - 1 do
-      if AddFrm.Files.Items[i].ImageIndex = 0 then
-         ParserCommandLine.FileMasks.Add(AddFrm.Files.Items[i].Text);
+    for I := 0 to AddFrm.Files.Items.Count - 1 do
+    begin
+      case AddFrm.Files.Items[I].ImageIndex of
+        0: ParserCommandLine.FileMasks   .Add(AddFrm.Files.Items[I].Text);
+        1: ParserCommandLine.ExcludeMasks.Add(AddFrm.Files.Items[I].Text);
+      end;
+    end;
 
-    ParserCommandLine.
+    ParserCommandLine.Recursive := AddFrm.RecurseSubdirectories.Checked;
 
-          AddFrm.RecurseSubdirectories.Checked);
+    if AddFrm.ArchiveWithPasswordCheck.Checked then
+      ParserCommandLine.Password := AddFrm.ArchiveWithPassword.Text;
 
-    for i := 0 to AddFrm.Files.Items.Count - 1 do
-      if AddFrm.Files.Items[i].ImageIndex = 1 then
-        Scanner.Delete(AddFrm.Files.Items[i].Text,
-          AddFrm.RecurseSubdirectories.Checked);
-
-    for i := 0 to Scanner.Count - 1 do
-      ParserCommandLine.FileMasks.Add(Scanner.Items[i].FileName);
-    Scanner.Destroy;
+    FreeAndNil(AddFrm);
 
     // START
     IdleTimer.Enabled := TRUE;
   end;
-  AddFrm.Destroy;
+
+  if Assigned(AddFrm) then
+    FreeAndNil(AddFrm);
 end;
 
 end.
