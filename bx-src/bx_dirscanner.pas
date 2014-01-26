@@ -136,7 +136,7 @@ begin
   //if (Rec.Attr and faHidden   ) > 0 then Exit;
   //if (Rec.Attr and faSysFile  ) > 0 then Exit;
   if (Rec.Attr and faVolumeId ) > 0 then Exit;
-  if (Rec.Attr and faDirectory) > 0 then Exit;
+  //if (Rec.Attr and faDirectory) > 0 then Exit;
   //if (Rec.Attr and faArchive  ) > 0 then Exit;
   //if (Rec.Attr and faSymLink  ) > 0 then Exit;
   //if (Rec.Attr and faAnyFile  ) > 0 then Exit;
