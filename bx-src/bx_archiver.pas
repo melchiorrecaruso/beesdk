@@ -589,6 +589,12 @@ begin
   FLastModifiedTime := Rec.FileTime;
   FLastStoredTime   := DateTimeToFileDate(Now);
   FAttributes       := Rec.FileAttr;
+
+  if (FAttributes and faSymLink) > 0 then
+    FLink := fpReadLink(FFileName)
+  else
+    FLink := '';
+
   /// reserved property ///
   FExternalFileName := Rec.FileName;
   FExternalFileSize := Rec.FileSize;
@@ -1137,7 +1143,11 @@ begin
       xxcode(FArchiveReader, FTempWriter, Item.FCompressedSize);
     end;
   end else
-    SetExitStatus(esStreamTypeError);
+    if (Item.Attributes and (faDirectory or faSymLink)) > 0 then
+    begin
+      // nothing to do
+    end else
+      SetExitStatus(esStreamTypeError);
 end;
 
 procedure TArchiver.EncodeFromSwap(Item: TArchiveItem);
@@ -1170,7 +1180,11 @@ begin
     Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FImageSeek;
     //Item.FUncompressedSize   := Item.FExternalFileSize;
   end else
-    SetExitStatus(esStreamTypeError);
+    if (Item.Attributes and (faDirectory or faSymLink)) > 0 then
+    begin
+      // nothing to do
+    end else
+      SetExitStatus(esStreamTypeError);
 end;
 
 procedure TArchiver.EncodeFromFile(Item: TArchiveItem);
@@ -1243,7 +1257,11 @@ begin
       if Item.CheckDigest <> FSwapWriter.HashDigest then
         SetExitStatus(esHashError);
   end else
-    SetExitStatus(esStreamTypeError);
+    if (Item.Attributes and (faDirectory or faSymLink)) > 0 then
+    begin
+      // nothing to do
+    end else
+      SetExitStatus(esStreamTypeError);
 end;
 
 procedure TArchiver.DecodeToNul(Item: TArchiveItem);
@@ -1279,7 +1297,11 @@ begin
       end;
     FreeAndNil(Destination);
   end else
-    SetExitStatus(esStreamTypeError);
+    if (Item.Attributes and (faDirectory or faSymLink)) > 0 then
+    begin
+      // nothing to do
+    end else
+      SetExitStatus(esStreamTypeError);
 end;
 
 procedure TArchiver.DecodeToFile(Item: TArchiveItem);
