@@ -90,7 +90,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="7">
       <Unit0>
         <Filename Value="bx.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -117,11 +117,10 @@
       <Unit2>
         <Filename Value="bx-src\bx_archiver.pas"/>
         <UnitName Value="bx_archiver"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="218"/>
         <CursorPos X="58" Y="236"/>
-        <FoldState Value=" T3q403A pj4jX0a2182"/>
         <UsageCount Value="39"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -129,7 +128,7 @@
       <Unit3>
         <Filename Value="bx-src\bx_dirscanner.pas"/>
         <UnitName Value="bx_dirscanner"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="114"/>
         <CursorPos X="1" Y="95"/>
@@ -140,10 +139,9 @@
       <Unit4>
         <Filename Value="bx-src\bx_application.pas"/>
         <UnitName Value="bx_application"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="744"/>
+        <TopLine Value="164"/>
         <CursorPos X="109" Y="758"/>
         <FoldState Value=" T3t30b12413t"/>
         <UsageCount Value="29"/>
@@ -153,7 +151,7 @@
       <Unit5>
         <Filename Value="bx-src\bx_messages.pas"/>
         <UnitName Value="bx_messages"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="22" Y="26"/>
@@ -161,6 +159,18 @@
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="bx-src\bx_commandline.pas"/>
+        <UnitName Value="bx_commandline"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="852"/>
+        <CursorPos X="3" Y="856"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit6>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
@@ -276,12 +286,12 @@
         <Caret Line="572" Column="44" TopLine="520"/>
       </Position28>
       <Position29>
-        <Filename Value="bx-src\bx_dirscanner.pas"/>
-        <Caret Line="95" Column="1" TopLine="114"/>
+        <Filename Value="bx-src\bx_application.pas"/>
+        <Caret Line="592" Column="27" TopLine="565"/>
       </Position29>
       <Position30>
         <Filename Value="bx-src\bx_application.pas"/>
-        <Caret Line="592" Column="27" TopLine="565"/>
+        <Caret Line="758" Column="109" TopLine="155"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
