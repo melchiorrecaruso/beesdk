@@ -589,12 +589,12 @@ begin
   FLastModifiedTime := Rec.FileTime;
   FLastStoredTime   := DateTimeToFileDate(Now);
   FAttributes       := Rec.FileAttr;
-
+  {$IFDEF UNIX}
   if (FAttributes and faSymLink) > 0 then
     FLink := fpReadLink(FFileName)
   else
     FLink := '';
-
+  {$ENDIF}
   /// reserved property ///
   FExternalFileName := Rec.FileName;
   FExternalFileSize := Rec.FileSize;
@@ -1350,9 +1350,10 @@ begin
     end else
       if (Item.FAttributes and (faSymLink)) > 0 then
       begin
+        {$IFDEF UNIX}
         if fpSymLink(PChar(Item.Link), PChar(Item.ExternalFileName)) <> 0 then
            SetExitStatus(esCreateLinkError);
-
+        {$ENDIF}
       end else
         SetExitStatus(esStreamTypeError);
 end;
@@ -2166,4 +2167,4 @@ begin
 end;
 
 end.
-
+
