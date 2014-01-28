@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 182
+  Left = 416
   Height = 453
-  Top = 191
+  Top = 217
   Width = 844
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
@@ -215,11 +215,11 @@ object MainFrm: TMainFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 0
-    Height = 389
-    Top = 64
-    Width = 844
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    Left = 397
+    Height = 221
+    Top = 232
+    Width = 447
+    Anchors = [akRight, akBottom]
     AutoSort = False
     BorderStyle = bsNone
     Columns = <>
@@ -238,6 +238,14 @@ object MainFrm: TMainFrm
     OnClick = ListViewClick
     OnCompare = ListViewCompare
     OnSelectItem = ListViewSelectItem
+  end
+  object ArchiveTreeView: TArchiveTreeView
+    Left = 40
+    Height = 257
+    Top = 168
+    Width = 312
+    DefaultItemHeight = 18
+    TabOrder = 4
   end
   object MainMenu: TPopupMenu
     AutoPopup = False

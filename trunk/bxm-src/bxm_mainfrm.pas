@@ -49,13 +49,14 @@ uses
   bxm_Plugins,
   bxm_ArchiveListViewMgr,
   bxm_ArchiveFolderBox,
-  bxm_IconList;
+  bxm_IconList, bxm_archivetreeviewmgr;
 
 type
 
   { TMainFrm }
 
   TMainFrm = class(TForm)
+    ArchiveTreeView: TArchiveTreeView;
     BackGround: TImage;
     HeaderControl: THeaderControl;
     IdleTimer: TIdleTimer;
@@ -354,6 +355,8 @@ end;
 procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
 var
   I: longint;
+  Item: TArchiveListItem;
+  List: TArchiveList;
 begin
 
   if ParserCommandLine.Command in [cList] then
@@ -362,11 +365,41 @@ begin
     ParserList.Execute(Parser);
 
     ListView.BeginUpdate;
+    ArchiveTreeView.BeginUpdate;
+    List := ArchiveTreeView.ArchiveFiles;
+
+
     for I := 0 to ParserList.Count - 1 do
     begin
       ListViewData(ListView, ListView.Items.Add);
+
+      Item := TArchiveListItem.Create;
+      Item.FileName      := ExtractFileName(ParserList.Items[I].ItemName);
+      Item.FilePath      := ExtractFilePath(ParserList.Items[I].ItemName);
+      Item.FileType      := '';
+      Item.FileSize      :=        StrToInt(ParserList.Items[I].ItemSize);
+      Item.FilePacked    :=        StrToInt(ParserList.Items[I].ItemPacked);
+      Item.FileRatio     :=  100;
+      Item.FileAttr      :=  100;
+      Item.FileTime      :=  DateTimeToFileDate(Now);
+      Item.FileComm      := '';
+      Item.FileCrc       :=  0;
+      Item.FileMethod    := '';
+      Item.FileVersion   := '1';
+      Item.FilePassword  := 'NO';
+      Item.FilePosition  := 0;
+      Item.FileIconIndex := 0;
+
+      List.Add(Item);
+
     end;
+    ArchiveTreeView.EndUpdate;
     ListView.EndUpdate;
+
+    ArchiveTreeView.Initialize;
+    // ArchiveTreeView.ExpandAll;
+
+
   end else
 
     if ParserCommandLine.Command in [cAdd, cDelete] then
