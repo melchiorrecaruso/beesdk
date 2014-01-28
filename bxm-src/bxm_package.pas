@@ -9,7 +9,8 @@ interface
 uses
   bxm_AddTreeViewMgr, bxm_FolderTreeViewMgr, bxm_IconList, bxm_Process, 
   bxm_AppViewer, bxm_ArchiveFolderBox, bxm_ArchiveListViewMgr, bxm_Consts, 
-  bxm_Messages, bxm_SysUtils, bxm_plugins, LazarusPackageIntf;
+  bxm_Messages, bxm_SysUtils, bxm_plugins, bxm_archivetreeviewmgr, 
+  LazarusPackageIntf;
 
 implementation
 
@@ -21,6 +22,7 @@ begin
   RegisterUnit('bxm_Process', @bxm_Process.Register);
   RegisterUnit('bxm_ArchiveFolderBox', @bxm_ArchiveFolderBox.Register);
   RegisterUnit('bxm_ArchiveListViewMgr', @bxm_ArchiveListViewMgr.Register);
+  RegisterUnit('bxm_archivetreeviewmgr', @bxm_archivetreeviewmgr.Register);
 end;
 
 initialization
