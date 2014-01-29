@@ -39,7 +39,7 @@ uses
   Controls,
   Dialogs,
   ExtCtrls,
-  FileUtil,
+  FileUtil, TreeFilterEdit,
   Forms,
   Graphics,
   Menus,
@@ -158,6 +158,8 @@ begin
   Adjust;
   DefaultButtons;
 end;
+
+
 
 procedure TMainFrm.FormDestroy(Sender: TObject);
 begin
@@ -374,8 +376,8 @@ begin
       ListViewData(ListView, ListView.Items.Add);
 
       Item := TArchiveListItem.Create;
-      Item.FileName      := ExtractFileName(ParserList.Items[I].ItemName);
-      Item.FilePath      := ExtractFilePath(ParserList.Items[I].ItemName);
+      Item.FileName      := ParserList.Items[I].ItemName;
+      Item.FilePath      := ParserList.Items[I].ItemPath;
       Item.FileType      := '';
       Item.FileSize      :=        StrToInt(ParserList.Items[I].ItemSize);
       Item.FilePacked    :=        StrToInt(ParserList.Items[I].ItemPacked);
@@ -397,7 +399,7 @@ begin
     ListView.EndUpdate;
 
     ArchiveTreeView.Initialize;
-    // ArchiveTreeView.ExpandAll;
+
 
 
   end else
