@@ -25,10 +25,12 @@
   
     Modifyed:
 
-    v1.0.3 build 0020 - 2006/11/25 by Melchiorre Caruso.
+    v1.0.0 build 0020 - 2006.11.25 by Melchiorre Caruso.
 }
 
 unit bxm_archivetreeviewmgr;
+
+{$I bxm_compiler.inc}
 
 interface
 
@@ -131,6 +133,9 @@ type
   procedure Register;
 
 implementation
+
+uses
+  bxm_iconlist;
 
   { TArchiveListDetails }
   
@@ -298,24 +303,20 @@ implementation
         end;
         FArchiveFileDetails.Update(TArchiveListItem(FArchiveFiles.Items[I]));
       end;
-      QuickSort(FArchiveFiles, 0, FArchiveFiles.Count -1);
-      QuickSort(FArchiveFolders, 0, FArchiveFolders.Count -1);
+      QuickSort(FArchiveFiles, 0, FArchiveFiles.Count - 1);
+      QuickSort(FArchiveFolders, 0, FArchiveFolders.Count - 1);
       
       Items.BeginUpdate;
       Items.Clear;
-      for I := 0 to FArchiveFolders.Count -1 do
+      for I := 0 to FArchiveFolders.Count - 1 do
       begin
         if Length(TArchiveListItem(FArchiveFolders.Items[I]).FilePath) = 0 then
-        begin
           AddFolder(nil, TArchiveListItem(FArchiveFolders.Items[I]));
-        end;
       end;
-      for I := 0 to FArchiveFiles.Count -1 do
+      for I := 0 to FArchiveFiles.Count - 1 do
       begin
         if Length(TArchiveListItem(FArchiveFiles.Items[I]).FilePath) = 0 then
-        begin
           AddFile(nil, TArchiveListItem(FArchiveFiles.Items[I]));
-        end;
       end;
       Items.EndUpdate;
     end;
@@ -325,15 +326,14 @@ implementation
   var
     Node: TTreeNode;
   begin
-    with TArchiveListItem(Item) do
+    with Item do
     begin
       Node := Items.AddChild(ParentNode, FileName);
-      //if Assigned(Images) and (Images.ClassType = TIconList) then
-      //begin
-      //  Node.SelectedIndex := TIconList(Images).GetIconIndex(ExtractFileExt(FileName));
-      //  Node.ImageIndex := Node.SelectedIndex;
-      //  Node.StateIndex := Node.SelectedIndex;
-      //end;
+      // if Assigned(Images) and (Images.ClassType = TIconList) then
+      begin
+        Node.SelectedIndex := 0;
+        Node.ImageIndex    := 0;
+      end;
       Node.Data := Item;
     end;
   end;
@@ -342,18 +342,17 @@ implementation
   var
     Node: TTreeNode;
   begin
-    with TArchiveListItem(Item) do
+    with Item do
     begin
       Node := Items.AddChild(ParentNode, FileName);
-      //if Assigned(Images) and (Images.ClassType = TIconList) then
-      //begin
-      //  Node.ImageIndex := TIconList(Images).GetIconIndex('folderclose');
-      //  Node.SelectedIndex := TIconList(Images).GetIconIndex('folderopen');
-      //  Node.StateIndex := Node.SelectedIndex;
-      //end;
+      // if Assigned(Images) and (Images.ClassType = TIconList) then
+      begin
+        Node.SelectedIndex := 7;
+        Node.ImageIndex    := 6;
+      end;
       Node.Data := Item;
-      Expand(Node);
     end;
+    Expand(Node);
   end;
 
   procedure TArchiveTreeView.Expand(Node: TTreeNode);

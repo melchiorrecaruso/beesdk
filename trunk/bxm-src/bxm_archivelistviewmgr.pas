@@ -25,7 +25,7 @@
     v1.0.5 build 0840 - 2009.04.25 by Melchiorre Caruso.
 }
 
-unit bxm_ArchiveListViewMgr;
+unit bxm_archivelistviewmgr;
 
 {$I bxm_compiler.inc}
 
