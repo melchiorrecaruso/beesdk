@@ -39,11 +39,11 @@ uses
   Controls,
   Dialogs,
   ExtCtrls,
-  FileUtil, TreeFilterEdit,
+  FileUtil, TreeFilterEdit, ShortPathEdit, ListFilterEdit,
   Forms,
   Graphics,
   Menus,
-  StdCtrls,
+  StdCtrls, FileCtrl,
   SysUtils,
   // ---
   bxm_Plugins,
@@ -56,24 +56,27 @@ type
   { TMainFrm }
 
   TMainFrm = class(TForm)
-    ArchiveTreeView: TArchiveTreeView;
     BackGround: TImage;
+    FilterComboBox1: TFilterComboBox;
     HeaderControl: THeaderControl;
     IdleTimer: TIdleTimer;
     ImageList: TImageList;
     IconList: TImageList;
+    ListFilterEdit1: TListFilterEdit;
     ListView: TListView;
     MenuItem1: TMenuItem;
     AboutMenuItem: TMenuItem;
     NulMenuItem: TMenuItem;
     OpenDialog: TOpenDialog;
+    SearchPanel: TPanel;
     PreferencesMenuItem: TMenuItem;
     MainMenu: TPopupMenu;
     MenuItem6: TMenuItem;
     MenuItem7: TMenuItem;
     MenuItem8: TMenuItem;
+    ShapeDown: TShape;
     ShareMenu: TPopupMenu;
-    Shape: TShape;
+    ShapeTop: TShape;
     ToolBar: TToolBar;
     ToolBarMenu: TToolBar;
     NewButton: TToolButton;
@@ -358,7 +361,6 @@ procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
 var
   I: longint;
   Item: TArchiveListItem;
-  List: TArchiveList;
 begin
 
   if ParserCommandLine.Command in [cList] then
@@ -367,41 +369,11 @@ begin
     ParserList.Execute(Parser);
 
     ListView.BeginUpdate;
-    ArchiveTreeView.BeginUpdate;
-    List := ArchiveTreeView.ArchiveFiles;
-
-
     for I := 0 to ParserList.Count - 1 do
     begin
       ListViewData(ListView, ListView.Items.Add);
-
-      Item := TArchiveListItem.Create;
-      Item.FileName      := ParserList.Items[I].ItemName;
-      Item.FilePath      := ParserList.Items[I].ItemPath;
-      Item.FileType      := '';
-      Item.FileSize      :=        StrToInt(ParserList.Items[I].ItemSize);
-      Item.FilePacked    :=        StrToInt(ParserList.Items[I].ItemPacked);
-      Item.FileRatio     :=  100;
-      Item.FileAttr      :=  100;
-      Item.FileTime      :=  DateTimeToFileDate(Now);
-      Item.FileComm      := '';
-      Item.FileCrc       :=  0;
-      Item.FileMethod    := '';
-      Item.FileVersion   := '1';
-      Item.FilePassword  := 'NO';
-      Item.FilePosition  := 0;
-      Item.FileIconIndex := 0;
-
-      List.Add(Item);
-
     end;
-    ArchiveTreeView.EndUpdate;
     ListView.EndUpdate;
-
-    ArchiveTreeView.Initialize;
-
-
-
   end else
 
     if ParserCommandLine.Command in [cAdd, cDelete] then

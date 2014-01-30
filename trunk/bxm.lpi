@@ -43,11 +43,11 @@
         <Filename Value="bxm.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="bxm"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="22"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="170"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
@@ -60,7 +60,7 @@
         <UnitName Value="bxm_mainfrm"/>
         <TopLine Value="65"/>
         <CursorPos X="3" Y="100"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="170"/>
       </Unit1>
       <Unit2>
         <Filename Value="test_main.pas"/>
@@ -231,10 +231,10 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="273"/>
-        <CursorPos X="26" Y="278"/>
-        <FoldState Value=" T3kY046 piZjA0B21118e"/>
-        <UsageCount Value="69"/>
+        <TopLine Value="363"/>
+        <CursorPos X="24" Y="376"/>
+        <FoldState Value=" T3kb046 piZjA0B21118j"/>
+        <UsageCount Value="72"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -245,11 +245,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="bxm_AboutFrm"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="41"/>
         <CursorPos X="38" Y="44"/>
-        <UsageCount Value="46"/>
+        <UsageCount Value="49"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit24>
@@ -259,11 +259,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="bxm_AddFrm"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="220"/>
         <CursorPos X="3" Y="138"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="72"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit25>
@@ -286,11 +286,11 @@
       <Unit28>
         <Filename Value="bxm-src/bxm_plugins.pas"/>
         <UnitName Value="bxm_plugins"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="74"/>
         <CursorPos X="3" Y="95"/>
-        <UsageCount Value="66"/>
+        <UsageCount Value="69"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit28>
@@ -300,11 +300,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="bxm_TickFrm"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="32"/>
         <CursorPos X="14" Y="49"/>
-        <UsageCount Value="66"/>
+        <UsageCount Value="69"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit29>
@@ -336,11 +336,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="bxm_RenameFrm"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="22" Y="2"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit33>
@@ -420,11 +420,11 @@
       <Unit43>
         <Filename Value="bxm-src/bxm_archivelistviewmgr.pas"/>
         <UnitName Value="bxm_archivelistviewmgr"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="13"/>
         <CursorPos X="27" Y="30"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="28"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit43>
@@ -473,11 +473,11 @@
       <Unit49>
         <Filename Value="bxm-src/bxm_iconlist.pas"/>
         <UnitName Value="bxm_IconList"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="31"/>
+        <TopLine Value="26"/>
         <CursorPos X="20" Y="26"/>
-        <UsageCount Value="15"/>
+        <UsageCount Value="18"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit49>
@@ -596,12 +596,10 @@
       <Unit64>
         <Filename Value="bxm-src/bxm_archivetreeviewmgr.pas"/>
         <UnitName Value="bxm_archivetreeviewmgr"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="319"/>
         <CursorPos X="65" Y="333"/>
-        <UsageCount Value="14"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="15"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit64>
       <Unit65>
@@ -617,124 +615,124 @@
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="bxm-src/bxm_archivetreeviewmgr.pas"/>
-        <Caret Line="270" Column="5" TopLine="263"/>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="374" Column="24" TopLine="361"/>
       </Position1>
       <Position2>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="59" Column="5" TopLine="41"/>
+        <Caret Line="373" Column="24" TopLine="360"/>
       </Position2>
       <Position3>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="372" Column="12" TopLine="357"/>
+        <Caret Line="374" Column="24" TopLine="361"/>
       </Position3>
       <Position4>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="358" Column="10" TopLine="337"/>
+        <Caret Line="373" Column="24" TopLine="360"/>
       </Position4>
       <Position5>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="388" Column="44" TopLine="358"/>
+        <Caret Line="374" Column="24" TopLine="361"/>
       </Position5>
       <Position6>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="379" Column="63" TopLine="348"/>
+        <Caret Line="373" Column="24" TopLine="360"/>
       </Position6>
       <Position7>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="375" Column="36" TopLine="354"/>
+        <Caret Line="372" Column="24" TopLine="359"/>
       </Position7>
       <Position8>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="378" Column="74" TopLine="355"/>
+        <Caret Line="373" Column="24" TopLine="360"/>
       </Position8>
       <Position9>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="376" Column="72" TopLine="355"/>
+        <Caret Line="372" Column="24" TopLine="359"/>
       </Position9>
       <Position10>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="379" Column="30" TopLine="359"/>
+        <Caret Line="373" Column="24" TopLine="360"/>
       </Position10>
       <Position11>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="396" Column="31" TopLine="357"/>
+        <Caret Line="372" Column="24" TopLine="359"/>
       </Position11>
       <Position12>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="384" Column="30" TopLine="361"/>
+        <Caret Line="373" Column="24" TopLine="360"/>
       </Position12>
       <Position13>
-        <Filename Value="bxm-src/bxm_archivetreeviewmgr.pas"/>
-        <Caret Line="207" Column="5" TopLine="187"/>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="372" Column="24" TopLine="359"/>
       </Position13>
       <Position14>
-        <Filename Value="bxm-src/bxm_archivetreeviewmgr.pas"/>
-        <Caret Line="207" Column="41" TopLine="187"/>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="373" Column="24" TopLine="360"/>
       </Position14>
       <Position15>
-        <Filename Value="bxm-src/bxm_archivetreeviewmgr.pas"/>
-        <Caret Line="137" Column="1" TopLine="108"/>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="374" Column="24" TopLine="361"/>
       </Position15>
       <Position16>
-        <Filename Value="bxm-src/bxm_archivetreeviewmgr.pas"/>
-        <Caret Line="136" Column="11" TopLine="115"/>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="375" Column="24" TopLine="362"/>
       </Position16>
       <Position17>
-        <Filename Value="bxm-src/bxm_archivetreeviewmgr.pas"/>
-        <Caret Line="133" Column="15" TopLine="115"/>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="376" Column="24" TopLine="363"/>
       </Position17>
       <Position18>
-        <Filename Value="bxm-src/bxm_archivetreeviewmgr.pas"/>
-        <Caret Line="207" Column="13" TopLine="186"/>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="377" Column="24" TopLine="364"/>
       </Position18>
       <Position19>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="386" Column="54" TopLine="361"/>
+        <Caret Line="376" Column="24" TopLine="363"/>
       </Position19>
       <Position20>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="401" Column="38" TopLine="368"/>
+        <Caret Line="375" Column="24" TopLine="362"/>
       </Position20>
       <Position21>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="389" Column="48" TopLine="365"/>
+        <Caret Line="374" Column="24" TopLine="361"/>
       </Position21>
       <Position22>
-        <Filename Value="bxm-src/bxm_plugins.pas"/>
-        <Caret Line="124" Column="14" TopLine="104"/>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="373" Column="24" TopLine="360"/>
       </Position22>
       <Position23>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="372" Column="50" TopLine="348"/>
+        <Caret Line="372" Column="24" TopLine="359"/>
       </Position23>
       <Position24>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="373" Column="50" TopLine="349"/>
+        <Caret Line="373" Column="24" TopLine="360"/>
       </Position24>
       <Position25>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="372" Column="50" TopLine="348"/>
+        <Caret Line="372" Column="24" TopLine="359"/>
       </Position25>
       <Position26>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="379" Column="50" TopLine="351"/>
+        <Caret Line="373" Column="24" TopLine="360"/>
       </Position26>
       <Position27>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="350" Column="5" TopLine="324"/>
+        <Caret Line="374" Column="24" TopLine="361"/>
       </Position27>
       <Position28>
-        <Filename Value="bxm-src/bxm_archivetreeviewmgr.pas"/>
-        <Caret Line="351" Column="7" TopLine="327"/>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="375" Column="24" TopLine="362"/>
       </Position28>
       <Position29>
-        <Filename Value="bxm-src/bxm_archivetreeviewmgr.pas"/>
-        <Caret Line="137" Column="20" TopLine="118"/>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="376" Column="24" TopLine="363"/>
       </Position29>
       <Position30>
-        <Filename Value="bxm-src/bxm_archivetreeviewmgr.pas"/>
-        <Caret Line="334" Column="60" TopLine="313"/>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="375" Column="24" TopLine="362"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
