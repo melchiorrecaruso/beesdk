@@ -43,7 +43,7 @@ uses
   Forms,
   Graphics,
   Menus,
-  StdCtrls, FileCtrl,
+  StdCtrls, FileCtrl, Spin, EditBtn,
   SysUtils,
   // ---
   bxm_Plugins,
@@ -57,8 +57,21 @@ type
 
   TMainFrm = class(TForm)
     BackGround: TImage;
-    FilterComboBox1: TFilterComboBox;
-    FilterComboBox2: TFilterComboBox;
+    FromFilter: TDateEdit;
+    ToFilter: TDateEdit;
+    TypeFilter: TEdit;
+    TypeFilterLabel: TLabel;
+    FromFilterLabel: TLabel;
+    Label3: TLabel;
+    SearchBtn: TBitBtn;
+    ClearBtn: TBitBtn;
+    MinSize: TEdit;
+    MaxSize: TEdit;
+    NameFilter: TComboBox;
+    PathFilterLabel: TLabel;
+    MinSizeLabel: TLabel;
+    NameFilterLabel: TLabel;
+    PathFilter: TComboBox;
     HeaderControl: THeaderControl;
     IdleTimer: TIdleTimer;
     ImageList: TImageList;
@@ -74,9 +87,10 @@ type
     MenuItem6: TMenuItem;
     MenuItem7: TMenuItem;
     MenuItem8: TMenuItem;
-    ShapeDown: TShape;
-    ShareMenu: TPopupMenu;
+    ShapeBotton: TShape;
     ShapeTop: TShape;
+    ShareMenu: TPopupMenu;
+    MaxSizeLabel: TLabel;
     ToolBar: TToolBar;
     ToolBarMenu: TToolBar;
     NewButton: TToolButton;
@@ -86,6 +100,11 @@ type
     MenuButton: TToolButton;
     ExtractButton: TToolButton;
     FindButton: TToolButton;
+    MaxSizeUpDown: TUpDown;
+    MinSizeUpDown: TUpDown;
+    procedure ClearBtnClick(Sender: TObject);
+    procedure SearchBtnClick(Sender: TObject);
+    procedure FindButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -160,9 +179,41 @@ begin
 
   Adjust;
   DefaultButtons;
+  FindButtonClick(nil);
 end;
 
+procedure TMainFrm.FindButtonClick(Sender: TObject);
+begin
+  if SearchPanel.Enabled = FALSE then
+  begin
+    ShapeBotton.Visible := TRUE;
+    SearchPanel.Height  := 130;
+    SearchPanel.Enabled := TRUE;
+  end else
+  begin
+    ShapeBotton.Visible := FALSE;
+    SearchPanel.Height  := 1;
+    SearchPanel.Enabled := FALSE;
+  end;
+end;
 
+procedure TMainFrm.SearchBtnClick(Sender: TObject);
+begin
+
+end;
+
+procedure TMainFrm.ClearBtnClick(Sender: TObject);
+begin
+  NameFilter.Text := '';
+  PathFilter.Text := '';
+
+  MinSize.Text    := '';
+  MaxSize.Text    := '';
+
+  TypeFilter.Text := '';
+  FromFilter.Text := '';
+  ToFilter.Text   := '';
+end;
 
 procedure TMainFrm.FormDestroy(Sender: TObject);
 begin
@@ -349,6 +400,10 @@ begin
   if ItemExt = '.unknow'      then Item.ImageIndex := 15 else
   if ItemExt = '.wab'         then Item.ImageIndex := 16 else
   if ItemExt = '.xls'         then Item.ImageIndex := 17 else Item.ImageIndex := 15;
+
+
+  if PathFilter.Items.IndexOf(ParserList.Items[Item.Index].ItemPath) = -1 then
+    PathFilter.Items.Add(ParserList.Items[Item.Index].ItemPath);
 end;
 
 procedure TMainFrm.ListViewSelectItem(Sender: TObject;
@@ -367,6 +422,10 @@ begin
   begin
     ParserList.Clear;
     ParserList.Execute(Parser);
+
+    PathFilter.Clear;
+    NameFilter.Clear;
+    ClearBtnClick(Sender);
 
     ListView.BeginUpdate;
     for I := 0 to ParserList.Count - 1 do
