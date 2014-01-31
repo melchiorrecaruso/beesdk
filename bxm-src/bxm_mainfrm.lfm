@@ -157,13 +157,13 @@ object MainFrm: TMainFrm
   end
   object HeaderControl: THeaderControl
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = ShapeTop
+    AnchorSideTop.Control = ShapeDown
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 0
     Height = 26
-    Top = 272
+    Top = 113
     Width = 947
     DragReorder = False
     Sections = <    
@@ -201,7 +201,7 @@ object MainFrm: TMainFrm
     OnSectionClick = HeaderControlSectionClick
     OnSectionResize = HeaderControlSectionResize
     OnSectionSeparatorDblClick = HeaderControlSectionSeparatorDblClick
-    Anchors = [akLeft, akRight]
+    Anchors = [akTop, akLeft, akRight]
     Font.Style = [fsBold]
     Constraints.MinHeight = 26
     ParentFont = False
@@ -216,8 +216,8 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 372
-    Top = 298
+    Height = 531
+    Top = 139
     Width = 947
     Anchors = [akTop, akLeft, akRight, akBottom]
     AutoSort = False
@@ -258,17 +258,14 @@ object MainFrm: TMainFrm
       Left = 21
       Height = 27
       Top = 11
-      Width = 260
+      Width = 228
       TabOrder = 0
     end
-    object ListFilterEdit1: TListFilterEdit
-      Left = 309
+    object FilterComboBox2: TFilterComboBox
+      Left = 336
       Height = 27
-      Top = 11
-      Width = 218
-      ButtonWidth = 23
-      NumGlyphs = 1
-      MaxLength = 0
+      Top = 10
+      Width = 308
       TabOrder = 1
     end
   end
@@ -279,13 +276,12 @@ object MainFrm: TMainFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 0
-    Height = 2
+    Height = 1
     Top = 112
     Width = 947
     Anchors = [akTop, akLeft, akRight]
     Brush.Color = clDefault
     Pen.Color = clGray
-    Shape = stRoundRect
   end
   object MainMenu: TPopupMenu
     AutoPopup = False
