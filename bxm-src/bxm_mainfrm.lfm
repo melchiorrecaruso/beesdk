@@ -1,14 +1,14 @@
 object MainFrm: TMainFrm
-  Left = 411
+  Left = 348
   Height = 670
-  Top = 219
-  Width = 947
+  Top = 155
+  Width = 948
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
   AlphaBlend = True
   Caption = 'BX Manager'
   ClientHeight = 670
-  ClientWidth = 947
+  ClientWidth = 948
   Constraints.MinHeight = 250
   Constraints.MinWidth = 400
   OnCreate = FormCreate
@@ -20,7 +20,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 36
     Top = 0
-    Width = 947
+    Width = 948
     Align = alTop
     AutoSize = True
     ParentShowHint = False
@@ -49,7 +49,7 @@ object MainFrm: TMainFrm
     Left = 3
     Height = 34
     Top = 2
-    Width = 872
+    Width = 873
     Align = alNone
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
@@ -100,13 +100,14 @@ object MainFrm: TMainFrm
       Top = 0
       Caption = 'FindButton'
       ImageIndex = 4
+      OnClick = FindButtonClick
     end
   end
   object ToolBarMenu: TToolBar
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 875
+    Left = 876
     Height = 34
     Top = 2
     Width = 69
@@ -141,30 +142,16 @@ object MainFrm: TMainFrm
       OnClick = MenuButtonClick
     end
   end
-  object ShapeTop: TShape
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = ToolBar
-    AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    Left = 0
-    Height = 1
-    Top = 37
-    Width = 947
-    Anchors = [akTop, akLeft, akRight]
-    Brush.Color = clDefault
-    Pen.Color = clGray
-  end
   object HeaderControl: THeaderControl
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = ShapeDown
+    AnchorSideLeft.Control = ListView
+    AnchorSideTop.Control = SearchPanel
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 0
     Height = 26
-    Top = 113
-    Width = 947
+    Top = 167
+    Width = 948
     DragReorder = False
     Sections = <    
       item
@@ -216,9 +203,9 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 531
-    Top = 139
-    Width = 947
+    Height = 477
+    Top = 193
+    Width = 948
     Anchors = [akTop, akLeft, akRight, akBottom]
     AutoSort = False
     BorderStyle = bsNone
@@ -241,47 +228,312 @@ object MainFrm: TMainFrm
   end
   object SearchPanel: TPanel
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = ShapeTop
+    AnchorSideTop.Control = ToolBar
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 0
-    Height = 74
-    Top = 38
-    Width = 947
+    Height = 130
+    Top = 37
+    Width = 948
     Anchors = [akTop, akLeft, akRight]
     BevelOuter = bvNone
-    ClientHeight = 74
-    ClientWidth = 947
+    ClientHeight = 130
+    ClientWidth = 948
+    Color = clYellow
+    ParentColor = False
     TabOrder = 4
-    object FilterComboBox1: TFilterComboBox
-      Left = 21
+    object ShapeBotton: TShape
+      AnchorSideLeft.Control = SearchPanel
+      AnchorSideRight.Control = SearchPanel
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = SearchPanel
+      AnchorSideBottom.Side = asrBottom
+      Left = 0
+      Height = 1
+      Top = 129
+      Width = 948
+      Align = alBottom
+      Pen.Color = clGray
+    end
+    object ShapeTop: TShape
+      AnchorSideLeft.Control = SearchPanel
+      AnchorSideTop.Control = SearchPanel
+      AnchorSideRight.Control = SearchPanel
+      AnchorSideRight.Side = asrBottom
+      Left = 0
+      Height = 1
+      Top = 0
+      Width = 948
+      Anchors = [akTop, akLeft, akRight]
+      Brush.Color = clDefault
+      Pen.Color = clGray
+    end
+    object PathFilter: TComboBox
+      AnchorSideLeft.Control = PathFilterLabel
+      AnchorSideTop.Control = PathFilterLabel
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = SearchBtn
+      Left = 285
       Height = 27
-      Top = 11
-      Width = 228
+      Top = 28
+      Width = 544
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = False
+      BorderSpacing.Top = 6
+      BorderSpacing.Right = 25
+      CharCase = ecLowerCase
+      ItemHeight = 0
       TabOrder = 0
     end
-    object FilterComboBox2: TFilterComboBox
-      Left = 336
+    object SearchBtn: TBitBtn
+      AnchorSideTop.Control = PathFilter
+      AnchorSideRight.Control = SearchPanel
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = PathFilter
+      AnchorSideBottom.Side = asrBottom
+      Left = 854
       Height = 27
-      Top = 10
-      Width = 308
+      Top = 28
+      Width = 84
+      Anchors = [akTop, akRight, akBottom]
+      AutoSize = True
+      BorderSpacing.Right = 10
+      Caption = 'Search'
+      Constraints.MaxWidth = 84
+      Constraints.MinWidth = 84
+      Default = True
+      OnClick = SearchBtnClick
       TabOrder = 1
     end
-  end
-  object ShapeDown: TShape
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = SearchPanel
-    AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    Left = 0
-    Height = 1
-    Top = 112
-    Width = 947
-    Anchors = [akTop, akLeft, akRight]
-    Brush.Color = clDefault
-    Pen.Color = clGray
+    object ClearBtn: TBitBtn
+      AnchorSideTop.Control = MinSize
+      AnchorSideRight.Control = SearchPanel
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = MinSize
+      AnchorSideBottom.Side = asrBottom
+      Left = 854
+      Height = 27
+      Top = 86
+      Width = 84
+      Anchors = [akTop, akRight, akBottom]
+      AutoSize = True
+      BorderSpacing.Right = 10
+      Caption = 'Clear'
+      Constraints.MaxWidth = 84
+      Constraints.MinWidth = 84
+      OnClick = ClearBtnClick
+      TabOrder = 2
+    end
+    object NameFilter: TComboBox
+      AnchorSideLeft.Control = NameFilterLabel
+      AnchorSideTop.Control = NameFilterLabel
+      AnchorSideTop.Side = asrBottom
+      Left = 10
+      Height = 27
+      Top = 28
+      Width = 250
+      BorderSpacing.Top = 6
+      ItemHeight = 0
+      TabOrder = 3
+    end
+    object NameFilterLabel: TLabel
+      AnchorSideLeft.Control = SearchPanel
+      AnchorSideTop.Control = ShapeTop
+      AnchorSideTop.Side = asrBottom
+      Left = 10
+      Height = 15
+      Top = 7
+      Width = 54
+      BorderSpacing.Left = 10
+      BorderSpacing.Top = 6
+      Caption = 'File name:'
+      ParentColor = False
+    end
+    object MinSizeLabel: TLabel
+      AnchorSideLeft.Control = SearchPanel
+      AnchorSideTop.Control = NameFilter
+      AnchorSideTop.Side = asrBottom
+      Left = 10
+      Height = 15
+      Top = 65
+      Width = 45
+      BorderSpacing.Left = 10
+      BorderSpacing.Top = 10
+      Caption = 'Min size:'
+      ParentColor = False
+    end
+    object PathFilterLabel: TLabel
+      AnchorSideLeft.Control = NameFilter
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = ShapeTop
+      AnchorSideTop.Side = asrBottom
+      Left = 285
+      Height = 15
+      Top = 7
+      Width = 48
+      BorderSpacing.Left = 25
+      BorderSpacing.Top = 6
+      Caption = 'File path:'
+      ParentColor = False
+    end
+    object MaxSizeLabel: TLabel
+      AnchorSideTop.Control = NameFilter
+      AnchorSideTop.Side = asrBottom
+      Left = 150
+      Height = 15
+      Top = 65
+      Width = 47
+      BorderSpacing.Top = 10
+      Caption = 'Max size:'
+      ParentColor = False
+    end
+    object MinSize: TEdit
+      AnchorSideLeft.Control = MinSizeLabel
+      AnchorSideTop.Control = MinSizeLabel
+      AnchorSideTop.Side = asrBottom
+      Left = 10
+      Height = 27
+      Top = 86
+      Width = 100
+      BorderSpacing.Top = 6
+      TabOrder = 4
+    end
+    object MaxSize: TEdit
+      AnchorSideTop.Control = MaxSizeLabel
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = MaxSizeUpDown
+      Left = 142
+      Height = 27
+      Top = 86
+      Width = 100
+      Anchors = [akTop, akRight]
+      BorderSpacing.Top = 6
+      TabOrder = 5
+    end
+    object MaxSizeUpDown: TUpDown
+      AnchorSideTop.Control = MaxSize
+      AnchorSideRight.Control = NameFilter
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = MaxSize
+      AnchorSideBottom.Side = asrBottom
+      Left = 242
+      Height = 27
+      Top = 86
+      Width = 18
+      Anchors = [akTop, akRight, akBottom]
+      Min = 0
+      Constraints.MaxWidth = 18
+      Constraints.MinWidth = 18
+      Position = 0
+      TabOrder = 6
+      Wrap = False
+    end
+    object MinSizeUpDown: TUpDown
+      AnchorSideLeft.Control = MinSize
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = MinSize
+      AnchorSideBottom.Control = MinSize
+      AnchorSideBottom.Side = asrBottom
+      Left = 110
+      Height = 27
+      Top = 86
+      Width = 18
+      Anchors = [akTop, akLeft, akBottom]
+      Min = 0
+      Constraints.MaxWidth = 18
+      Constraints.MinWidth = 18
+      Position = 0
+      TabOrder = 7
+      Wrap = False
+    end
+    object TypeFilterLabel: TLabel
+      AnchorSideTop.Control = PathFilter
+      AnchorSideTop.Side = asrBottom
+      Left = 285
+      Height = 15
+      Top = 65
+      Width = 47
+      BorderSpacing.Top = 10
+      Caption = 'File type:'
+      ParentColor = False
+    end
+    object TypeFilter: TEdit
+      AnchorSideTop.Control = TypeFilterLabel
+      AnchorSideTop.Side = asrBottom
+      Left = 285
+      Height = 27
+      Top = 86
+      Width = 120
+      BorderSpacing.Top = 6
+      TabOrder = 8
+    end
+    object FromFilter: TDateEdit
+      AnchorSideLeft.Control = FromFilterLabel
+      AnchorSideTop.Control = FromFilterLabel
+      AnchorSideTop.Side = asrBottom
+      Left = 420
+      Height = 27
+      Top = 86
+      Width = 120
+      CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
+      OKCaption = 'OK'
+      CancelCaption = 'Cancel'
+      DateOrder = doNone
+      ButtonWidth = 23
+      BorderSpacing.Top = 6
+      CharCase = ecNormal
+      NumGlyphs = 1
+      MaxLength = 0
+      TabOrder = 9
+    end
+    object ToFilter: TDateEdit
+      AnchorSideLeft.Control = Label3
+      AnchorSideTop.Control = Label3
+      AnchorSideTop.Side = asrBottom
+      Left = 580
+      Height = 27
+      Top = 86
+      Width = 120
+      CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
+      OKCaption = 'OK'
+      CancelCaption = 'Cancel'
+      DateOrder = doNone
+      ButtonWidth = 23
+      BorderSpacing.Top = 6
+      CharCase = ecNormal
+      NumGlyphs = 1
+      MaxLength = 0
+      TabOrder = 10
+    end
+    object FromFilterLabel: TLabel
+      AnchorSideLeft.Control = TypeFilter
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = PathFilter
+      AnchorSideTop.Side = asrBottom
+      Left = 420
+      Height = 15
+      Top = 65
+      Width = 58
+      BorderSpacing.Left = 15
+      BorderSpacing.Top = 10
+      Caption = 'From date:'
+      ParentColor = False
+    end
+    object Label3: TLabel
+      AnchorSideLeft.Control = FromFilter
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = PathFilter
+      AnchorSideTop.Side = asrBottom
+      Left = 580
+      Height = 15
+      Top = 65
+      Width = 41
+      BorderSpacing.Left = 40
+      BorderSpacing.Top = 10
+      Caption = 'To date:'
+      ParentColor = False
+    end
   end
   object MainMenu: TPopupMenu
     AutoPopup = False

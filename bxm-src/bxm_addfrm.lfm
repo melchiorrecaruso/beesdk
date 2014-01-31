@@ -1,7 +1,7 @@
 object AddFrm: TAddFrm
-  Left = 565
+  Left = 898
   Height = 502
-  Top = 159
+  Top = 417
   Width = 500
   AllowDropFiles = True
   BorderIcons = [biSystemMenu]
@@ -28,6 +28,7 @@ object AddFrm: TAddFrm
     AutoSize = True
     BorderSpacing.Around = 6
     Caption = 'Ok'
+    Constraints.MaxWidth = 84
     Constraints.MinWidth = 84
     ModalResult = 1
     TabOrder = 1
@@ -45,6 +46,7 @@ object AddFrm: TAddFrm
     BorderSpacing.Around = 6
     Cancel = True
     Caption = 'Cancel'
+    Constraints.MaxWidth = 84
     Constraints.MinWidth = 84
     ModalResult = 2
     TabOrder = 0
@@ -145,6 +147,7 @@ object AddFrm: TAddFrm
     AutoSize = True
     BorderSpacing.InnerBorder = 2
     Caption = 'Add files ...'
+    Constraints.MaxWidth = 84
     OnClick = PopupMenu_AddFilesClick
     TabOrder = 5
   end
@@ -163,6 +166,7 @@ object AddFrm: TAddFrm
     BorderSpacing.Top = 6
     BorderSpacing.InnerBorder = 2
     Caption = '+ / -'
+    Constraints.MinWidth = 84
     Enabled = False
     OnClick = PopupMenu_PlusMinusClick
     TabOrder = 6
@@ -181,6 +185,8 @@ object AddFrm: TAddFrm
     AutoSize = True
     BorderSpacing.InnerBorder = 2
     Caption = 'Delete'
+    Constraints.MaxWidth = 84
+    Constraints.MinWidth = 84
     Enabled = False
     OnClick = PopupMenu_DeleteClick
     TabOrder = 7
@@ -250,6 +256,7 @@ object AddFrm: TAddFrm
     AutoSize = True
     BorderSpacing.Around = 6
     Caption = 'Help'
+    Constraints.MaxWidth = 84
     Constraints.MinWidth = 84
     TabOrder = 9
   end
