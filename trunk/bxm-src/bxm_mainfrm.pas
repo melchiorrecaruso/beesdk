@@ -58,11 +58,11 @@ type
   TMainFrm = class(TForm)
     BackGround: TImage;
     FilterComboBox1: TFilterComboBox;
+    FilterComboBox2: TFilterComboBox;
     HeaderControl: THeaderControl;
     IdleTimer: TIdleTimer;
     ImageList: TImageList;
     IconList: TImageList;
-    ListFilterEdit1: TListFilterEdit;
     ListView: TListView;
     MenuItem1: TMenuItem;
     AboutMenuItem: TMenuItem;
