@@ -36,23 +36,23 @@ interface
 const
   { Messages }
 
-  cmCreating          = 'Creating new archive %s';
-  cmListing           = 'Listing %s';
-  cmOpening           = 'Opening archive %s';
+  cmCreating          = 'Creating new archive  %s';
+  cmListing           = 'Listing  %s';
+  cmOpening           = 'Opening archive  %s';
   cmScanning          = 'Scanning files';
 
-  cmAdding            = 'Adding %s';
-  cmCopying           = 'Copying %s';
-  cmDecoding          = 'Decoding %s';
-  cmDeleting          = 'Deleting %s';
-  cmEncoding          = 'Encoding %s';
-  cmExtracting        = 'Extracting %s';
+  cmAdding            = 'Adding  %s';
+  cmCopying           = 'Copying  %s';
+  cmDecoding          = 'Decoding  %s';
+  cmDeleting          = 'Deleting  %s';
+  cmEncoding          = 'Encoding  %s';
+  cmExtracting        = 'Extracting  %s';
 
-  cmRenaming          = 'Renaming %s';
-  cmSplitting         = 'Splitting %s';
-  cmSwapping          = 'Swapping %s';
-  cmTesting           = 'Testing %s';
-  cmUpdating          = 'Updating %s';
+  cmRenaming          = 'Renaming  %s';
+  cmSplitting         = 'Splitting  %s';
+  cmSwapping          = 'Swapping  %s';
+  cmTesting           = 'Testing  %s';
+  cmUpdating          = 'Updating  %s';
 
   { ExitStatus }
 
