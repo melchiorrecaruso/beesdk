@@ -226,7 +226,6 @@ object MainFrm: TMainFrm
     OnClick = ListViewClick
     OnCompare = ListViewCompare
     OnData = ListViewData
-    OnSelectItem = ListViewSelectItem
   end
   object SearchPanel: TPanel
     AnchorSideLeft.Control = Owner
@@ -537,17 +536,21 @@ object MainFrm: TMainFrm
       ParentColor = False
     end
   end
-  object StringGrid1: TStringGrid
-    Left = 48
-    Height = 201
-    Top = 216
-    Width = 792
-    FixedCols = 0
-    FixedRows = 0
-    GridLineWidth = 0
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect, goSmoothScroll]
+  object VirtualStringTree: TVirtualStringTree
+    Left = 53
+    Height = 169
+    Top = 233
+    Width = 778
+    DefaultText = 'Node'
+    Header.AutoSizeIndex = 0
+    Header.Columns = <>
+    Header.DefaultHeight = 17
+    Header.MainColumn = -1
+    StateImages = IconList
     TabOrder = 5
-    OnDrawCell = StringGrid1DrawCell
+    TreeOptions.MiscOptions = [toFullRepaintOnResize, toInitOnSave, toReportMode, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+    OnGetText = VirtualStringTreeGetText
+    OnGetImageIndex = VirtualStringTreeGetImageIndex
   end
   object MainMenu: TPopupMenu
     AutoPopup = False
