@@ -1,14 +1,14 @@
 object MainFrm: TMainFrm
-  Left = 348
+  Left = 326
   Height = 670
-  Top = 155
-  Width = 948
+  Top = 136
+  Width = 884
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
   AlphaBlend = True
   Caption = 'BX Manager'
   ClientHeight = 670
-  ClientWidth = 948
+  ClientWidth = 884
   Constraints.MinHeight = 250
   Constraints.MinWidth = 400
   OnCreate = FormCreate
@@ -20,7 +20,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 36
     Top = 0
-    Width = 948
+    Width = 884
     Align = alTop
     AutoSize = True
     ParentShowHint = False
@@ -49,7 +49,7 @@ object MainFrm: TMainFrm
     Left = 3
     Height = 34
     Top = 2
-    Width = 873
+    Width = 809
     Align = alNone
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
@@ -107,7 +107,7 @@ object MainFrm: TMainFrm
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 876
+    Left = 812
     Height = 34
     Top = 2
     Width = 69
@@ -151,7 +151,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 26
     Top = 167
-    Width = 948
+    Width = 884
     DragReorder = False
     Sections = <    
       item
@@ -203,16 +203,17 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 477
-    Top = 193
-    Width = 948
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    Height = 222
+    Top = 448
+    Width = 884
+    Anchors = [akLeft, akRight, akBottom]
     AutoSort = False
     BorderStyle = bsNone
     Columns = <>
     ColumnClick = False
     IconOptions.WrapText = False
     MultiSelect = True
+    OwnerData = True
     ReadOnly = True
     RowSelect = True
     ScrollBars = ssAutoVertical
@@ -224,6 +225,7 @@ object MainFrm: TMainFrm
     ViewStyle = vsReport
     OnClick = ListViewClick
     OnCompare = ListViewCompare
+    OnData = ListViewData
     OnSelectItem = ListViewSelectItem
   end
   object SearchPanel: TPanel
@@ -235,11 +237,11 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 130
     Top = 37
-    Width = 948
+    Width = 884
     Anchors = [akTop, akLeft, akRight]
     BevelOuter = bvNone
     ClientHeight = 130
-    ClientWidth = 948
+    ClientWidth = 884
     Color = clYellow
     ParentColor = False
     TabOrder = 4
@@ -252,7 +254,7 @@ object MainFrm: TMainFrm
       Left = 0
       Height = 1
       Top = 129
-      Width = 948
+      Width = 884
       Align = alBottom
       Pen.Color = clGray
     end
@@ -264,7 +266,7 @@ object MainFrm: TMainFrm
       Left = 0
       Height = 1
       Top = 0
-      Width = 948
+      Width = 884
       Anchors = [akTop, akLeft, akRight]
       Brush.Color = clDefault
       Pen.Color = clGray
@@ -277,7 +279,7 @@ object MainFrm: TMainFrm
       Left = 285
       Height = 27
       Top = 28
-      Width = 544
+      Width = 480
       Anchors = [akTop, akLeft, akRight]
       AutoSize = False
       BorderSpacing.Top = 6
@@ -292,7 +294,7 @@ object MainFrm: TMainFrm
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = PathFilter
       AnchorSideBottom.Side = asrBottom
-      Left = 854
+      Left = 790
       Height = 27
       Top = 28
       Width = 84
@@ -312,7 +314,7 @@ object MainFrm: TMainFrm
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = MinSize
       AnchorSideBottom.Side = asrBottom
-      Left = 854
+      Left = 790
       Height = 27
       Top = 86
       Width = 84
@@ -534,6 +536,18 @@ object MainFrm: TMainFrm
       Caption = 'To date:'
       ParentColor = False
     end
+  end
+  object StringGrid1: TStringGrid
+    Left = 48
+    Height = 201
+    Top = 216
+    Width = 792
+    FixedCols = 0
+    FixedRows = 0
+    GridLineWidth = 0
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect, goSmoothScroll]
+    TabOrder = 5
+    OnDrawCell = StringGrid1DrawCell
   end
   object MainMenu: TPopupMenu
     AutoPopup = False

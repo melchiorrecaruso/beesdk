@@ -49,6 +49,7 @@ type
 
   TParserCommandLine = class
   private
+    FExec: string;
     FCommand: TCommand;
     FCompressionMode: TCompressionMode;
     FPassword: string;
@@ -62,6 +63,7 @@ type
     procedure Clear;
     function GetCommandLine: string;
   public
+    property Exec: string read FExec write FExec;
     property Command: TCommand read FCommand write FCommand;
     property CompressionMode: TCompressionMode read FCompressionMode write FCompressionMode;
     property Password: string read FPassword write FPassword;
@@ -128,31 +130,31 @@ implementation
 
 uses
   bx_Common,
-  Dialogs;
+  Dialogs,
+  IniFiles;
 
 /// TParserCommandLine class ...
 
 constructor TParserCommandLine.Create;
 begin
   inherited Create;
-  FCommand         := cNone;
-  FCompressionMode := cmNormal;
-  FPassword        := '';
-  FRecursive       := FALSE;
-  FArchiveName     := '';
-  FFileMasks       := TStringList.Create;
-  FExcludeMasks    := TStringList.Create;
+  FFileMasks    := TStringList.Create;
+  FExcludeMasks := TStringList.Create;
+  begin
+    Clear;
+  end;
 end;
 
 destructor TParserCommandLine.Destroy;
 begin
-  FFileMasks.Destroy;
   FExcludeMasks.Destroy;
+  FFileMasks.Destroy;
   inherited Destroy;
 end;
 
 procedure TParserCommandLine.Clear;
 begin
+  FExec            := '';
   FCommand         := cNone;
   FCompressionMode := cmNormal;
   FPassword        := '';
@@ -164,45 +166,49 @@ end;
 
 function TParserCommandLine.GetCommandLine: string;
 var
-  i: longint;
+  I: longint;
+  ParserIni: TIniFile;
 begin
+  ParserIni := TIniFile.Create('bxm.ini');
+
   Result := '';
   if FCommand <> cNone then
   begin
-    Result := '7z';
+    Result := ParserIni.ReadString(FExec, 'exec', '');
     case FCommand of
-      cAdd:      Result := Result + ' a -y';
-      cDelete:   Result := Result + ' d -y';
-      cExtract:  Result := Result + ' e -y';
-      cList:     Result := Result + ' l -y -slt';
-      cTest:     Result := Result + ' t -y';
-      cxExtract: Result := Result + ' x -y';
+      cAdd:      Result := Result + ' ' + ParserIni.ReadString(FExec, 'add',      '');
+      cDelete:   Result := Result + ' ' + ParserIni.ReadString(FExec, 'delete',   '');
+      cExtract:  Result := Result + ' ' + ParserIni.ReadString(FExec, 'extract',  '');
+      cList:     Result := Result + ' ' + ParserIni.ReadString(FExec, 'list',     '');
+      cTest:     Result := Result + ' ' + ParserIni.ReadString(FExec, 'test',     '');
+      cxExtract: Result := Result + ' ' + ParserIni.ReadString(FExec, 'xextract', '');
     end;
 
     if FCommand in [cAdd] then
       case FCompressionMode of
-        cmStore:   Result := Result + ' -mx0';
-        cmFastest: Result := Result + ' -mx1';
-        cmFast:    Result := Result + ' -mx3';
-        cmNormal:  Result := Result + ' -mx5';
-        cmMaximum: Result := Result + ' -mx7';
-        cmUltra:   Result := Result + ' -mx9';
+        cmStore:   Result := Result + ' ' + ParserIni.ReadString(FExec, 'store',   '');
+        cmFastest: Result := Result + ' ' + ParserIni.ReadString(FExec, 'fastest', '');
+        cmFast:    Result := Result + ' ' + ParserIni.ReadString(FExec, 'fast',    '');
+        cmNormal:  Result := Result + ' ' + ParserIni.ReadString(FExec, 'normal',  '');
+        cmMaximum: Result := Result + ' ' + ParserIni.ReadString(FExec, 'maximum', '');
+        cmUltra:   Result := Result + ' ' + ParserIni.ReadString(FExec, 'ultra',   '');
       end;
 
     if FPassword <> '' then
-      Result := Result + ' -p' + FPassword;
+      Result := Result + ' ' + ParserIni.ReadString(FExec, 'password',   '')  + ' ' + FPassword;
 
     if FRecursive = TRUE then
-      Result := Result + ' -r';
+      Result := Result + ' ' + ParserIni.ReadString(FExec, 'recursive',   '');
 
-    for i := 0 to FExcludeMasks.Count - 1 do
-      Result := Result + ' -x' + FExcludeMasks[i];
+    for I := 0 to FExcludeMasks.Count - 1 do
+      Result := Result + ' ' + ParserIni.ReadString(FExec, 'exclude',   '') + FExcludeMasks[I];
 
     Result := Result + ' ' + FArchiveName;
 
-    for i := 0 to FFileMasks.Count - 1 do
-      Result := Result + ' ' + FFileMasks[i];
+    for I := 0 to FFileMasks.Count - 1 do
+      Result := Result + ' ' + FFileMasks[I];
   end;
+  ParserIni.Destroy;
 end;
 
 /// TParser class ...

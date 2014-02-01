@@ -1,7 +1,7 @@
 object AddFrm: TAddFrm
-  Left = 898
+  Left = 871
   Height = 502
-  Top = 417
+  Top = 314
   Width = 500
   AllowDropFiles = True
   BorderIcons = [biSystemMenu]

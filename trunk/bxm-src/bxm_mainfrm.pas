@@ -43,7 +43,7 @@ uses
   Forms,
   Graphics,
   Menus,
-  StdCtrls, FileCtrl, Spin, EditBtn,
+  StdCtrls, FileCtrl, Spin, EditBtn, Grids,
   SysUtils,
   // ---
   bxm_Plugins,
@@ -58,6 +58,7 @@ type
   TMainFrm = class(TForm)
     BackGround: TImage;
     FromFilter: TDateEdit;
+    StringGrid1: TStringGrid;
     ToFilter: TDateEdit;
     TypeFilter: TEdit;
     TypeFilterLabel: TLabel;
@@ -130,6 +131,8 @@ type
     procedure NewButtonClick(Sender: TObject);
     procedure ShareButtonClick(Sender: TObject);
     procedure ShareMenuClose(Sender: TObject);
+    procedure StringGrid1DrawCell(Sender: TObject; aCol, aRow: Integer;
+      aRect: TRect; aState: TGridDrawState);
   private
     { private declarations }
     ParserCommandLine: TParserCommandLine;
@@ -198,7 +201,28 @@ begin
 end;
 
 procedure TMainFrm.SearchBtnClick(Sender: TObject);
+var
+  I: longint;
+  Item: TParserItem;
+  Res: boolean;
 begin
+  for I := 0 to ListView.Items.Count - 1 do
+  begin
+    Item := TParserItem(ListView.Items[I].Data);
+
+    Res := TRUE;
+    if PathFilter.Text <> '' then
+      if AnsiCompareFileName(Item.ItemPath, PathFilter.Text) <> 0 then
+      begin
+        Res := FALSE;
+      end;
+
+    ListView.Items[I].Selected := Res;
+  end;
+
+
+
+
 
 end;
 
@@ -403,7 +427,9 @@ begin
 
 
   if PathFilter.Items.IndexOf(ParserList.Items[Item.Index].ItemPath) = -1 then
+  begin
     PathFilter.Items.Add(ParserList.Items[Item.Index].ItemPath);
+  end;
 end;
 
 procedure TMainFrm.ListViewSelectItem(Sender: TObject;
@@ -428,11 +454,25 @@ begin
     ClearBtnClick(Sender);
 
     ListView.BeginUpdate;
+    ListView.Clear;
+    ListView.Items.Count := ParserList.Count;
+    ListView.EndUpdate;
+
+
+    StringGrid1.RowCount := ParserList.Count;
     for I := 0 to ParserList.Count - 1 do
     begin
-      ListViewData(ListView, ListView.Items.Add);
+      StringGrid1.Rows[I].Add(' ' + ParserList.Items[I].ItemName);
+      StringGrid1.Rows[I].Add(' ' + ParserList.Items[I].ItemSize);
+      StringGrid1.Rows[I].Add(' ' + ParserList.Items[I].ItemType);
+      StringGrid1.Rows[I].Add(' ' + ParserList.Items[I].ItemTime);
+      StringGrid1.Rows[I].Add(' ' + ParserList.Items[I].ItemPath);
     end;
-    ListView.EndUpdate;
+
+
+
+
+
   end else
 
     if ParserCommandLine.Command in [cAdd, cDelete] then
@@ -526,6 +566,19 @@ begin
   ShareButton.Down := FALSE;
 end;
 
+procedure TMainFrm.StringGrid1DrawCell(Sender: TObject;
+  aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
+begin
+
+  if aCol = 0 then
+  begin
+
+  end;
+
+
+
+end;
+
 procedure TMainFrm.AboutMenuItemClick(Sender: TObject);
 begin
   AboutFrm := TAboutFrm.Create(Self);
@@ -540,6 +593,8 @@ begin
   if OpenDialog.Execute then
   begin
     ParserCommandLine.Clear;
+
+    ParserCommandLine.Exec := '7zip';
     ParserCommandLine.Command := cList;
     ParserCommandLine.ArchiveName := OpenDialog.FileName;
     // START
