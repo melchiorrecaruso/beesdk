@@ -7,7 +7,7 @@ uses
   cthreads,
   {$ENDIF}
   Interfaces,
-  Forms,
+  Forms, virtualtreeview_package,
   lazcontrols,
 
   bxm_mainfrm;

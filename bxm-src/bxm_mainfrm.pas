@@ -49,7 +49,7 @@ uses
   bxm_Plugins,
   bxm_ArchiveListViewMgr,
   bxm_ArchiveFolderBox,
-  bxm_IconList, bxm_archivetreeviewmgr;
+  bxm_IconList, bxm_archivetreeviewmgr, VirtualTrees;
 
 type
 
@@ -58,7 +58,6 @@ type
   TMainFrm = class(TForm)
     BackGround: TImage;
     FromFilter: TDateEdit;
-    StringGrid1: TStringGrid;
     ToFilter: TDateEdit;
     TypeFilter: TEdit;
     TypeFilterLabel: TLabel;
@@ -103,6 +102,7 @@ type
     FindButton: TToolButton;
     MaxSizeUpDown: TUpDown;
     MinSizeUpDown: TUpDown;
+    VirtualStringTree: TVirtualStringTree;
     procedure ClearBtnClick(Sender: TObject);
     procedure SearchBtnClick(Sender: TObject);
     procedure FindButtonClick(Sender: TObject);
@@ -122,8 +122,7 @@ type
     procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem;
       Data: Integer; var Compare: Integer);
     procedure ListViewData(Sender: TObject; Item: TListItem);
-    procedure ListViewSelectItem(Sender: TObject; Item: TListItem;
-      Selected: Boolean);
+
     procedure MainMenuClose(Sender: TObject);
     procedure MenuButtonClick(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
@@ -131,8 +130,12 @@ type
     procedure NewButtonClick(Sender: TObject);
     procedure ShareButtonClick(Sender: TObject);
     procedure ShareMenuClose(Sender: TObject);
-    procedure StringGrid1DrawCell(Sender: TObject; aCol, aRow: Integer;
-      aRect: TRect; aState: TGridDrawState);
+    procedure VirtualStringTreeGetImageIndex(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
+      var Ghosted: Boolean; var ImageIndex: Integer);
+    procedure VirtualStringTreeGetText(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+      var CellText: String);
   private
     { private declarations }
     ParserCommandLine: TParserCommandLine;
@@ -253,6 +256,7 @@ end;
 procedure TMainFrm.HeaderControlSectionClick(
   HeaderControl: TCustomHeaderControl; Section: THeaderSection);
 begin
+  (*
   if ListView.SortColumn = Section.Index then
   begin
     if ListView.SortDirection = sdAscending then
@@ -261,6 +265,7 @@ begin
       ListView.SortDirection := sdAscending;
   end;
   ListView.SortColumn := Section.Index;
+  *)
 end;
 
 procedure TMainFrm.HeaderControlSectionResize(
@@ -383,10 +388,12 @@ begin
     else Compare := 0;
   end;
 
+  (*
   if ListView.SortDirection = sdDescending then
   begin
     Compare := - Compare;
   end;
+  *)
 end;
 
 procedure TMainFrm.ListViewData(Sender: TObject; Item: TListItem);
@@ -404,26 +411,7 @@ begin
   ItemExt := LowerCase(ExtractFileExt(
     ParserList.Items[Item.Index].ItemName));
 
-  if ItemExt = '.avi'         then Item.ImageIndex := 0  else
-  if ItemExt = '.bat'         then Item.ImageIndex := 1  else
-  if ItemExt = '.bmp'         then Item.ImageIndex := 2  else
-  if ItemExt = '.png'         then Item.ImageIndex := 2  else
-  if ItemExt = '.cddrive'     then Item.ImageIndex := 3  else
-  if ItemExt = '.doc'         then Item.ImageIndex := 4  else
-  if ItemExt = '.exe'         then Item.ImageIndex := 5  else
-  if ItemExt = '.folderclose' then Item.ImageIndex := 6  else
-  if ItemExt = '.folderopen'  then Item.ImageIndex := 7  else
-  if ItemExt = '.harddrive'   then Item.ImageIndex := 8  else
-  if ItemExt = '.html'        then Item.ImageIndex := 9  else
-  if ItemExt = '.mp3'         then Item.ImageIndex := 10 else
-  if ItemExt = '.deb'         then Item.ImageIndex := 11 else
-  if ItemExt = '.pkg'         then Item.ImageIndex := 11 else
-  if ItemExt = '.ppd'         then Item.ImageIndex := 12 else
-  if ItemExt = '.ttf'         then Item.ImageIndex := 13 else
-  if ItemExt = '.txt'         then Item.ImageIndex := 14 else
-  if ItemExt = '.unknow'      then Item.ImageIndex := 15 else
-  if ItemExt = '.wab'         then Item.ImageIndex := 16 else
-  if ItemExt = '.xls'         then Item.ImageIndex := 17 else Item.ImageIndex := 15;
+
 
 
   if PathFilter.Items.IndexOf(ParserList.Items[Item.Index].ItemPath) = -1 then
@@ -432,11 +420,28 @@ begin
   end;
 end;
 
-procedure TMainFrm.ListViewSelectItem(Sender: TObject;
-  Item: TListItem; Selected: Boolean);
+
+
+procedure TMainFrm.VirtualStringTreeGetText(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+  var CellText: String);
 begin
 
+
+  case Column of
+    0: CellText := ParserList.Items[Node.Index].ItemName;
+    1: CellText := ParserList.Items[Node.Index].ItemSize;
+    2: CellText := ParserList.Items[Node.Index].ItemType;
+    3: CellText := ParserList.Items[Node.Index].ItemTime;
+    4: CellText := ParserList.Items[Node.Index].ItemPath;
+    else CellText := 'ASA'
+  end;
+
 end;
+
+
+
+
 
 procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
 var
@@ -459,19 +464,7 @@ begin
     ListView.EndUpdate;
 
 
-    StringGrid1.RowCount := ParserList.Count;
-    for I := 0 to ParserList.Count - 1 do
-    begin
-      StringGrid1.Rows[I].Add(' ' + ParserList.Items[I].ItemName);
-      StringGrid1.Rows[I].Add(' ' + ParserList.Items[I].ItemSize);
-      StringGrid1.Rows[I].Add(' ' + ParserList.Items[I].ItemType);
-      StringGrid1.Rows[I].Add(' ' + ParserList.Items[I].ItemTime);
-      StringGrid1.Rows[I].Add(' ' + ParserList.Items[I].ItemPath);
-    end;
-
-
-
-
+    VirtualStringTree.RootNodeCount := ParserList.Count;
 
   end else
 
@@ -566,14 +559,35 @@ begin
   ShareButton.Down := FALSE;
 end;
 
-procedure TMainFrm.StringGrid1DrawCell(Sender: TObject;
-  aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
+
+procedure TMainFrm.VirtualStringTreeGetImageIndex(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
+  var Ghosted: Boolean; var ImageIndex: Integer);
 begin
 
-  if aCol = 0 then
-  begin
 
-  end;
+  (*
+  if ItemExt = '.avi'         then Item.ImageIndex := 0  else
+  if ItemExt = '.bat'         then Item.ImageIndex := 1  else
+  if ItemExt = '.bmp'         then Item.ImageIndex := 2  else
+  if ItemExt = '.png'         then Item.ImageIndex := 2  else
+  if ItemExt = '.cddrive'     then Item.ImageIndex := 3  else
+  if ItemExt = '.doc'         then Item.ImageIndex := 4  else
+  if ItemExt = '.exe'         then Item.ImageIndex := 5  else
+  if ItemExt = '.folderclose' then Item.ImageIndex := 6  else
+  if ItemExt = '.folderopen'  then Item.ImageIndex := 7  else
+  if ItemExt = '.harddrive'   then Item.ImageIndex := 8  else
+  if ItemExt = '.html'        then Item.ImageIndex := 9  else
+  if ItemExt = '.mp3'         then Item.ImageIndex := 10 else
+  if ItemExt = '.deb'         then Item.ImageIndex := 11 else
+  if ItemExt = '.pkg'         then Item.ImageIndex := 11 else
+  if ItemExt = '.ppd'         then Item.ImageIndex := 12 else
+  if ItemExt = '.ttf'         then Item.ImageIndex := 13 else
+  if ItemExt = '.txt'         then Item.ImageIndex := 14 else
+  if ItemExt = '.unknow'      then Item.ImageIndex := 15 else
+  if ItemExt = '.wab'         then Item.ImageIndex := 16 else
+  if ItemExt = '.xls'         then Item.ImageIndex := 17 else Item.ImageIndex := 15;
+  *)
 
 
 
