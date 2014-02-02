@@ -1,5 +1,5 @@
 object MainFrm: TMainFrm
-  Left = 326
+  Left = 370
   Height = 670
   Top = 136
   Width = 884
@@ -142,91 +142,6 @@ object MainFrm: TMainFrm
       OnClick = MenuButtonClick
     end
   end
-  object HeaderControl: THeaderControl
-    AnchorSideLeft.Control = ListView
-    AnchorSideTop.Control = SearchPanel
-    AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    Left = 0
-    Height = 26
-    Top = 167
-    Width = 884
-    DragReorder = False
-    Sections = <    
-      item
-        Alignment = taLeftJustify
-        MaxWidth = 1000
-        Text = ' Name'
-        Width = 250
-        Visible = True
-      end    
-      item
-        Alignment = taLeftJustify
-        Text = ' Size'
-        Width = 120
-        Visible = True
-      end    
-      item
-        Alignment = taLeftJustify
-        Text = ' Type'
-        Width = 120
-        Visible = True
-      end    
-      item
-        Alignment = taLeftJustify
-        Text = ' Date Modified'
-        Width = 150
-        Visible = True
-      end    
-      item
-        Alignment = taLeftJustify
-        Text = ' Path'
-        Width = 200
-        Visible = True
-      end>
-    OnSectionClick = HeaderControlSectionClick
-    OnSectionResize = HeaderControlSectionResize
-    OnSectionSeparatorDblClick = HeaderControlSectionSeparatorDblClick
-    Anchors = [akTop, akLeft, akRight]
-    Font.Style = [fsBold]
-    Constraints.MinHeight = 26
-    ParentFont = False
-    ParentShowHint = False
-  end
-  object ListView: TListView
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = HeaderControl
-    AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = Owner
-    AnchorSideBottom.Side = asrBottom
-    Left = 0
-    Height = 222
-    Top = 448
-    Width = 884
-    Anchors = [akLeft, akRight, akBottom]
-    AutoSort = False
-    BorderStyle = bsNone
-    Columns = <>
-    ColumnClick = False
-    IconOptions.WrapText = False
-    MultiSelect = True
-    OwnerData = True
-    ReadOnly = True
-    RowSelect = True
-    ScrollBars = ssAutoVertical
-    ShowColumnHeaders = False
-    SmallImages = IconList
-    SortColumn = 0
-    SortType = stData
-    TabOrder = 3
-    ViewStyle = vsReport
-    OnClick = ListViewClick
-    OnCompare = ListViewCompare
-    OnData = ListViewData
-  end
   object SearchPanel: TPanel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = ToolBar
@@ -243,7 +158,7 @@ object MainFrm: TMainFrm
     ClientWidth = 884
     Color = clYellow
     ParentColor = False
-    TabOrder = 4
+    TabOrder = 2
     object ShapeBotton: TShape
       AnchorSideLeft.Control = SearchPanel
       AnchorSideRight.Control = SearchPanel
@@ -536,21 +451,66 @@ object MainFrm: TMainFrm
       ParentColor = False
     end
   end
-  object VirtualStringTree: TVirtualStringTree
-    Left = 53
-    Height = 169
-    Top = 233
-    Width = 778
+  object VST: TVirtualStringTree
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = SearchPanel
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 0
+    Height = 503
+    Top = 167
+    Width = 884
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderStyle = bsNone
     DefaultText = 'Node'
     Header.AutoSizeIndex = 0
-    Header.Columns = <>
-    Header.DefaultHeight = 17
-    Header.MainColumn = -1
+    Header.Background = clDefault
+    Header.Columns = <    
+      item
+        Position = 0
+        Text = 'Name'
+        Width = 250
+      end    
+      item
+        Position = 1
+        Text = 'Size'
+        Width = 120
+      end    
+      item
+        Position = 2
+        Text = 'Type'
+        Width = 120
+      end    
+      item
+        Position = 3
+        Text = 'Date Modifies'
+        Width = 150
+      end    
+      item
+        Position = 4
+        Text = 'Path'
+        Width = 200
+      end>
+    Header.DefaultHeight = 26
+    Header.Font.Style = [fsBold]
+    Header.Height = 26
+    Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
+    LineStyle = lsCustomStyle
+    ParentFont = False
+    ScrollBarOptions.ScrollBars = ssAutoVertical
     StateImages = IconList
-    TabOrder = 5
+    TabOrder = 3
     TreeOptions.MiscOptions = [toFullRepaintOnResize, toInitOnSave, toReportMode, toToggleOnDblClick, toWheelPanning, toEditOnClick]
-    OnGetText = VirtualStringTreeGetText
-    OnGetImageIndex = VirtualStringTreeGetImageIndex
+    TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
+    OnChange = VSTChange
+    OnFocusChanged = VSTFocusChanged
+    OnFreeNode = VSTFreeNode
+    OnGetText = VSTGetText
+    OnGetImageIndex = VSTGetImageIndex
+    OnGetNodeDataSize = VSTGetNodeDataSize
   end
   object MainMenu: TPopupMenu
     AutoPopup = False
