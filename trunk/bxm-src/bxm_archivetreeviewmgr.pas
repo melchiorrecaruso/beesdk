@@ -370,6 +370,7 @@ uses
         CurrFolder := IncludeTrailingBackslash(Start.Text) + CurrFolder;
       until Start.Level = 0;
     end;
+
     for I := 0 to FArchiveFolders.Count -1 do
     begin
       if AnsiCompareText(CurrFolder, TArchiveListItem(FArchiveFolders.Items[I]).FilePath) = 0 then
@@ -377,6 +378,7 @@ uses
         AddFolder(Node, TArchiveListItem(FArchiveFolders.Items[I]));
       end;
     end;
+
     for I := 0 to FArchiveFiles.Count -1 do
     begin
       if AnsiCompareText(CurrFolder, TArchiveListItem(FArchiveFiles.Items[I]).FilePath) = 0 then
