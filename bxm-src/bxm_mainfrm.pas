@@ -416,11 +416,11 @@ var
 begin
   //ListView.BeginUpdate;
   //Listview.ScrollBars := ssNone;
-  //HeaderControl.Sections[4].Width :=
-  //  - HeaderControl.Sections[0].Width
-  //  - HeaderControl.Sections[1].Width
-  //  - HeaderControl.Sections[2].Width
-  //  - HeaderControl.Sections[3].Width + HeaderControl.Width + 1000;
+  VST.Header.Columns[4].Width :=
+    - VST.Header.Columns[0].Width
+    - VST.Header.Columns[1].Width
+    - VST.Header.Columns[2].Width
+    - VST.Header.Columns[3].Width + VST.Width - 10;
 
   //for I := 0 to HeaderControl.Sections.Count - 1 do
   //   ListView.Columns[I].Width := HeaderControl.Sections[I].Width;
@@ -538,6 +538,7 @@ var
   I: longint;
   Data: PTreeData;
   XNode: PVirtualNode;
+  Folders: TStringList;
 begin
 
   if ParserCommandLine.Command in [cList] then
@@ -550,14 +551,16 @@ begin
     ClearBtnClick(Sender);
 
 
-
+    Folders := TStringList.Create;
+    Folders.Sorted := TRUE;
     for I := 0 to ParserList.Count - 1 do
     begin
 
-      ParserList.Items[I].ItemPath
+      ///ParserList.Items[I].ItemPath
 
 
     end;
+    Folders.Destroy;
 
     for I := 0 to ParserList.Count - 1 do
     begin
