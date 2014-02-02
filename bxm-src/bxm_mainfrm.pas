@@ -551,6 +551,13 @@ begin
 
 
 
+    for I := 0 to ParserList.Count - 1 do
+    begin
+
+      ParserList.Items[I].ItemPath
+
+
+    end;
 
     for I := 0 to ParserList.Count - 1 do
     begin
@@ -569,8 +576,6 @@ begin
       //begin
       //  PathFilter.Items.Add(ParserList.Items[I].ItemPath);
       //end;
-
-
     end;
 
 
