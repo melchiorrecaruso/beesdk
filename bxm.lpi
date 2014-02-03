@@ -234,8 +234,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="543"/>
-        <CursorPos X="6" Y="558"/>
+        <TopLine Value="540"/>
+        <CursorPos X="9" Y="566"/>
         <FoldState Value=" T3lQ048133293C"/>
         <UsageCount Value="84"/>
         <Loaded Value="True"/>
@@ -248,7 +248,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="bxm_AboutFrm"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="41"/>
         <CursorPos X="38" Y="44"/>
@@ -289,7 +289,7 @@
       <Unit28>
         <Filename Value="bxm-src/bxm_plugins.pas"/>
         <UnitName Value="bxm_plugins"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="295"/>
         <CursorPos X="3" Y="334"/>
@@ -598,7 +598,7 @@
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="268"/>
-        <CursorPos X="78" Y="292"/>
+        <CursorPos X="124" Y="283"/>
         <FoldState Value=" T3oN2E1N"/>
         <UsageCount Value="14"/>
         <Loaded Value="True"/>
