@@ -139,6 +139,7 @@
       <Unit4>
         <Filename Value="bx-src\bx_application.pas"/>
         <UnitName Value="bx_application"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="125"/>
@@ -151,7 +152,6 @@
       <Unit5>
         <Filename Value="bx-src\bx_messages.pas"/>
         <UnitName Value="bx_messages"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="31"/>
