@@ -137,7 +137,7 @@ var
 begin
   StartTime := Now;
 
-  DoMessage('The BX 1.0.0a archiver utility, Copyright (c) 2014 Melchiorre Caruso.');
+  DoMessage('The BX 1.0.0b archiver utility, Copyright (c) 2014 Melchiorre Caruso.');
   if ExitStatus = esNoError then
     case FCommandLine.Command of
       cmdA: UpdateShell;
@@ -885,4 +885,4 @@ begin
 end;
 
 end.
-
+
