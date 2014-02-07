@@ -222,6 +222,7 @@ var
   Data: PTreeData;
   XNode: PVirtualNode;
 begin
+  (*
   Data := VST.GetNodeData(Node);
   if Assigned(Data) then
     Folder := Data.Column4 + IncludeTrailingBackSlash(Data.Column0)
@@ -244,6 +245,7 @@ begin
       end;
 
   Allowed := TRUE;
+  *)
 end;
 
 procedure TMainFrm.VSTFocusChanged(Sender: TBaseVirtualTree;
@@ -569,8 +571,10 @@ end;
 
 procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
 var
-  Exp: boolean;
   I: longint;
+  //Exp: boolean;
+  Data: PTreeData;
+  XNode: PVirtualNode;
 begin
 
   if ParserCommandLine.Command in [cList] then
@@ -583,8 +587,25 @@ begin
 
     PathFilter.Clear;
 
-    Exp := TRUE;
-    VSTExpanding(VST, nil, Exp);
+
+
+
+    for I := 0 to ParserList.Count - 1 do
+    begin
+      XNode:=VST.AddChild(nil);
+      if VST.AbsoluteIndex(XNode) > -1 then
+      begin
+        Data := VST.GetNodeData(XNode);
+        Data^.Column0 := ParserList.Items[I].ItemName;
+        Data^.Column1 := ParserList.Items[I].ItemSize;
+        Data^.Column2 := ParserList.Items[I].ItemType;
+        Data^.Column3 := ParserList.Items[I].ItemTime;
+        Data^.Column4 := ParserList.Items[I].ItemPath;
+        end;
+      end;
+
+    //Exp := TRUE;
+    //VSTExpanding(VST, nil, Exp);
   end else
 
     if ParserCommandLine.Command in [cAdd, cDelete] then

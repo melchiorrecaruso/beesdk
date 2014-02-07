@@ -338,12 +338,11 @@ var
   Parent: TParserItem;
 begin
   FList.Add(Item);
-
+  (*
   if Item.ItemPath <> '' then
     if FFolders.Find(Item.ItemPath, I) = FALSE then
     begin
       FFolders.Add(Item.ItemPath);
-      (*
       Parent := TParserItem.Create;
       Parent.ItemName   := ExtractFileName(ExcludeTrailingBackSlash(Item.ItemPath));
       Parent.ItemPath   := ExtractFilePath(ExcludeTrailingBackSlash(Item.ItemPath));
@@ -357,8 +356,8 @@ begin
       Parent.ItemCypher := '';
       Parent.ItemMethod := '';
       AddItem(Parent);
-      *)
     end;
+    *)
 end;
 
 procedure TParserList.Execute(Parser: TParser);
