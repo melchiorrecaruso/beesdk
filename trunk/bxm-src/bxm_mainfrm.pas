@@ -557,7 +557,7 @@ begin
     for I := 0 to ParserList.Count - 1 do
     begin
 
-      Folder := ExcludePathDelimeter(ParserList.Items[I].ItemPath);
+      //Folder := ExcludePathDelimeter(ParserList.Items[I].ItemPath);
       while Folder <> '' do
       begin
 
