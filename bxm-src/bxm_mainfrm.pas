@@ -228,21 +228,6 @@ begin
   else
     Folder := '';
 
-  for I := 0 to PathFilter.Items.Count - 1 do
-    if AnsiCompareFileName(ExtractFilePath(ExcludeTrailingBackSlash(PathFilter.Items[I])), Folder) = 0 then
-    begin
-      XNode:=VST.AddChild(Node);
-      if VST.AbsoluteIndex(XNode) > -1 then
-      begin
-        Data := VST.GetNodeData(XNode);
-        Data^.Column0 := ExtractFileName(ExcludeTrailingBackSlash(PathFilter.Items[I]));
-        Data^.Column1 := '';
-        Data^.Column2 := '';
-        Data^.Column3 := '';
-        Data^.Column4 := ExtractFilePath(ExcludeTrailingBackSlash(PathFilter.Items[I]));
-      end;
-    end;
-
     for I := 0 to ParserList.Count - 1 do
       if AnsiCompareFileName(ParserList.Items[I].ItemPath, Folder) = 0 then
       begin
@@ -309,36 +294,31 @@ procedure TMainFrm.VSTGetImageIndex(Sender: TBaseVirtualTree;
   var Ghosted: Boolean; var ImageIndex: Integer);
 var
   Data: PTreeData;
-  ItemExt: ansistring;
 begin
   if Column = 0 then
   begin
     Data := VST.GetNodeData(Node);
 
-    ItemExt := lowercase(ExtractFileExt(Data^.Column0));
-
-    if ItemExt = ''             then ImageIndex := 6  else
-
-    if ItemExt = '.avi'         then ImageIndex := 0  else
-    if ItemExt = '.bat'         then ImageIndex := 1  else
-    if ItemExt = '.bmp'         then ImageIndex := 2  else
-    if ItemExt = '.png'         then ImageIndex := 2  else
-    if ItemExt = '.cddrive'     then ImageIndex := 3  else
-    if ItemExt = '.doc'         then ImageIndex := 4  else
-    if ItemExt = '.exe'         then ImageIndex := 5  else
-  //if ItemExt = '.folderclose' then ImageIndex := 6  else
-  //if ItemExt = '.folderopen'  then ImageIndex := 7  else
-    if ItemExt = '.harddrive'   then ImageIndex := 8  else
-    if ItemExt = '.html'        then ImageIndex := 9  else
-    if ItemExt = '.mp3'         then ImageIndex := 10 else
-    if ItemExt = '.deb'         then ImageIndex := 11 else
-    if ItemExt = '.pkg'         then ImageIndex := 11 else
-    if ItemExt = '.ppd'         then ImageIndex := 12 else
-    if ItemExt = '.ttf'         then ImageIndex := 13 else
-    if ItemExt = '.txt'         then ImageIndex := 14 else
-    if ItemExt = '.unknow'      then ImageIndex := 15 else
-    if ItemExt = '.wab'         then ImageIndex := 16 else
-    if ItemExt = '.xls'         then ImageIndex := 17 else ImageIndex := 15;
+    if LowerCase(Data^.Column2) = '.avi'         then ImageIndex := 0  else
+    if LowerCase(Data^.Column2) = '.bat'         then ImageIndex := 1  else
+    if LowerCase(Data^.Column2) = '.bmp'         then ImageIndex := 2  else
+    if LowerCase(Data^.Column2) = '.png'         then ImageIndex := 2  else
+    if LowerCase(Data^.Column2) = '.cddrive'     then ImageIndex := 3  else
+    if LowerCase(Data^.Column2) = '.doc'         then ImageIndex := 4  else
+    if LowerCase(Data^.Column2) = '.exe'         then ImageIndex := 5  else
+    if LowerCase(Data^.Column2) = '.folderclose' then ImageIndex := 6  else
+    if LowerCase(Data^.Column2) = '.folderopen'  then ImageIndex := 7  else
+    if LowerCase(Data^.Column2) = '.harddrive'   then ImageIndex := 8  else
+    if LowerCase(Data^.Column2) = '.html'        then ImageIndex := 9  else
+    if LowerCase(Data^.Column2) = '.mp3'         then ImageIndex := 10 else
+    if LowerCase(Data^.Column2) = '.deb'         then ImageIndex := 11 else
+    if LowerCase(Data^.Column2) = '.pkg'         then ImageIndex := 11 else
+    if LowerCase(Data^.Column2) = '.ppd'         then ImageIndex := 12 else
+    if LowerCase(Data^.Column2) = '.ttf'         then ImageIndex := 13 else
+    if LowerCase(Data^.Column2) = '.txt'         then ImageIndex := 14 else
+    if LowerCase(Data^.Column2) = '.unknow'      then ImageIndex := 15 else
+    if LowerCase(Data^.Column2) = '.wab'         then ImageIndex := 16 else
+    if LowerCase(Data^.Column2) = '.xls'         then ImageIndex := 17 else ImageIndex := 15;
   end;
 end;
 
@@ -590,9 +570,7 @@ end;
 procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
 var
   Exp: boolean;
-  Folder: string;
-  Folders: TStringList;
-  I, J: longint;
+  I: longint;
 begin
 
   if ParserCommandLine.Command in [cList] then
@@ -600,33 +578,10 @@ begin
     ParserList.Clear;
     ParserList.Execute(Parser);
 
-
     NameFilter.Clear;
     ClearBtnClick(Sender);
 
-
-    Folders := TStringList.Create;
-    Folders.Sorted := TRUE;
-    Folders.CaseSensitive := FileNameCaseSensitive;
-    for I := 0 to ParserList.Count - 1 do
-    begin
-      Folder := ParserList.Items[I].ItemPath;
-      while TRUE do
-      begin
-        if Folders.Find(Folder, J) = FALSE then
-          Folders.Add(Folder);
-
-        if Folder <> ExtractFilePath(ExcludeTrailingBackSlash(Folder)) then
-          Folder := ExtractFilePath(ExcludeTrailingBackSlash(Folder))
-        else
-          Break;
-      end;
-    end;
-
     PathFilter.Clear;
-    for I := 0 to Folders.Count - 1 do
-      PathFilter.Items.Add(Folders[I]);
-    Folders.Destroy;
 
     Exp := TRUE;
     VSTExpanding(VST, nil, Exp);
