@@ -465,7 +465,9 @@ object MainFrm: TMainFrm
     Width = 884
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderStyle = bsNone
+    ButtonFillMode = fmTransparent
     DefaultText = 'Node'
+    DragImageKind = diMainColumnOnly
     Header.AutoSizeIndex = 0
     Header.Background = clDefault
     Header.Columns = <    
@@ -498,13 +500,15 @@ object MainFrm: TMainFrm
     Header.Font.Style = [fsBold]
     Header.Height = 26
     Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
+    LineMode = lmBands
     LineStyle = lsCustomStyle
     ParentFont = False
     ScrollBarOptions.ScrollBars = ssAutoVertical
     StateImages = IconList
     TabOrder = 3
     TreeOptions.MiscOptions = [toFullRepaintOnResize, toInitOnSave, toReportMode, toToggleOnDblClick, toWheelPanning, toEditOnClick]
-    TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
+    TreeOptions.PaintOptions = [toHideFocusRect, toShowButtons, toShowDropmark, toThemeAware, toUseBlendedImages]
+    TreeOptions.SelectionOptions = [toDisableDrawSelection, toExtendedFocus, toFullRowSelect, toMultiSelect, toRightClickSelect]
     OnChange = VSTChange
     OnExpanding = VSTExpanding
     OnFocusChanged = VSTFocusChanged
