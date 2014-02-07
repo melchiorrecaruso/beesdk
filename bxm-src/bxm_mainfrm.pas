@@ -129,6 +129,8 @@ type
     procedure ShareMenuClose(Sender: TObject);
     procedure VSTChange(Sender: TBaseVirtualTree;
       Node: PVirtualNode);
+    procedure VSTExpanding(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      var Allowed: Boolean);
     procedure VSTFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex);
     procedure VSTFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
@@ -172,11 +174,11 @@ uses
 type
   PTreeData = ^TTreeData;
   TTreeData = record
-    Column0: ansistring;
-    Column1: ansistring;
-    Column2: ansistring;
-    Column3: ansistring;
-    Column4: ansistring;
+    Column0: string;
+    Column1: string;
+    Column2: string;
+    Column3: string;
+    Column4: string;
   end;
 
 { TMainFrm }
@@ -212,6 +214,53 @@ begin
   VST.Refresh;
 end;
 
+procedure TMainFrm.VSTExpanding(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; var Allowed: Boolean);
+var
+  I: longint;
+  Folder: string;
+  Data: PTreeData;
+  XNode: PVirtualNode;
+begin
+  Data := VST.GetNodeData(Node);
+  if Assigned(Data) then
+    Folder := Data.Column4 + IncludeTrailingBackSlash(Data.Column0)
+  else
+    Folder := '';
+
+  for I := 0 to PathFilter.Items.Count - 1 do
+    if AnsiCompareFileName(ExtractFilePath(ExcludeTrailingBackSlash(PathFilter.Items[I])), Folder) = 0 then
+    begin
+      XNode:=VST.AddChild(Node);
+      if VST.AbsoluteIndex(XNode) > -1 then
+      begin
+        Data := VST.GetNodeData(XNode);
+        Data^.Column0 := ExtractFileName(ExcludeTrailingBackSlash(PathFilter.Items[I]));
+        Data^.Column1 := '';
+        Data^.Column2 := '';
+        Data^.Column3 := '';
+        Data^.Column4 := ExtractFilePath(ExcludeTrailingBackSlash(PathFilter.Items[I]));
+      end;
+    end;
+
+    for I := 0 to ParserList.Count - 1 do
+      if AnsiCompareFileName(ParserList.Items[I].ItemPath, Folder) = 0 then
+      begin
+        XNode:=VST.AddChild(Node);
+        if VST.AbsoluteIndex(XNode) > -1 then
+        begin
+          Data := VST.GetNodeData(XNode);
+          Data^.Column0 := ParserList.Items[I].ItemName;
+          Data^.Column1 := ParserList.Items[I].ItemSize;
+          Data^.Column2 := ParserList.Items[I].ItemType;
+          Data^.Column3 := ParserList.Items[I].ItemTime;
+          Data^.Column4 := ParserList.Items[I].ItemPath;
+        end;
+      end;
+
+  Allowed := TRUE;
+end;
+
 procedure TMainFrm.VSTFocusChanged(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex);
 begin
@@ -245,13 +294,14 @@ var
   Data: PTreeData;
 begin
   Data := VST.GetNodeData(Node);
-  case Column of
-    0: CellText := Data^.Column0;
-    1: CellText := Data^.Column1;
-    2: CellText := Data^.Column2;
-    3: CellText := Data^.Column3;
-    4: CellText := Data^.Column4;
-  end;
+  if Assigned(Data) then
+    case Column of
+      0: CellText := Data^.Column0;
+      1: CellText := Data^.Column1;
+      2: CellText := Data^.Column2;
+      3: CellText := Data^.Column3;
+      4: CellText := Data^.Column4;
+    end;
 end;
 
 procedure TMainFrm.VSTGetImageIndex(Sender: TBaseVirtualTree;
@@ -267,6 +317,8 @@ begin
 
     ItemExt := lowercase(ExtractFileExt(Data^.Column0));
 
+    if ItemExt = ''             then ImageIndex := 6  else
+
     if ItemExt = '.avi'         then ImageIndex := 0  else
     if ItemExt = '.bat'         then ImageIndex := 1  else
     if ItemExt = '.bmp'         then ImageIndex := 2  else
@@ -274,8 +326,8 @@ begin
     if ItemExt = '.cddrive'     then ImageIndex := 3  else
     if ItemExt = '.doc'         then ImageIndex := 4  else
     if ItemExt = '.exe'         then ImageIndex := 5  else
-    if ItemExt = '.folderclose' then ImageIndex := 6  else
-    if ItemExt = '.folderopen'  then ImageIndex := 7  else
+  //if ItemExt = '.folderclose' then ImageIndex := 6  else
+  //if ItemExt = '.folderopen'  then ImageIndex := 7  else
     if ItemExt = '.harddrive'   then ImageIndex := 8  else
     if ItemExt = '.html'        then ImageIndex := 9  else
     if ItemExt = '.mp3'         then ImageIndex := 10 else
@@ -348,7 +400,9 @@ begin
     if PathFilter.Text <> '' then
     begin
       if AnsiCompareFileName(Data^.Column4, PathFilter.Text) <> 0 then
+      begin
         VST.VisiblePath[XNode] := FALSE;
+      end;
     end;
 
     XNode:= VST.GetNextSibling(XNode);
@@ -535,11 +589,10 @@ end;
 
 procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
 var
-  I: longint;
-  Data: PTreeData;
-  XNode: PVirtualNode;
-  Folders: TStringList;
+  Exp: boolean;
   Folder: string;
+  Folders: TStringList;
+  I, J: longint;
 begin
 
   if ParserCommandLine.Command in [cList] then
@@ -547,51 +600,36 @@ begin
     ParserList.Clear;
     ParserList.Execute(Parser);
 
-    PathFilter.Clear;
+
     NameFilter.Clear;
     ClearBtnClick(Sender);
 
 
     Folders := TStringList.Create;
     Folders.Sorted := TRUE;
+    Folders.CaseSensitive := FileNameCaseSensitive;
     for I := 0 to ParserList.Count - 1 do
     begin
-
-      //Folder := ExcludePathDelimeter(ParserList.Items[I].ItemPath);
-      while Folder <> '' do
+      Folder := ParserList.Items[I].ItemPath;
+      while TRUE do
       begin
+        if Folders.Find(Folder, J) = FALSE then
+          Folders.Add(Folder);
 
-
+        if Folder <> ExtractFilePath(ExcludeTrailingBackSlash(Folder)) then
+          Folder := ExtractFilePath(ExcludeTrailingBackSlash(Folder))
+        else
+          Break;
       end;
-
-
-
     end;
+
+    PathFilter.Clear;
+    for I := 0 to Folders.Count - 1 do
+      PathFilter.Items.Add(Folders[I]);
     Folders.Destroy;
 
-    for I := 0 to ParserList.Count - 1 do
-    begin
-      XNode:=VST.AddChild(nil);
-      if VST.AbsoluteIndex(XNode) > -1 then
-      begin
-        Data := VST.GetNodeData(XNode);
-        Data^.Column0 := ParserList.Items[I].ItemName;
-        Data^.Column1 := ParserList.Items[I].ItemSize;
-        Data^.Column2 := ParserList.Items[I].ItemType;
-        Data^.Column3 := ParserList.Items[I].ItemTime;
-        Data^.Column4 := ParserList.Items[I].ItemPath;
-      end;
-
-      //if PathFilter.Items.IndexOf(ParserList.Items[I].ItemPath) = -1 then
-      //begin
-      //  PathFilter.Items.Add(ParserList.Items[I].ItemPath);
-      //end;
-    end;
-
-
-
-    //VST.RootNodeCount := ParserList.Count;
-
+    Exp := TRUE;
+    VSTExpanding(VST, nil, Exp);
   end else
 
     if ParserCommandLine.Command in [cAdd, cDelete] then
