@@ -114,8 +114,10 @@ type
   TParserList = class
   private
     FList: TList;
+    FFolders: TStringList;
     function GetCount: longint;
     function GetItem(Index: longint): TParserItem;
+    procedure AddItem(Item: TParserItem);
   public
     constructor Create;
     destructor Destroy; override;
@@ -298,12 +300,16 @@ constructor TParserList.Create;
 begin
   inherited Create;
   FList := TList.Create;
+  FFolders := TStringList.Create;
+  FFolders.CaseSensitive := FileNameCaseSensitive;
+  FFolders.Sorted := TRUE;
 end;
 
 destructor TParserList.Destroy;
 begin
   Clear;
   FList.Destroy;
+  FFolders.Destroy;
 end;
 
 procedure TParserList.Clear;
@@ -313,6 +319,7 @@ begin
   for i := 0 to FList.Count -1 do
     TParserItem(FList[i]).Destroy;
   FList.Clear;
+  FFolders.Clear;
 end;
 
 function TParserList.GetCount: longint;
@@ -323,6 +330,35 @@ end;
 function TParserList.GetItem(Index: longint): TParserItem;
 begin
   Result := TParserItem(FList[Index]);
+end;
+
+procedure TParserList.AddItem(Item: TParserItem);
+var
+  I: longint;
+  Parent: TParserItem;
+begin
+  FList.Add(Item);
+
+  if Item.ItemPath <> '' then
+    if FFolders.Find(Item.ItemPath, I) = FALSE then
+    begin
+      FFolders.Add(Item.ItemPath);
+      (*
+      Parent := TParserItem.Create;
+      Parent.ItemName   := ExtractFileName(ExcludeTrailingBackSlash(Item.ItemPath));
+      Parent.ItemPath   := ExtractFilePath(ExcludeTrailingBackSlash(Item.ItemPath));
+      Parent.ItemType   := '.folderclose';
+      Parent.ItemSize   := '';
+      Parent.ItemPacked := '';
+      Parent.ItemAttr   := '';
+      Parent.ItemTime   := '';
+      Parent.ItemComm   := '';
+      Parent.ItemHash   := '';
+      Parent.ItemCypher := '';
+      Parent.ItemMethod := '';
+      AddItem(Parent);
+      *)
+    end;
 end;
 
 procedure TParserList.Execute(Parser: TParser);
@@ -362,7 +398,7 @@ begin
       Item.ItemPath := ExtractFilePath(S);
       Item.ItemName := ExtractFileName(S);
       Item.ItemType := ExtractFileExt(S);
-      FList.Add(Item);
+      AddItem(Item);
     end else
 
     if FileNamePos('Size = ', S) = 1 then
