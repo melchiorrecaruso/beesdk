@@ -24,7 +24,7 @@
 
 }
 
-unit bxm_AboutFrm;
+unit bxm_aboutfrm;
 
 {$I bxm_compiler.inc}
 
@@ -80,4 +80,4 @@ begin
     BtnLicense.Color := clDefault;
 end;
 
-end.
+end.
