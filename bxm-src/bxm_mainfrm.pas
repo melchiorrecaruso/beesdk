@@ -26,7 +26,7 @@
 }
 
 
-unit bxm_MainFrm;
+unit bxm_mainfrm;
 
 {$I bxm_compiler.inc}
 
@@ -244,13 +244,17 @@ begin
     Item := ParserList.Items[I];
 
     RES := TRUE;
+    if NameFilter.Text <> '' then
+      if AnsiCompareFileName(Item.ItemName, NameFilter.Text) <> 0 then
+      begin
+        RES := FALSE;
+      end;
+
     if PathFilter.Text <> '' then
-    begin
       if AnsiCompareFileName(Item.ItemPath, PathFilter.Text) <> 0 then
       begin
         RES := FALSE;
       end;
-    end;
 
     if RES then List.Add(Item);
   end;
@@ -269,6 +273,8 @@ begin
   TypeFilter.Text := '';
   FromFilter.Text := '';
   ToFilter.Text   := '';
+
+  SearchBtnClick(Self);
 end;
 
 procedure TMainFrm.LVData(Sender: TObject; Item: TListItem);

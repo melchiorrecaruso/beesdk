@@ -331,7 +331,9 @@ procedure TParserList.UpdateItem(Item: TParserItem);
 begin
   if Pos('D', UpperCase(Item.ItemAttr)) > 0 then
   begin
-    Item.ItemType := '.folderclose';
+    Item.ItemType   := '.folderclose';
+    Item.ItemPacked := '';
+    Item.ItemSize   := '';
   end;
 end;
 
@@ -425,7 +427,7 @@ begin
     Inc(I);
   end;
 
-  for I := 0 to GetCount - 1 do UpdateItem(GetItem(I));;
+  for I := 0 to GetCount - 1 do UpdateItem(GetItem(I));
 end;
 
 end.
