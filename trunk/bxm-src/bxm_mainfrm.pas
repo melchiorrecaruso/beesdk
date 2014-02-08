@@ -141,7 +141,9 @@ type
     ParserCommandLine: TParserCommandLine;
     ParserList: TParserList;
     Parser: TParser;
+
     Paths: TStringList;
+    List: TList;
   public
     { public declarations }
     procedure Adjust;
@@ -177,6 +179,7 @@ begin
   Paths := TStringList.Create;
   Paths.CaseSensitive := FileNameCaseSensitive;
   Paths.Sorted := TRUE;
+  List := TList.Create;
 
   for I := 0 to HC.Sections.Count - 1 do
   begin
@@ -193,6 +196,7 @@ end;
 
 procedure TMainFrm.FormDestroy(Sender: TObject);
 begin
+  List.Destroy;
   Paths.Destroy;
   ParserList.Destroy;
   ParserCommandLine.Destroy;
@@ -226,29 +230,32 @@ begin
 end;
 
 procedure TMainFrm.SearchBtnClick(Sender: TObject);
+var
+  I: longint;
+  Item: TParserItem;
+  RES: boolean;
 begin
- (*
-  while XNode <> nil do
+  LV.BeginUpdate;
+  LV.Clear;
+
+  List.Clear;
+  for I := 0 to ParserList.Count - 1 do
   begin
-    Data:=VST.GetNodeData(XNode);
+    Item := ParserList.Items[I];
 
-    VST.VisiblePath[XNode] := TRUE;
-
-
-
-
+    RES := TRUE;
     if PathFilter.Text <> '' then
     begin
-      if AnsiCompareFileName(Data^.Column4, PathFilter.Text) <> 0 then
+      if AnsiCompareFileName(Item.ItemPath, PathFilter.Text) <> 0 then
       begin
-        VST.VisiblePath[XNode] := FALSE;
+        RES := FALSE;
       end;
     end;
 
-    XNode:= VST.GetNextSibling(XNode);
+    if RES then List.Add(Item);
   end;
-  VST.Refresh;
-  *)
+  LV.Items.Count := List.Count;
+  LV.EndUpdate;
 end;
 
 procedure TMainFrm.ClearBtnClick(Sender: TObject);
@@ -268,17 +275,20 @@ procedure TMainFrm.LVData(Sender: TObject; Item: TListItem);
 var
   I: longint;
   ItemType: string;
+  PI: TParserItem;
 begin
-  Item.Caption   := ParserList.Items[Item.Index].ItemName;
-  Item.SubItems.Add(ParserList.Items[Item.Index].ItemSize);
-  Item.SubItems.Add(ParserList.Items[Item.Index].ItemType);
-  Item.SubItems.Add(ParserList.Items[Item.Index].ItemTime);
-  Item.SubItems.Add(ParserList.Items[Item.Index].ItemPath);
+  PI := TParserItem(List.Items[Item.Index]);
 
-  if Paths.Find(ParserList.Items[Item.Index].ItemPath, I) = FALSE then
-    Paths.Add(ParserList.Items[Item.Index].ItemPath);
+  Item.Caption   := PI.ItemName;
+  Item.SubItems.Add(PI.ItemSize);
+  Item.SubItems.Add(PI.ItemType);
+  Item.SubItems.Add(PI.ItemTime);
+  Item.SubItems.Add(PI.ItemPath);
 
-  ItemType := LowerCase(ParserList.Items[Item.Index].ItemType);
+  if Paths.Find(PI.ItemPath, I) = FALSE then
+    Paths.Add(PI.ItemPath);
+
+  ItemType := LowerCase(PI.ItemType);
 
   if ItemType = '.avi'         then Item.ImageIndex := 0  else
   if ItemType = '.bat'         then Item.ImageIndex := 1  else
@@ -300,7 +310,7 @@ begin
   if ItemType = '.unknow'      then Item.ImageIndex := 15 else
   if ItemType = '.wab'         then Item.ImageIndex := 16 else
   if ItemType = '.xls'         then Item.ImageIndex := 17 else
-    Item.ImageIndex := 15;
+                                    Item.ImageIndex := 15;
 end;
 
 procedure TMainFrm.HeaderControlSectionClick(
@@ -459,8 +469,8 @@ begin
     ParserList.Execute(Parser);
 
     ClearBtnClick(Sender);
+    SearchBtnClick(Sender);
 
-    LV.Items.Count := ParserList.Count;
   end else
 
     if ParserCommandLine.Command in [cAdd, cDelete] then

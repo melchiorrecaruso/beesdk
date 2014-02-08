@@ -108,9 +108,6 @@ type
     ItemCypher: string;
     ItemMethod: string;
     ItemIndex: longint;
-
-    Visible: boolean;
-    Checked: boolean;
   end;
 
   { TParserList }
@@ -120,13 +117,12 @@ type
     FList: TList;
     function GetCount: longint;
     function GetItem(Index: longint): TParserItem;
-    procedure AddItem(Item: TParserItem);
+    procedure UpdateItem(Item: TParserItem);
   public
     constructor Create;
     destructor Destroy; override;
     procedure Execute(Parser: TParser);
     procedure Clear;
-    procedure Sort(Compare: TListSortCompare);
   public
     property Count: longint read GetCount;
     property Items[Index: longint]: TParserItem read GetItem;
@@ -331,17 +327,12 @@ begin
   Result := TParserItem(FList[Index]);
 end;
 
-procedure TParserList.AddItem(Item: TParserItem);
-var
-  I: longint;
-  Parent: TParserItem;
+procedure TParserList.UpdateItem(Item: TParserItem);
 begin
-  FList.Add(Item);
-end;
-
-procedure TParserList.Sort(Compare: TListSortCompare);
-begin
-  FList.Sort(Compare);
+  if Pos('D', UpperCase(Item.ItemAttr)) > 0 then
+  begin
+    Item.ItemType := '.folderclose';
+  end;
 end;
 
 procedure TParserList.Execute(Parser: TParser);
@@ -381,7 +372,7 @@ begin
       Item.ItemPath := ExtractFilePath(S);
       Item.ItemName := ExtractFileName(S);
       Item.ItemType := ExtractFileExt(S);
-      AddItem(Item);
+      FList.Add(Item);
     end else
 
     if FileNamePos('Size = ', S) = 1 then
@@ -433,6 +424,8 @@ begin
     end;
     Inc(I);
   end;
+
+  for I := 0 to GetCount - 1 do UpdateItem(GetItem(I));;
 end;
 
 end.
