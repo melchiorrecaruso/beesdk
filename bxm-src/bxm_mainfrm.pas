@@ -39,17 +39,15 @@ uses
   Controls,
   Dialogs,
   ExtCtrls,
-  FileUtil, TreeFilterEdit, ShortPathEdit, ListFilterEdit,
+  FileUtil,
   Forms,
   Graphics,
   Menus,
-  StdCtrls, FileCtrl, Spin, EditBtn, Grids,
+  StdCtrls, FileCtrl, Spin, EditBtn,
   SysUtils,
   // ---
   bxm_Plugins,
-  bxm_ArchiveListViewMgr,
-  bxm_ArchiveFolderBox,
-  bxm_IconList, bxm_archivetreeviewmgr, VirtualTrees;
+  bxm_IconList;
 
 type
 
@@ -104,6 +102,7 @@ type
     MinSizeUpDown: TUpDown;
     procedure ClearBtnClick(Sender: TObject);
     procedure LVData(Sender: TObject; Item: TListItem);
+    procedure LVDblClick(Sender: TObject);
     procedure SearchBtnClick(Sender: TObject);
     procedure FindButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -213,8 +212,6 @@ var
 begin
   if SearchPanel.Enabled = FALSE then
   begin
-    NameFilter.Clear;
-    PathFilter.Clear;
     for I := 0 to Paths.Count - 1 do
       PathFilter.AddItem(Paths[I], nil);
 
@@ -250,11 +247,11 @@ begin
         RES := FALSE;
       end;
 
-    if PathFilter.Text <> '' then
-      if AnsiCompareFileName(Item.ItemPath, PathFilter.Text) <> 0 then
-      begin
-        RES := FALSE;
-      end;
+
+    if AnsiCompareFileName(Item.ItemPath, PathFilter.Text) <> 0 then
+    begin
+      RES := FALSE;
+    end;
 
     if RES then List.Add(Item);
   end;
@@ -263,6 +260,8 @@ begin
 end;
 
 procedure TMainFrm.ClearBtnClick(Sender: TObject);
+var
+  I: longint;
 begin
   NameFilter.Text := '';
   PathFilter.Text := '';
@@ -274,7 +273,15 @@ begin
   FromFilter.Text := '';
   ToFilter.Text   := '';
 
-  SearchBtnClick(Self);
+  LV.BeginUpdate;
+  LV.Clear;
+
+  List.Clear;
+  for I := 0 to ParserList.Count - 1 do
+    List.Add(ParserList.Items[I]);
+
+  LV.Items.Count := List.Count;
+  LV.EndUpdate;
 end;
 
 procedure TMainFrm.LVData(Sender: TObject; Item: TListItem);
@@ -317,6 +324,16 @@ begin
   if ItemType = '.wab'         then Item.ImageIndex := 16 else
   if ItemType = '.xls'         then Item.ImageIndex := 17 else
                                     Item.ImageIndex := 15;
+end;
+
+procedure TMainFrm.LVDblClick(Sender: TObject);
+begin
+  if LV.SelCount = 1 then
+  begin
+    PathFilter.Text := LV.Selected.SubItems[3] + LV.Selected.Caption + PathDelim;
+
+    SearchBtnClick(Self);
+  end;
 end;
 
 procedure TMainFrm.HeaderControlSectionClick(
@@ -475,8 +492,6 @@ begin
     ParserList.Execute(Parser);
 
     ClearBtnClick(Sender);
-    SearchBtnClick(Sender);
-
   end else
 
     if ParserCommandLine.Command in [cAdd, cDelete] then

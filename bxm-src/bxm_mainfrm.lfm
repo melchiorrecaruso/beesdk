@@ -1,5 +1,5 @@
 object MainFrm: TMainFrm
-  Left = 370
+  Left = 391
   Height = 670
   Top = 136
   Width = 884
@@ -156,7 +156,7 @@ object MainFrm: TMainFrm
     BevelOuter = bvNone
     ClientHeight = 130
     ClientWidth = 884
-    Color = clYellow
+    Color = clSilver
     ParentColor = False
     TabOrder = 2
     object ShapeBotton: TShape
@@ -479,6 +479,7 @@ object MainFrm: TMainFrm
     TabOrder = 3
     ViewStyle = vsReport
     OnData = LVData
+    OnDblClick = LVDblClick
   end
   object HC: THeaderControl
     AnchorSideLeft.Control = Owner
