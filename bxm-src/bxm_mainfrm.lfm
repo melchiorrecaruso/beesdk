@@ -451,71 +451,83 @@ object MainFrm: TMainFrm
       ParentColor = False
     end
   end
-  object VST: TVirtualStringTree
+  object LV: TListView
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = SearchPanel
+    AnchorSideTop.Control = HC
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 503
-    Top = 167
+    Height = 477
+    Top = 193
     Width = 884
     Anchors = [akTop, akLeft, akRight, akBottom]
+    AutoSort = False
     BorderStyle = bsNone
-    ButtonFillMode = fmTransparent
-    DefaultText = 'Node'
-    DragImageKind = diMainColumnOnly
-    Header.AutoSizeIndex = 0
-    Header.Background = clDefault
-    Header.Columns = <    
-      item
-        Position = 0
-        Text = 'Name'
-        Width = 250
-      end    
-      item
-        Position = 1
-        Text = 'Size'
-        Width = 120
-      end    
-      item
-        Position = 2
-        Text = 'Type'
-        Width = 120
-      end    
-      item
-        Position = 3
-        Text = 'Date Modifies'
-        Width = 150
-      end    
-      item
-        Position = 4
-        Text = 'Path'
-        Width = 200
-      end>
-    Header.DefaultHeight = 26
-    Header.Font.Style = [fsBold]
-    Header.Height = 26
-    Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
-    LineMode = lmBands
-    LineStyle = lsCustomStyle
-    ParentFont = False
-    ScrollBarOptions.ScrollBars = ssAutoVertical
-    StateImages = IconList
+    Columns = <>
+    LargeImages = IconList
+    MultiSelect = True
+    OwnerData = True
+    ParentShowHint = False
+    ReadOnly = True
+    RowSelect = True
+    ScrollBars = ssAutoVertical
+    ShowColumnHeaders = False
+    SmallImages = IconList
     TabOrder = 3
-    TreeOptions.MiscOptions = [toFullRepaintOnResize, toInitOnSave, toReportMode, toToggleOnDblClick, toWheelPanning, toEditOnClick]
-    TreeOptions.PaintOptions = [toHideFocusRect, toShowButtons, toShowDropmark, toThemeAware, toUseBlendedImages]
-    TreeOptions.SelectionOptions = [toDisableDrawSelection, toExtendedFocus, toFullRowSelect, toMultiSelect, toRightClickSelect]
-    OnChange = VSTChange
-    OnExpanding = VSTExpanding
-    OnFocusChanged = VSTFocusChanged
-    OnFreeNode = VSTFreeNode
-    OnGetText = VSTGetText
-    OnGetImageIndex = VSTGetImageIndex
-    OnGetNodeDataSize = VSTGetNodeDataSize
+    ViewStyle = vsReport
+    OnData = LVData
+  end
+  object HC: THeaderControl
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = SearchPanel
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 0
+    Height = 26
+    Top = 167
+    Width = 884
+    DragReorder = False
+    Sections = <    
+      item
+        Alignment = taLeftJustify
+        Text = 'Nome file'
+        Width = 250
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'Dimensione'
+        Width = 120
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'Tipo'
+        Width = 120
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'Ultima modifica'
+        Width = 200
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'Percorso'
+        Width = 150
+        Visible = True
+      end>
+    OnSectionClick = HeaderControlSectionClick
+    OnSectionResize = HeaderControlSectionResize
+    OnSectionSeparatorDblClick = HeaderControlSectionSeparatorDblClick
+    Anchors = [akTop, akLeft, akRight]
+    Font.Style = [fsBold]
+    ParentFont = False
   end
   object MainMenu: TPopupMenu
     AutoPopup = False
