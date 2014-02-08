@@ -58,6 +58,8 @@ type
   TMainFrm = class(TForm)
     BackGround: TImage;
     FromFilter: TDateEdit;
+    HC: THeaderControl;
+    LV: TListView;
     ToFilter: TDateEdit;
     TypeFilter: TEdit;
     TypeFilterLabel: TLabel;
@@ -100,8 +102,8 @@ type
     FindButton: TToolButton;
     MaxSizeUpDown: TUpDown;
     MinSizeUpDown: TUpDown;
-    VST: TVirtualStringTree;
     procedure ClearBtnClick(Sender: TObject);
+    procedure LVData(Sender: TObject; Item: TListItem);
     procedure SearchBtnClick(Sender: TObject);
     procedure FindButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -127,26 +129,19 @@ type
     procedure NewButtonClick(Sender: TObject);
     procedure ShareButtonClick(Sender: TObject);
     procedure ShareMenuClose(Sender: TObject);
-    procedure VSTChange(Sender: TBaseVirtualTree;
-      Node: PVirtualNode);
-    procedure VSTExpanding(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      var Allowed: Boolean);
-    procedure VSTFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Column: TColumnIndex);
-    procedure VSTFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
-    procedure VSTGetImageIndex(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: Integer);
-    procedure VSTGetNodeDataSize(Sender: TBaseVirtualTree;
-      var NodeDataSize: Integer);
-    procedure VSTGetText(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
-      var CellText: String);
+
+
+
+
+
+
+
   private
     { private declarations }
     ParserCommandLine: TParserCommandLine;
     ParserList: TParserList;
     Parser: TParser;
+    Paths: TStringList;
   public
     { public declarations }
     procedure Adjust;
@@ -171,16 +166,6 @@ uses
   bxm_AboutFrm,
   bxm_TickFrm;
 
-type
-  PTreeData = ^TTreeData;
-  TTreeData = record
-    Column0: string;
-    Column1: string;
-    Column2: string;
-    Column3: string;
-    Column4: string;
-  end;
-
 { TMainFrm }
 
 procedure TMainFrm.FormCreate(Sender: TObject);
@@ -189,6 +174,14 @@ var
 begin
   ParserCommandLine := TParserCommandLine.Create;
   ParserList := TParserList.Create;
+  Paths := TStringList.Create;
+  Paths.CaseSensitive := FileNameCaseSensitive;
+  Paths.Sorted := TRUE;
+
+  for I := 0 to HC.Sections.Count - 1 do
+  begin
+    LV.Columns.Add;
+  end;
 
   {$IFDEF MSWINDOWS}
   {$ENDIF}
@@ -200,6 +193,7 @@ end;
 
 procedure TMainFrm.FormDestroy(Sender: TObject);
 begin
+  Paths.Destroy;
   ParserList.Destroy;
   ParserCommandLine.Destroy;
 end;
@@ -209,153 +203,17 @@ begin
   Adjust;
 end;
 
-procedure TMainFrm.VSTChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
-begin
-  VST.Refresh;
-end;
-
-procedure TMainFrm.VSTExpanding(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; var Allowed: Boolean);
+procedure TMainFrm.FindButtonClick(Sender: TObject);
 var
   I: longint;
-  Folder: string;
-  Data: PTreeData;
-  XNode: PVirtualNode;
-begin
-  (*
-  Data := VST.GetNodeData(Node);
-  if Assigned(Data) then
-    Folder := Data.Column4 + IncludeTrailingBackSlash(Data.Column0)
-  else
-    Folder := '';
-
-    for I := 0 to ParserList.Count - 1 do
-      if AnsiCompareFileName(ParserList.Items[I].ItemPath, Folder) = 0 then
-      begin
-        XNode:=VST.AddChild(Node);
-        if VST.AbsoluteIndex(XNode) > -1 then
-        begin
-          Data := VST.GetNodeData(XNode);
-          Data^.Column0 := ParserList.Items[I].ItemName;
-          Data^.Column1 := ParserList.Items[I].ItemSize;
-          Data^.Column2 := ParserList.Items[I].ItemType;
-          Data^.Column3 := ParserList.Items[I].ItemTime;
-          Data^.Column4 := ParserList.Items[I].ItemPath;
-        end;
-      end;
-
-  Allowed := TRUE;
-  *)
-end;
-
-procedure TMainFrm.VSTFocusChanged(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; Column: TColumnIndex);
-begin
-  VST.Refresh;
-end;
-
-procedure TMainFrm.VSTFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
-var
-  Data: PTreeData;
-begin
-  Data := VST.GetNodeData(Node);
-  if Assigned(Data) then
-  begin
-    Data^.Column0 := '';
-    Data^.Column1 := '';
-    Data^.Column2 := '';
-    Data^.Column3 := '';
-    Data^.Column4 := '';
-  end;
-end;
-
-procedure TMainFrm.VSTGetNodeDataSize(Sender: TBaseVirtualTree;
-  var NodeDataSize: Integer);
-begin
-  NodeDataSize := SizeOf(TTreeData);
-end;
-
-procedure TMainFrm.VSTGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-  Column: TColumnIndex; TextType: TVSTTextType; var CellText: String);
-var
-  Data: PTreeData;
-begin
-  Data := VST.GetNodeData(Node);
-  if Assigned(Data) then
-    case Column of
-      0: CellText := Data^.Column0;
-      1: CellText := Data^.Column1;
-      2: CellText := Data^.Column2;
-      3: CellText := Data^.Column3;
-      4: CellText := Data^.Column4;
-    end;
-end;
-
-procedure TMainFrm.VSTGetImageIndex(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: Integer);
-var
-  Data: PTreeData;
-begin
-  if Column = 0 then
-  begin
-    Data := VST.GetNodeData(Node);
-
-    if LowerCase(Data^.Column2) = '.avi'         then ImageIndex := 0  else
-    if LowerCase(Data^.Column2) = '.bat'         then ImageIndex := 1  else
-    if LowerCase(Data^.Column2) = '.bmp'         then ImageIndex := 2  else
-    if LowerCase(Data^.Column2) = '.png'         then ImageIndex := 2  else
-    if LowerCase(Data^.Column2) = '.cddrive'     then ImageIndex := 3  else
-    if LowerCase(Data^.Column2) = '.doc'         then ImageIndex := 4  else
-    if LowerCase(Data^.Column2) = '.exe'         then ImageIndex := 5  else
-    if LowerCase(Data^.Column2) = '.folderclose' then ImageIndex := 6  else
-    if LowerCase(Data^.Column2) = '.folderopen'  then ImageIndex := 7  else
-    if LowerCase(Data^.Column2) = '.harddrive'   then ImageIndex := 8  else
-    if LowerCase(Data^.Column2) = '.html'        then ImageIndex := 9  else
-    if LowerCase(Data^.Column2) = '.mp3'         then ImageIndex := 10 else
-    if LowerCase(Data^.Column2) = '.deb'         then ImageIndex := 11 else
-    if LowerCase(Data^.Column2) = '.pkg'         then ImageIndex := 11 else
-    if LowerCase(Data^.Column2) = '.ppd'         then ImageIndex := 12 else
-    if LowerCase(Data^.Column2) = '.ttf'         then ImageIndex := 13 else
-    if LowerCase(Data^.Column2) = '.txt'         then ImageIndex := 14 else
-    if LowerCase(Data^.Column2) = '.unknow'      then ImageIndex := 15 else
-    if LowerCase(Data^.Column2) = '.wab'         then ImageIndex := 16 else
-    if LowerCase(Data^.Column2) = '.xls'         then ImageIndex := 17 else ImageIndex := 15;
-  end;
-end;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-procedure TMainFrm.FindButtonClick(Sender: TObject);
 begin
   if SearchPanel.Enabled = FALSE then
   begin
+    NameFilter.Clear;
+    PathFilter.Clear;
+    for I := 0 to Paths.Count - 1 do
+      PathFilter.AddItem(Paths[I], nil);
+
     ShapeBotton.Visible := TRUE;
     SearchPanel.Height  := 130;
     SearchPanel.Enabled := TRUE;
@@ -368,17 +226,17 @@ begin
 end;
 
 procedure TMainFrm.SearchBtnClick(Sender: TObject);
-var
-  Data: PTreeData;
-  XNode: PVirtualNode;
 begin
-
-  XNode:= VST.GetFirst;
+ (*
   while XNode <> nil do
   begin
     Data:=VST.GetNodeData(XNode);
 
     VST.VisiblePath[XNode] := TRUE;
+
+
+
+
     if PathFilter.Text <> '' then
     begin
       if AnsiCompareFileName(Data^.Column4, PathFilter.Text) <> 0 then
@@ -389,6 +247,8 @@ begin
 
     XNode:= VST.GetNextSibling(XNode);
   end;
+  VST.Refresh;
+  *)
 end;
 
 procedure TMainFrm.ClearBtnClick(Sender: TObject);
@@ -404,29 +264,49 @@ begin
   ToFilter.Text   := '';
 end;
 
+procedure TMainFrm.LVData(Sender: TObject; Item: TListItem);
+var
+  I: longint;
+  ItemType: string;
+begin
+  Item.Caption   := ParserList.Items[Item.Index].ItemName;
+  Item.SubItems.Add(ParserList.Items[Item.Index].ItemSize);
+  Item.SubItems.Add(ParserList.Items[Item.Index].ItemType);
+  Item.SubItems.Add(ParserList.Items[Item.Index].ItemTime);
+  Item.SubItems.Add(ParserList.Items[Item.Index].ItemPath);
 
+  if Paths.Find(ParserList.Items[Item.Index].ItemPath, I) = FALSE then
+    Paths.Add(ParserList.Items[Item.Index].ItemPath);
 
+  ItemType := LowerCase(ParserList.Items[Item.Index].ItemType);
 
+  if ItemType = '.avi'         then Item.ImageIndex := 0  else
+  if ItemType = '.bat'         then Item.ImageIndex := 1  else
+  if ItemType = '.bmp'         then Item.ImageIndex := 2  else
+  if ItemType = '.png'         then Item.ImageIndex := 2  else
+  if ItemType = '.cddrive'     then Item.ImageIndex := 3  else
+  if ItemType = '.doc'         then Item.ImageIndex := 4  else
+  if ItemType = '.exe'         then Item.ImageIndex := 5  else
+  if ItemType = '.folderclose' then Item.ImageIndex := 6  else
+  if ItemType = '.folderopen'  then Item.ImageIndex := 7  else
+  if ItemType = '.harddrive'   then Item.ImageIndex := 8  else
+  if ItemType = '.html'        then Item.ImageIndex := 9  else
+  if ItemType = '.mp3'         then Item.ImageIndex := 10 else
+  if ItemType = '.deb'         then Item.ImageIndex := 11 else
+  if ItemType = '.pkg'         then Item.ImageIndex := 11 else
+  if ItemType = '.ppd'         then Item.ImageIndex := 12 else
+  if ItemType = '.ttf'         then Item.ImageIndex := 13 else
+  if ItemType = '.txt'         then Item.ImageIndex := 14 else
+  if ItemType = '.unknow'      then Item.ImageIndex := 15 else
+  if ItemType = '.wab'         then Item.ImageIndex := 16 else
+  if ItemType = '.xls'         then Item.ImageIndex := 17 else
+    Item.ImageIndex := 15;
+end;
 
 procedure TMainFrm.HeaderControlSectionClick(
   HeaderControl: TCustomHeaderControl; Section: THeaderSection);
 begin
-  (*
-  if ListView.SortColumn = Section.Index then
-  begin
-    if ListView.SortDirection = sdAscending then
-      ListView.SortDirection := sdDescending
-    else
-      ListView.SortDirection type
-  PTreeData = ^TTreeData;
-  TTreeData = record
-    Column0: String;
-    Column1: String;
-    Column2: String;
-  end;:= sdAscending;
-  end;
-  ListView.SortColumn := Section.Index;
-  *)
+
 end;
 
 procedure TMainFrm.HeaderControlSectionResize(
@@ -438,50 +318,49 @@ end;
 procedure TMainFrm.HeaderControlSectionSeparatorDblClick(
   HeaderControl: TCustomHeaderControl; Section: THeaderSection);
 begin
-  //ListView.Columns[Section.Index].AutoSize := TRUE;
-  //begin
-  //  Section.Width := ListView.Columns[Section.Index].Width;
-  //end;
-  //ListView.Columns[Section.Index].AutoSize := FALSE;
-  // Adjust;
+
+  Adjust;
 end;
 
 procedure TMainFrm.Adjust;
 var
   I, J, ColumnWidth: longint;
 begin
-  //ListView.BeginUpdate;
-  //Listview.ScrollBars := ssNone;
-  VST.Header.Columns[4].Width :=
-    - VST.Header.Columns[0].Width
-    - VST.Header.Columns[1].Width
-    - VST.Header.Columns[2].Width
-    - VST.Header.Columns[3].Width + VST.Width - 10;
+  LV.BeginUpdate;
+  LV.ScrollBars := ssNone;
+  LV.AutoWidthLastColumn := FALSE;
 
-  //for I := 0 to HeaderControl.Sections.Count - 1 do
-  //   ListView.Columns[I].Width := HeaderControl.Sections[I].Width;
+  HC.Sections[4].Width :=
+    - HC.Sections[0].Width
+    - HC.Sections[1].Width
+    - HC.Sections[2].Width
+    - HC.Sections[3].Width + HC.Width - 10;
 
-  //for I := ListView.Columns.Count - 1 downto 0 do
-  //begin
-  //  ColumnWidth := ListView.Width - 20;
-  //  for J := 0 to I - 1 do
-  //    Dec(ColumnWidth, ListView.Columns[J].Width);
+  for I := 0 to HC.Sections.Count - 1 do
+     LV.Columns[I].Width := HC.Sections[I].Width;
+  (*
+  for I := LV.Columns.Count - 1 downto 0 do
+  begin
+    ColumnWidth := LV.Width - 20;
+    for J := 0 to I - 1 do
+      Dec(ColumnWidth, LV.Columns[J].Width);
 
-  //  if ColumnWidth > 0 then
-  //  begin
-  //    ListView.Columns[I].Width := ColumnWidth;
-  //    Break;
-  //  end else
-  //    ListView.Columns[I].Width := 0;
-  //end;
-  //Listview.ScrollBars := ssAutoVertical;
-  //ListView.EndUpdate;
+    if ColumnWidth > 0 then
+    begin
+      LV.Columns[I].Width := ColumnWidth;
+      Break;
+    end else
+      LV.Columns[I].Width := 0;
+  end;
+  *)
+  LV.ScrollBars := ssAutoVertical;
+  LV.EndUpdate;
 end;
 
 procedure TMainFrm.IdleTimerStartTimer(Sender: TObject);
 begin
   DisableButtons;
-  VST.Clear;
+  LV.Clear;
 
   TickFrm := TTickFrm. Create(Self);
   with TickFrm.ActionLabel do
@@ -571,10 +450,7 @@ end;
 
 procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
 var
-  I: longint;
-  //Exp: boolean;
-  Data: PTreeData;
-  XNode: PVirtualNode;
+  I, J: longint;
 begin
 
   if ParserCommandLine.Command in [cList] then
@@ -582,30 +458,9 @@ begin
     ParserList.Clear;
     ParserList.Execute(Parser);
 
-    NameFilter.Clear;
     ClearBtnClick(Sender);
 
-    PathFilter.Clear;
-
-
-
-
-    for I := 0 to ParserList.Count - 1 do
-    begin
-      XNode:=VST.AddChild(nil);
-      if VST.AbsoluteIndex(XNode) > -1 then
-      begin
-        Data := VST.GetNodeData(XNode);
-        Data^.Column0 := ParserList.Items[I].ItemName;
-        Data^.Column1 := ParserList.Items[I].ItemSize;
-        Data^.Column2 := ParserList.Items[I].ItemType;
-        Data^.Column3 := ParserList.Items[I].ItemTime;
-        Data^.Column4 := ParserList.Items[I].ItemPath;
-        end;
-      end;
-
-    //Exp := TRUE;
-    //VSTExpanding(VST, nil, Exp);
+    LV.Items.Count := ParserList.Count;
   end else
 
     if ParserCommandLine.Command in [cAdd, cDelete] then
@@ -631,8 +486,10 @@ begin
   ToolBar.Buttons[3].Enabled := FALSE;
   ToolBar.Buttons[4].Enabled := FALSE;
 
-  VST.Enabled := FALSE;
-  VST.Visible := FALSE;
+  HC.Enabled := FALSE;
+  HC.Visible := FALSE;
+  LV.Enabled := FALSE;
+  LV.Visible := FALSE;
 end;
 
 procedure TMainFrm.DisableButtons;
@@ -643,8 +500,10 @@ begin
   ToolBar.Buttons[3].Enabled := FALSE;
   ToolBar.Buttons[4].Enabled := FALSE;
 
-  VST.Enabled := FALSE;
-  VST.Visible := FALSE;
+  HC.Enabled := FALSE;
+  HC.Visible := FALSE;
+  LV.Enabled := FALSE;
+  LV.Visible := FALSE;
 end;
 
 procedure TMainFrm.EnableButtons;
@@ -655,8 +514,10 @@ begin
   ToolBar.Buttons[3].Enabled := TRUE;
   ToolBar.Buttons[4].Enabled := TRUE;
 
-  VST.Enabled := TRUE;
-  VST.Visible := TRUE;
+  HC.Enabled := TRUE;
+  HC.Visible := TRUE;
+  LV.Enabled := TRUE;
+  LV.Visible := TRUE;
 end;
 
 procedure TMainFrm.MenuButtonClick(Sender: TObject);

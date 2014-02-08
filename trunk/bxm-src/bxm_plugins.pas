@@ -107,6 +107,10 @@ type
     ItemHash:   string;
     ItemCypher: string;
     ItemMethod: string;
+    ItemIndex: longint;
+
+    Visible: boolean;
+    Checked: boolean;
   end;
 
   { TParserList }
@@ -114,7 +118,6 @@ type
   TParserList = class
   private
     FList: TList;
-    FFolders: TStringList;
     function GetCount: longint;
     function GetItem(Index: longint): TParserItem;
     procedure AddItem(Item: TParserItem);
@@ -123,6 +126,7 @@ type
     destructor Destroy; override;
     procedure Execute(Parser: TParser);
     procedure Clear;
+    procedure Sort(Compare: TListSortCompare);
   public
     property Count: longint read GetCount;
     property Items[Index: longint]: TParserItem read GetItem;
@@ -300,16 +304,12 @@ constructor TParserList.Create;
 begin
   inherited Create;
   FList := TList.Create;
-  FFolders := TStringList.Create;
-  FFolders.CaseSensitive := FileNameCaseSensitive;
-  FFolders.Sorted := TRUE;
 end;
 
 destructor TParserList.Destroy;
 begin
   Clear;
   FList.Destroy;
-  FFolders.Destroy;
 end;
 
 procedure TParserList.Clear;
@@ -319,7 +319,6 @@ begin
   for i := 0 to FList.Count -1 do
     TParserItem(FList[i]).Destroy;
   FList.Clear;
-  FFolders.Clear;
 end;
 
 function TParserList.GetCount: longint;
@@ -338,26 +337,11 @@ var
   Parent: TParserItem;
 begin
   FList.Add(Item);
-  (*
-  if Item.ItemPath <> '' then
-    if FFolders.Find(Item.ItemPath, I) = FALSE then
-    begin
-      FFolders.Add(Item.ItemPath);
-      Parent := TParserItem.Create;
-      Parent.ItemName   := ExtractFileName(ExcludeTrailingBackSlash(Item.ItemPath));
-      Parent.ItemPath   := ExtractFilePath(ExcludeTrailingBackSlash(Item.ItemPath));
-      Parent.ItemType   := '.folderclose';
-      Parent.ItemSize   := '';
-      Parent.ItemPacked := '';
-      Parent.ItemAttr   := '';
-      Parent.ItemTime   := '';
-      Parent.ItemComm   := '';
-      Parent.ItemHash   := '';
-      Parent.ItemCypher := '';
-      Parent.ItemMethod := '';
-      AddItem(Parent);
-    end;
-    *)
+end;
+
+procedure TParserList.Sort(Compare: TListSortCompare);
+begin
+  FList.Sort(Compare);
 end;
 
 procedure TParserList.Execute(Parser: TParser);
