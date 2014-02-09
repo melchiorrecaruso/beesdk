@@ -332,8 +332,8 @@ begin
   if Pos('D', UpperCase(Item.ItemAttr)) > 0 then
   begin
     Item.ItemType   := '.folderclose';
-    Item.ItemPacked := '';
-    Item.ItemSize   := '';
+    Item.ItemPacked := '-';
+    Item.ItemSize   := '-';
   end;
 end;
 

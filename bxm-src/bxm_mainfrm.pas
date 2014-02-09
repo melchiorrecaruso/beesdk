@@ -64,7 +64,7 @@ type
     TypeFilterLabel: TLabel;
     FromFilterLabel: TLabel;
     Label3: TLabel;
-    SearchBtn: TBitBtn;
+    ApplyBtn: TBitBtn;
     ClearBtn: TBitBtn;
     MinSize: TEdit;
     MaxSize: TEdit;
@@ -102,9 +102,10 @@ type
     MaxSizeUpDown: TUpDown;
     MinSizeUpDown: TUpDown;
     procedure ClearBtnClick(Sender: TObject);
+
     procedure LVData(Sender: TObject; Item: TListItem);
     procedure LVDblClick(Sender: TObject);
-    procedure SearchBtnClick(Sender: TObject);
+    procedure ApplyBtnClick(Sender: TObject);
     procedure FindButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -118,7 +119,11 @@ type
     procedure IdleTimerStartTimer(Sender: TObject);
     procedure IdleTimerStopTimer(Sender: TObject);
     procedure IdleTimerTimer(Sender: TObject);
-    procedure ListViewClick(Sender: TObject);
+
+
+    procedure LVDrawItem(Sender: TCustomListView; AItem: TListItem;
+      ARect: TRect; AState: TOwnerDrawState);
+
 
     procedure MainMenuClose(Sender: TObject);
     procedure MenuButtonClick(Sender: TObject);
@@ -140,6 +145,7 @@ type
     ParserList: TParserList;
     Parser: TParser;
 
+    Names: TStringList;
     Paths: TStringList;
     Types: TStringList;
     List: TList;
@@ -179,6 +185,10 @@ begin
   ParserCommandLine := TParserCommandLine.Create;
   ParserList := TParserList.Create;
 
+  Names := TStringList.Create;
+  Names.CaseSensitive := FileNameCaseSensitive;
+  Names.Sorted := TRUE;
+
   Paths := TStringList.Create;
   Paths.CaseSensitive := FileNameCaseSensitive;
   Paths.Sorted := TRUE;
@@ -206,6 +216,7 @@ end;
 procedure TMainFrm.FormDestroy(Sender: TObject);
 begin
   List.Destroy;
+  Names.Destroy;
   Paths.Destroy;
   Types.Destroy;
   ParserList.Destroy;
@@ -218,33 +229,21 @@ begin
 end;
 
 procedure TMainFrm.FindButtonClick(Sender: TObject);
-var
-  I: longint;
 begin
   if SearchPanel.Enabled = FALSE then
   begin
-    NameFilter.Clear;
-    NameFilter.AddItem('*', nil);
-
-    PathFilter.Clear;
-    PathFilter.AddItem('*', nil);
-    for I := 0 to Paths.Count - 1 do
-      PathFilter.AddItem(Paths[I], nil);
-
-    TypeFilter.Clear;
-    TypeFilter.AddItem('*', nil);
-    for I := 0 to Types.Count - 1 do
-      TypeFilter.AddItem(Types[I], nil);
-
     ShapeBotton.Visible := TRUE;
     SearchPanel.Height  := 130;
     SearchPanel.Enabled := TRUE;
+    FindButton.Down     := TRUE;
   end else
   begin
     ShapeBotton.Visible := FALSE;
     SearchPanel.Height  := 1;
     SearchPanel.Enabled := FALSE;
+    FindButton.Down     := FALSE;
   end;
+
 end;
 
 function CompareItem(Item1, Item2: pointer): longint;
@@ -297,7 +296,7 @@ begin
   end;
 end;
 
-procedure TMainFrm.SearchBtnClick(Sender: TObject);
+procedure TMainFrm.ApplyBtnClick(Sender: TObject);
 var
   I: longint;
   Item: TParserItem;
@@ -317,7 +316,6 @@ begin
       RES := FALSE;
     end;
 
-    RES := TRUE;
     if MatchesMask(Item.ItemType, TypeFilter.Text, FileNameCaseSensitive) = FALSE then
     begin
       RES := FALSE;
@@ -334,19 +332,24 @@ begin
 
   LV.Items.Count := List.Count;
   LV.EndUpdate;
+
+  if Names.Find(NameFilter.Text, I) = FALSE then
+  begin
+    Names.Add(NameFilter.Text);
+    NameFilter.AddItem(NameFilter.Text, nil);
+  end;
 end;
 
 procedure TMainFrm.ClearBtnClick(Sender: TObject);
 var
   I: longint;
 begin
-  NameFilter.ItemIndex := 0;
-  PathFilter.ItemIndex := 0;
-  TypeFilter.ItemIndex := 0;
+  NameFilter.Text := '*';
+  PathFilter.Text := '*';
+  TypeFilter.Text := '*';
 
   MinSize.Text    := '';
   MaxSize.Text    := '';
-
 
   FromFilter.Text := '';
   ToFilter.Text   := '';
@@ -363,9 +366,11 @@ begin
   LV.EndUpdate;
 end;
 
+
+
+
 procedure TMainFrm.LVData(Sender: TObject; Item: TListItem);
 var
-  I: longint;
   ItemType: string;
   PI: TParserItem;
 begin
@@ -376,12 +381,6 @@ begin
   Item.SubItems.Add(PI.ItemType);
   Item.SubItems.Add(PI.ItemTime);
   Item.SubItems.Add(PI.ItemPath);
-
-  if Paths.Find(PI.ItemPath, I) = FALSE then
-    Paths.Add(PI.ItemPath);
-
-  if Types.Find(PI.ItemType, I) = FALSE then
-    Types.Add(PI.ItemType);
 
   ItemType := LowerCase(PI.ItemType);
 
@@ -411,11 +410,13 @@ end;
 procedure TMainFrm.LVDblClick(Sender: TObject);
 begin
   if LV.SelCount = 1 then
-  begin
-    PathFilter.Text := LV.Selected.SubItems[3] + LV.Selected.Caption + PathDelim;
-
-    SearchBtnClick(Self);
-  end;
+    if LV.Selected.SubItems[1] = '.folderclose' then
+    begin
+      PathFilter.Text :=
+        LV.Selected.SubItems[3] +
+        LV.Selected.Caption + PathDelim;
+      ApplyBtnClick(Self);
+    end;
 end;
 
 procedure TMainFrm.HeaderControlSectionClick(
@@ -425,8 +426,7 @@ begin
     ListSortColumn := Section.Index
   else
     ListSortAscending := not ListSortAscending;
-
-  SearchBtnClick(Self);
+  ApplyBtnClick(Self);
 end;
 
 procedure TMainFrm.HeaderControlSectionResize(
@@ -512,21 +512,44 @@ begin
     IdleTimer.Enabled := FALSE;
 end;
 
-procedure TMainFrm.ListViewClick(Sender: TObject);
+procedure TMainFrm.LVDrawItem(Sender: TCustomListView; AItem: TListItem;
+  ARect: TRect; AState: TOwnerDrawState);
+var
+  i: Integer;
+  x1, x2: integer;
+  r: TRect;
+  S: string;
+//const
+//  DT_ALIGN: array[TAlignment] of integer = (DT_LEFT, DT_RIGHT, DT_CENTER);
 begin
+  if Odd(AItem.Index) then
+  begin
+    Sender.Canvas.Font.Color := clBlack;
+    Sender.Canvas.Brush.Color := $F6F6F6;
+  end else
+  begin
+    Sender.Canvas.Font.Color := clBlack;
+    Sender.Canvas.Brush.Color := clWhite;
+  end;
 
+  Sender.Canvas.Brush.Style := bsSolid;
+  Sender.Canvas.FillRect(ARect);
+  x1 := 0;
+  x2 := 0;
+  r := ARect;
+
+
+    DrawText(Sender.Canvas.Handle,
+      S,
+      length(S),
+      r,
+      DT_SINGLELINE or DT_ALIGN[ListView1.Columns[i].Alignment] or
+        DT_VCENTER or DT_END_ELLIPSIS);
+    x1 := x2;
+  end;
+  if odFocused in State then                                                     // NEW!
+    DrawFocusRect(Sender.Canvas.Handle, Rect);                                   // NEW!
 end;
-
-
-
-
-
-
-
-
-
-
-
 
 procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
 var
@@ -537,6 +560,34 @@ begin
   begin
     ParserList.Clear;
     ParserList.Execute(Parser);
+
+    Names.Clear;
+    Paths.Clear;
+    Types.Clear;
+
+    for I := 0 to ParserList.Count - 1 do
+    begin
+      if Paths.Find(ParserList.Items[I].ItemPath, J) = FALSE then
+        Paths.Add(ParserList.Items[I].ItemPath);
+
+      if Types.Find(ParserList.Items[I].ItemType, J) = FALSE then
+        Types.Add(ParserList.Items[I].ItemType);
+    end;
+
+    NameFilter.Clear;
+    NameFilter.AddItem('*', nil);
+    for I := 0 to Names.Count - 1 do
+      NameFilter.AddItem(Name[I], nil);
+
+    PathFilter.Clear;
+    PathFilter.AddItem('*', nil);
+    for I := 0 to Paths.Count - 1 do
+      PathFilter.AddItem(Paths[I], nil);
+
+    TypeFilter.Clear;
+    TypeFilter.AddItem('*', nil);
+    for I := 0 to Types.Count - 1 do
+      TypeFilter.AddItem(Types[I], nil);
 
     ClearBtnClick(Sender);
   end else

@@ -189,7 +189,7 @@ object MainFrm: TMainFrm
       AnchorSideLeft.Control = PathFilterLabel
       AnchorSideTop.Control = PathFilterLabel
       AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Control = SearchBtn
+      AnchorSideRight.Control = ApplyBtn
       Left = 285
       Height = 27
       Top = 28
@@ -202,7 +202,7 @@ object MainFrm: TMainFrm
       ItemHeight = 0
       TabOrder = 0
     end
-    object SearchBtn: TBitBtn
+    object ApplyBtn: TBitBtn
       AnchorSideTop.Control = PathFilter
       AnchorSideRight.Control = SearchPanel
       AnchorSideRight.Side = asrBottom
@@ -215,11 +215,11 @@ object MainFrm: TMainFrm
       Anchors = [akTop, akRight, akBottom]
       AutoSize = True
       BorderSpacing.Right = 10
-      Caption = 'Search'
+      Caption = 'Apply'
       Constraints.MaxWidth = 84
       Constraints.MinWidth = 84
       Default = True
-      OnClick = SearchBtnClick
+      OnClick = ApplyBtnClick
       TabOrder = 1
     end
     object ClearBtn: TBitBtn
@@ -468,10 +468,12 @@ object MainFrm: TMainFrm
     Anchors = [akTop, akLeft, akRight, akBottom]
     AutoSort = False
     BorderStyle = bsNone
+    Color = clNone
     Columns = <>
     LargeImages = IconList
     MultiSelect = True
     OwnerData = True
+    OwnerDraw = True
     ParentShowHint = False
     ReadOnly = True
     RowSelect = True
@@ -482,6 +484,7 @@ object MainFrm: TMainFrm
     ViewStyle = vsReport
     OnData = LVData
     OnDblClick = LVDblClick
+    OnDrawItem = LVDrawItem
   end
   object HC: THeaderControl
     AnchorSideLeft.Control = Owner
