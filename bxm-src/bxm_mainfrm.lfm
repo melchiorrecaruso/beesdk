@@ -469,7 +469,6 @@ object MainFrm: TMainFrm
     AutoSort = False
     BorderStyle = bsNone
     Columns = <>
-    IconOptions.AutoArrange = True
     LargeImages = IconList
     MultiSelect = True
     OwnerData = True
