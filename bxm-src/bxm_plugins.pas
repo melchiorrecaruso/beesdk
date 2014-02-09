@@ -176,12 +176,12 @@ begin
   Result := '';
   if FCommand <> cNone then
   begin
-    Result := ParserIni.ReadString(FExec, 'exec', '');
+    Result := ParserIni.ReadString(FExec, 'exec', '7z');
     case FCommand of
       cAdd:      Result := Result + ' ' + ParserIni.ReadString(FExec, 'add',      '');
       cDelete:   Result := Result + ' ' + ParserIni.ReadString(FExec, 'delete',   '');
       cExtract:  Result := Result + ' ' + ParserIni.ReadString(FExec, 'extract',  '');
-      cList:     Result := Result + ' ' + ParserIni.ReadString(FExec, 'list',     '');
+      cList:     Result := Result + ' ' + ParserIni.ReadString(FExec, 'list',     'l -slt');
       cTest:     Result := Result + ' ' + ParserIni.ReadString(FExec, 'test',     '');
       cxExtract: Result := Result + ' ' + ParserIni.ReadString(FExec, 'xextract', '');
     end;
@@ -430,4 +430,4 @@ begin
   for I := 0 to GetCount - 1 do UpdateItem(GetItem(I));
 end;
 
-end.
+end.
