@@ -30,16 +30,13 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="3">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="virtualtreeview_package"/>
+        <PackageName Value="LazControls"/>
       </Item1>
       <Item2>
-        <PackageName Value="LazControls"/>
-      </Item2>
-      <Item3>
         <PackageName Value="LCL"/>
-      </Item3>
+      </Item2>
     </RequiredPackages>
     <Units Count="74">
       <Unit0>
@@ -234,7 +231,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="240"/>
+        <TopLine Value="396"/>
         <CursorPos X="3" Y="379"/>
         <FoldState Value=" T3mZ0m2322113W"/>
         <UsageCount Value="100"/>
@@ -622,21 +619,21 @@
         <UsageCount Value="5"/>
       </Unit67>
       <Unit68>
-        <Filename Value="../../../Applications/fpc/source/rtl/objpas/classes/classesh.inc"/>
+        <Filename Value="../../Applications/fpc/source/rtl/objpas/classes/classesh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="341"/>
         <CursorPos X="49" Y="362"/>
         <UsageCount Value="9"/>
       </Unit68>
       <Unit69>
-        <Filename Value="../../../Applications/fpc/source/rtl/objpas/classes/stringl.inc"/>
+        <Filename Value="../../Applications/fpc/source/rtl/objpas/classes/stringl.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1252"/>
         <CursorPos X="3" Y="1258"/>
         <UsageCount Value="9"/>
       </Unit69>
       <Unit70>
-        <Filename Value="../../../Applications/fpc/source/rtl/unix/sysunixh.inc"/>
+        <Filename Value="../../Applications/fpc/source/rtl/unix/sysunixh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="32"/>
         <CursorPos X="24" Y="51"/>
@@ -658,7 +655,7 @@
         <UsageCount Value="9"/>
       </Unit72>
       <Unit73>
-        <Filename Value="../../../Applications/fpc/source/rtl/inc/systemh.inc"/>
+        <Filename Value="../../Applications/fpc/source/rtl/inc/systemh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="578"/>
         <CursorPos X="10" Y="598"/>
