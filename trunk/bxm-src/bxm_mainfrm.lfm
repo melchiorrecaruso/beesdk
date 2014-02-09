@@ -468,15 +468,13 @@ object MainFrm: TMainFrm
     Anchors = [akTop, akLeft, akRight, akBottom]
     AutoSort = False
     BorderStyle = bsNone
-    Color = clNone
     Columns = <>
+    IconOptions.AutoArrange = True
     LargeImages = IconList
     MultiSelect = True
     OwnerData = True
-    OwnerDraw = True
     ParentShowHint = False
     ReadOnly = True
-    RowSelect = True
     ScrollBars = ssAutoVertical
     ShowColumnHeaders = False
     SmallImages = IconList
@@ -484,7 +482,6 @@ object MainFrm: TMainFrm
     ViewStyle = vsReport
     OnData = LVData
     OnDblClick = LVDblClick
-    OnDrawItem = LVDrawItem
   end
   object HC: THeaderControl
     AnchorSideLeft.Control = Owner

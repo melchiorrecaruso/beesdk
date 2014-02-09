@@ -46,7 +46,7 @@
         <Filename Value="bxm.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="bxm"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="22"/>
@@ -79,7 +79,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="15"/>
         <CursorPos X="11" Y="35"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit3>
       <Unit4>
         <Filename Value="../../lazarus/lcl/buttons.pp"/>
@@ -87,7 +87,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="247"/>
         <CursorPos X="14" Y="342"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit4>
       <Unit5>
         <Filename Value="../../lazarus/lcl/comctrls.pp"/>
@@ -147,7 +147,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="290"/>
         <CursorPos X="14" Y="300"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit12>
       <Unit13>
         <Filename Value="../lazarus/lcl/controls.pp"/>
@@ -155,14 +155,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="2149"/>
         <CursorPos X="25" Y="2169"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit13>
       <Unit14>
         <Filename Value="../lazarus/lcl/include/wincontrol.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="5973"/>
         <CursorPos X="5" Y="5978"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit14>
       <Unit15>
         <Filename Value="../lazarus/lcl/include/winapih.inc"/>
@@ -200,14 +200,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="306"/>
         <CursorPos X="49" Y="326"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit19>
       <Unit20>
         <Filename Value="../lazarus/lcl/include/control.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="3355"/>
         <CursorPos X="5" Y="3392"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit20>
       <Unit21>
         <Filename Value="../lazarus/lcl/lclclasses.pp"/>
@@ -234,9 +234,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="525"/>
-        <CursorPos X="30" Y="550"/>
-        <FoldState Value=" T3mX0m3222123;"/>
+        <TopLine Value="188"/>
+        <CursorPos X="1" Y="207"/>
+        <FoldState Value=" T3mZ0m3222113X"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -285,11 +285,10 @@
       <Unit28>
         <Filename Value="bxm-src/bxm_plugins.pas"/>
         <UnitName Value="bxm_plugins"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="303"/>
         <CursorPos X="26" Y="336"/>
-        <FoldState Value=" T3oc0{At"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -362,7 +361,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="32"/>
         <CursorPos X="28" Y="56"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit36>
       <Unit37>
         <Filename Value="bx-src/bx_common.pas"/>
@@ -378,7 +377,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="34"/>
         <CursorPos X="5" Y="57"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit38>
       <Unit39>
         <Filename Value="bx-src/bx_hashgen.pas"/>
@@ -386,7 +385,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="31"/>
         <CursorPos X="69" Y="26"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
       <Unit40>
@@ -395,14 +394,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="165"/>
         <CursorPos X="14" Y="179"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit40>
       <Unit41>
         <Filename Value="../../lazarus/components/lazutils/fileutil.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1071"/>
         <CursorPos X="13" Y="1076"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit41>
       <Unit42>
         <Filename Value="bxm-src/bxm_addtreeviewmgr.pas"/>
@@ -434,21 +433,23 @@
       <Unit45>
         <Filename Value="bxm-src/bxm_archivefolderbox.pas"/>
         <UnitName Value="bxm_ArchiveFolderBox"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="70"/>
         <CursorPos X="28" Y="74"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit45>
       <Unit46>
         <Filename Value="../../lazarus/lcl/graphics.pp"/>
         <UnitName Value="Graphics"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1190"/>
-        <CursorPos X="15" Y="1207"/>
-        <UsageCount Value="10"/>
+        <TopLine Value="1186"/>
+        <CursorPos X="15" Y="1205"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
       </Unit46>
       <Unit47>
         <Filename Value="../../lazarus/lcl/grids.pas"/>
@@ -669,123 +670,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="539" Column="11" TopLine="520"/>
+        <Caret Line="550" Column="38" TopLine="535"/>
       </Position1>
       <Position2>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="543" Column="17" TopLine="522"/>
+        <Caret Line="543" Column="43" TopLine="510"/>
       </Position2>
       <Position3>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="549" Column="15" TopLine="534"/>
+        <Caret Line="512" Column="5" TopLine="491"/>
       </Position3>
       <Position4>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="544" Column="117" TopLine="531"/>
+        <Caret Line="123" Column="46" TopLine="103"/>
       </Position4>
       <Position5>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="555" Column="34" TopLine="536"/>
+        <Caret Line="381" Column="7" TopLine="365"/>
       </Position5>
       <Position6>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="550" Column="38" TopLine="535"/>
+        <Caret Line="369" Column="10" TopLine="340"/>
       </Position6>
       <Position7>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="543" Column="43" TopLine="510"/>
+        <Caret Line="379" Column="26" TopLine="340"/>
       </Position7>
       <Position8>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="512" Column="5" TopLine="491"/>
+        <Caret Line="189" Column="41" TopLine="139"/>
       </Position8>
       <Position9>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="123" Column="46" TopLine="103"/>
+        <Caret Line="371" Column="3" TopLine="368"/>
       </Position9>
       <Position10>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="381" Column="7" TopLine="365"/>
+        <Caret Line="342" Column="1" TopLine="248"/>
       </Position10>
       <Position11>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="369" Column="10" TopLine="340"/>
+        <Caret Line="106" Column="33" TopLine="86"/>
       </Position11>
       <Position12>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="379" Column="26" TopLine="340"/>
+        <Caret Line="366" Column="1" TopLine="365"/>
       </Position12>
       <Position13>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="189" Column="41" TopLine="139"/>
+        <Caret Line="104" Column="46" TopLine="86"/>
       </Position13>
       <Position14>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="371" Column="3" TopLine="368"/>
+        <Caret Line="515" Column="1" TopLine="498"/>
       </Position14>
       <Position15>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="342" Column="1" TopLine="248"/>
+        <Caret Line="125" Column="4" TopLine="103"/>
       </Position15>
       <Position16>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="106" Column="33" TopLine="86"/>
+        <Caret Line="380" Column="5" TopLine="367"/>
       </Position16>
       <Position17>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="366" Column="1" TopLine="365"/>
+        <Caret Line="368" Column="1" TopLine="342"/>
       </Position17>
       <Position18>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="104" Column="46" TopLine="86"/>
+        <Caret Line="105" Column="5" TopLine="86"/>
       </Position18>
       <Position19>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="515" Column="1" TopLine="498"/>
+        <Caret Line="514" Column="1" TopLine="498"/>
       </Position19>
       <Position20>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="125" Column="4" TopLine="103"/>
+        <Caret Line="575" Column="5" TopLine="501"/>
       </Position20>
       <Position21>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="380" Column="5" TopLine="367"/>
+        <Caret Line="532" Column="26" TopLine="526"/>
       </Position21>
       <Position22>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="368" Column="1" TopLine="342"/>
+        <Caret Line="535" Column="75" TopLine="515"/>
       </Position22>
       <Position23>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="105" Column="5" TopLine="86"/>
+        <Caret Line="537" Column="27" TopLine="518"/>
       </Position23>
       <Position24>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="514" Column="1" TopLine="498"/>
+        <Caret Line="540" Column="9" TopLine="521"/>
       </Position24>
       <Position25>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="575" Column="5" TopLine="501"/>
+        <Caret Line="525" Column="48" TopLine="502"/>
       </Position25>
       <Position26>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="532" Column="26" TopLine="526"/>
+        <Caret Line="550" Column="30" TopLine="525"/>
       </Position26>
       <Position27>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="535" Column="75" TopLine="515"/>
+        <Caret Line="542" Column="30" TopLine="520"/>
       </Position27>
       <Position28>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="537" Column="27" TopLine="518"/>
+        <Caret Line="546" Column="7" TopLine="526"/>
       </Position28>
       <Position29>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="540" Column="9" TopLine="521"/>
+        <Caret Line="514" Column="1" TopLine="502"/>
       </Position29>
       <Position30>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
-        <Caret Line="525" Column="48" TopLine="502"/>
+        <Caret Line="202" Column="57" TopLine="179"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

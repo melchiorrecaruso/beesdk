@@ -121,8 +121,7 @@ type
     procedure IdleTimerTimer(Sender: TObject);
 
 
-    procedure LVDrawItem(Sender: TCustomListView; AItem: TListItem;
-      ARect: TRect; AState: TOwnerDrawState);
+
 
 
     procedure MainMenuClose(Sender: TObject);
@@ -204,6 +203,9 @@ begin
   end;
   ListSortColumn := 0;
   ListSortAscending := TRUE;
+
+
+
 
   {$IFDEF MSWINDOWS}
   {$ENDIF}
@@ -510,45 +512,6 @@ begin
 
   if Parser.Terminated then
     IdleTimer.Enabled := FALSE;
-end;
-
-procedure TMainFrm.LVDrawItem(Sender: TCustomListView; AItem: TListItem;
-  ARect: TRect; AState: TOwnerDrawState);
-var
-  i: Integer;
-  x1, x2: integer;
-  r: TRect;
-  S: string;
-//const
-//  DT_ALIGN: array[TAlignment] of integer = (DT_LEFT, DT_RIGHT, DT_CENTER);
-begin
-  if Odd(AItem.Index) then
-  begin
-    Sender.Canvas.Font.Color := clBlack;
-    Sender.Canvas.Brush.Color := $F6F6F6;
-  end else
-  begin
-    Sender.Canvas.Font.Color := clBlack;
-    Sender.Canvas.Brush.Color := clWhite;
-  end;
-
-  Sender.Canvas.Brush.Style := bsSolid;
-  Sender.Canvas.FillRect(ARect);
-  x1 := 0;
-  x2 := 0;
-  r := ARect;
-
-
-    DrawText(Sender.Canvas.Handle,
-      S,
-      length(S),
-      r,
-      DT_SINGLELINE or DT_ALIGN[ListView1.Columns[i].Alignment] or
-        DT_VCENTER or DT_END_ELLIPSIS);
-    x1 := x2;
-  end;
-  if odFocused in State then                                                     // NEW!
-    DrawFocusRect(Sender.Canvas.Handle, Rect);                                   // NEW!
 end;
 
 procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
