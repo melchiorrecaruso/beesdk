@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 391
+  Left = 343
   Height = 670
-  Top = 136
+  Top = 57
   Width = 884
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
@@ -470,7 +470,6 @@ object MainFrm: TMainFrm
     BorderStyle = bsNone
     Columns = <>
     ColumnClick = False
-    GridLines = True
     LargeImages = IconList
     MultiSelect = True
     OwnerData = True
