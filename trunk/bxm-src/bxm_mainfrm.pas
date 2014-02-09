@@ -42,6 +42,7 @@ uses
   FileUtil,
   Forms,
   Graphics,
+  Masks,
   Menus,
   StdCtrls, FileCtrl, Spin, EditBtn,
   SysUtils,
@@ -55,11 +56,11 @@ type
 
   TMainFrm = class(TForm)
     BackGround: TImage;
+    TypeFilter: TComboBox;
     FromFilter: TDateEdit;
     HC: THeaderControl;
     LV: TListView;
     ToFilter: TDateEdit;
-    TypeFilter: TEdit;
     TypeFilterLabel: TLabel;
     FromFilterLabel: TLabel;
     Label3: TLabel;
@@ -118,8 +119,6 @@ type
     procedure IdleTimerStopTimer(Sender: TObject);
     procedure IdleTimerTimer(Sender: TObject);
     procedure ListViewClick(Sender: TObject);
-    procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem;
-      Data: Integer; var Compare: Integer);
 
     procedure MainMenuClose(Sender: TObject);
     procedure MenuButtonClick(Sender: TObject);
@@ -142,6 +141,7 @@ type
     Parser: TParser;
 
     Paths: TStringList;
+    Types: TStringList;
     List: TList;
   public
     { public declarations }
@@ -154,7 +154,6 @@ type
 
 var
   MainFrm: TMainFrm;
-  FirstPoint, ThisPoint: TPoint;
 
 implementation
 
@@ -167,6 +166,10 @@ uses
   bxm_AboutFrm,
   bxm_TickFrm;
 
+var
+  ListSortAscending: boolean;
+  ListSortColumn: longint;
+
 { TMainFrm }
 
 procedure TMainFrm.FormCreate(Sender: TObject);
@@ -175,15 +178,22 @@ var
 begin
   ParserCommandLine := TParserCommandLine.Create;
   ParserList := TParserList.Create;
+
   Paths := TStringList.Create;
   Paths.CaseSensitive := FileNameCaseSensitive;
   Paths.Sorted := TRUE;
-  List := TList.Create;
 
+  Types := TStringList.Create;
+  Types.CaseSensitive := FileNameCaseSensitive;
+  Types.Sorted := TRUE;
+
+  List := TList.Create;
   for I := 0 to HC.Sections.Count - 1 do
   begin
     LV.Columns.Add;
   end;
+  ListSortColumn := 0;
+  ListSortAscending := TRUE;
 
   {$IFDEF MSWINDOWS}
   {$ENDIF}
@@ -197,6 +207,7 @@ procedure TMainFrm.FormDestroy(Sender: TObject);
 begin
   List.Destroy;
   Paths.Destroy;
+  Types.Destroy;
   ParserList.Destroy;
   ParserCommandLine.Destroy;
 end;
@@ -212,8 +223,18 @@ var
 begin
   if SearchPanel.Enabled = FALSE then
   begin
+    NameFilter.Clear;
+    NameFilter.AddItem('*', nil);
+
+    PathFilter.Clear;
+    PathFilter.AddItem('*', nil);
     for I := 0 to Paths.Count - 1 do
       PathFilter.AddItem(Paths[I], nil);
+
+    TypeFilter.Clear;
+    TypeFilter.AddItem('*', nil);
+    for I := 0 to Types.Count - 1 do
+      TypeFilter.AddItem(Types[I], nil);
 
     ShapeBotton.Visible := TRUE;
     SearchPanel.Height  := 130;
@@ -223,6 +244,56 @@ begin
     ShapeBotton.Visible := FALSE;
     SearchPanel.Height  := 1;
     SearchPanel.Enabled := FALSE;
+  end;
+end;
+
+function CompareItem(Item1, Item2: pointer): longint;
+var
+  P1, P2: TParserItem;
+  P1IsDir, P2IsDir: boolean;
+begin
+  Result := 0;
+
+  P1 := TParserItem(Item1);
+  P2 := TParserItem(Item2);
+
+  P1IsDir := Pos('D', P1.ItemAttr) > 0;
+  P2IsDir := Pos('D', P2.ItemAttr) > 0;
+
+  if P1IsDir = P2IsDir then
+  begin
+    case ListSortColumn of
+      0:   Result := AnsiCompareFileName(P1.ItemName, P2.ItemName);
+      1:   if P1.ItemSize > P2.ItemSize then
+             Result := 1
+           else
+             if P1.ItemSize < P2.ItemSize then
+               Result := -1
+             else
+               Result := 0;
+
+      2:   Result := AnsiCompareFileName(P1.ItemType, P2.ItemType);
+      3:   if P1.ItemTime > P2.ItemTime then
+             Result := 1
+           else
+             if P1.ItemTime < P2.ItemTime then
+               Result := -1
+             else
+               Result := 0;
+
+      4:   Result := AnsiCompareFileName(P1.ItemPath, P2.ItemPath);
+    end;
+
+  end else
+    if P1IsDir then
+      Result := -1
+    else
+      if P2IsDir then
+        Result := 1;
+
+  if ListSortAscending = FALSE then
+  begin
+    Result := - Result;
   end;
 end;
 
@@ -241,20 +312,26 @@ begin
     Item := ParserList.Items[I];
 
     RES := TRUE;
-    if NameFilter.Text <> '' then
-      if AnsiCompareFileName(Item.ItemName, NameFilter.Text) <> 0 then
-      begin
-        RES := FALSE;
-      end;
+    if MatchesMask(Item.ItemName, NameFilter.Text, FileNameCaseSensitive) = FALSE then
+    begin
+      RES := FALSE;
+    end;
 
+    RES := TRUE;
+    if MatchesMask(Item.ItemType, TypeFilter.Text, FileNameCaseSensitive) = FALSE then
+    begin
+      RES := FALSE;
+    end;
 
-    if AnsiCompareFileName(Item.ItemPath, PathFilter.Text) <> 0 then
+    if MatchesMask(Item.ItemPath, PathFilter.Text, FileNameCaseSensitive) = FALSE then
     begin
       RES := FALSE;
     end;
 
     if RES then List.Add(Item);
   end;
+  List.Sort(CompareItem);
+
   LV.Items.Count := List.Count;
   LV.EndUpdate;
 end;
@@ -263,13 +340,14 @@ procedure TMainFrm.ClearBtnClick(Sender: TObject);
 var
   I: longint;
 begin
-  NameFilter.Text := '';
-  PathFilter.Text := '';
+  NameFilter.ItemIndex := 0;
+  PathFilter.ItemIndex := 0;
+  TypeFilter.ItemIndex := 0;
 
   MinSize.Text    := '';
   MaxSize.Text    := '';
 
-  TypeFilter.Text := '';
+
   FromFilter.Text := '';
   ToFilter.Text   := '';
 
@@ -279,6 +357,7 @@ begin
   List.Clear;
   for I := 0 to ParserList.Count - 1 do
     List.Add(ParserList.Items[I]);
+  List.Sort(CompareItem);
 
   LV.Items.Count := List.Count;
   LV.EndUpdate;
@@ -300,6 +379,9 @@ begin
 
   if Paths.Find(PI.ItemPath, I) = FALSE then
     Paths.Add(PI.ItemPath);
+
+  if Types.Find(PI.ItemType, I) = FALSE then
+    Types.Add(PI.ItemType);
 
   ItemType := LowerCase(PI.ItemType);
 
@@ -339,7 +421,12 @@ end;
 procedure TMainFrm.HeaderControlSectionClick(
   HeaderControl: TCustomHeaderControl; Section: THeaderSection);
 begin
+  if ListSortColumn <> Section.Index then
+    ListSortColumn := Section.Index
+  else
+    ListSortAscending := not ListSortAscending;
 
+  SearchBtnClick(Self);
 end;
 
 procedure TMainFrm.HeaderControlSectionResize(
@@ -351,7 +438,6 @@ end;
 procedure TMainFrm.HeaderControlSectionSeparatorDblClick(
   HeaderControl: TCustomHeaderControl; Section: THeaderSection);
 begin
-
   Adjust;
 end;
 
@@ -431,46 +517,7 @@ begin
 
 end;
 
-procedure TMainFrm.ListViewCompare(Sender: TObject;
-  Item1, Item2: TListItem; Data: Integer; var Compare: Integer);
-var
-  P1, P2: TParserItem;
-begin
-  P1 := TParserItem(Item1.Data);
-  P2 := TParserItem(Item2.Data);
 
-  (*
-  case ListView.SortColumn of
-    0:   Compare := AnsiCompareFileName(P1.ItemName, P2.ItemName);
-    1:   if P1.ItemSize > P2.ItemSize then
-           Compare := 1
-         else
-           if P1.ItemSize < P2.ItemSize then
-             Compare := -1
-           else
-             Compare := 0;
-
-    2:   Compare := AnsiCompareFileName(P1.ItemType, P2.ItemType);
-    3:   if P1.ItemTime > P2.ItemTime then
-           Compare := 1
-         else
-           if P1.ItemTime < P2.ItemTime then
-             Compare := -1
-           else
-             Compare := 0;
-
-    4:   Compare := AnsiCompareFileName(P1.ItemPath, P2.ItemPath);
-    else Compare := 0;
-  end;
-  *)
-
-  (*
-  if ListView.SortDirection = sdDescending then
-  begin
-    Compare := - Compare;
-  end;
-  *)
-end;
 
 
 

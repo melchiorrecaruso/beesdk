@@ -374,16 +374,6 @@ object MainFrm: TMainFrm
       Caption = 'File type:'
       ParentColor = False
     end
-    object TypeFilter: TEdit
-      AnchorSideTop.Control = TypeFilterLabel
-      AnchorSideTop.Side = asrBottom
-      Left = 285
-      Height = 27
-      Top = 86
-      Width = 120
-      BorderSpacing.Top = 6
-      TabOrder = 8
-    end
     object FromFilter: TDateEdit
       AnchorSideLeft.Control = FromFilterLabel
       AnchorSideTop.Control = FromFilterLabel
@@ -401,7 +391,7 @@ object MainFrm: TMainFrm
       CharCase = ecNormal
       NumGlyphs = 1
       MaxLength = 0
-      TabOrder = 9
+      TabOrder = 8
     end
     object ToFilter: TDateEdit
       AnchorSideLeft.Control = Label3
@@ -420,7 +410,7 @@ object MainFrm: TMainFrm
       CharCase = ecNormal
       NumGlyphs = 1
       MaxLength = 0
-      TabOrder = 10
+      TabOrder = 9
     end
     object FromFilterLabel: TLabel
       AnchorSideLeft.Control = TypeFilter
@@ -449,6 +439,18 @@ object MainFrm: TMainFrm
       BorderSpacing.Top = 10
       Caption = 'To date:'
       ParentColor = False
+    end
+    object TypeFilter: TComboBox
+      AnchorSideLeft.Control = TypeFilterLabel
+      AnchorSideTop.Control = TypeFilterLabel
+      AnchorSideTop.Side = asrBottom
+      Left = 285
+      Height = 27
+      Top = 86
+      Width = 120
+      BorderSpacing.Top = 6
+      ItemHeight = 0
+      TabOrder = 10
     end
   end
   object LV: TListView
