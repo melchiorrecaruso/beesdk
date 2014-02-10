@@ -205,7 +205,12 @@ begin
     for I := 0 to FExcludeMasks.Count - 1 do
       Result := Result + ' ' + ParserIni.ReadString(FExec, 'exclude',   '') + FExcludeMasks[I];
 
+    {$IFDEF MSWINDOWS}
+    Result := Result + ' "' + FArchiveName + '"';
+    {$ENDIF}
+    {$IFDEF UNIX}
     Result := Result + ' ''' + FArchiveName + '''';
+    {$ENDIF}
 
     for I := 0 to FFileMasks.Count - 1 do
       Result := Result + ' ' + FFileMasks[I];
