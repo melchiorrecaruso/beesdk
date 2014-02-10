@@ -56,7 +56,6 @@ type
 
   TMainFrm = class(TForm)
     BackGround: TImage;
-    SG: TStringGrid;
     TypeFilter: TComboBox;
     FromFilter: TDateEdit;
     HC: THeaderControl;
@@ -200,7 +199,7 @@ begin
   List := TList.Create;
   for I := 0 to HC.Sections.Count - 1 do
   begin
-    LV.Columns.Add;
+    LV.Columns.Add.Caption := HC.Sections[I].Text;
   end;
   ListSortColumn := 0;
   ListSortAscending := TRUE;
@@ -209,6 +208,7 @@ begin
 
 
   {$IFDEF MSWINDOWS}
+  LV.BorderStyle := bsSingle;
   {$ENDIF}
 
   Adjust;
@@ -456,7 +456,7 @@ begin
     - HC.Sections[0].Width
     - HC.Sections[1].Width
     - HC.Sections[2].Width
-    - HC.Sections[3].Width + HC.Width - 10;
+    - HC.Sections[3].Width + HC.Width - 25;
 
   for I := 0 to HC.Sections.Count - 1 do
      LV.Columns[I].Width := HC.Sections[I].Width;
@@ -554,6 +554,16 @@ begin
       TypeFilter.AddItem(Types[I], nil);
 
     ClearBtnClick(Sender);
+
+
+
+    for I := 0 to Parser.Count - 1 do
+    begin
+      TickFrm.DetailsReport.Lines.Add(Parser.Messages[I]);
+    end;
+
+
+
   end else
 
     if ParserCommandLine.Command in [cAdd, cDelete] then
