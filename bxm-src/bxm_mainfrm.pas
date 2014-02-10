@@ -44,7 +44,7 @@ uses
   Graphics,
   Masks,
   Menus,
-  StdCtrls, FileCtrl, Spin, EditBtn,
+  StdCtrls, FileCtrl, Spin, EditBtn, Grids,
   SysUtils,
   // ---
   bxm_Plugins,
@@ -56,6 +56,7 @@ type
 
   TMainFrm = class(TForm)
     BackGround: TImage;
+    SG: TStringGrid;
     TypeFilter: TComboBox;
     FromFilter: TDateEdit;
     HC: THeaderControl;
