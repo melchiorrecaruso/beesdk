@@ -58,8 +58,6 @@ type
     BackGround: TImage;
     TypeFilter: TComboBox;
     FromFilter: TDateEdit;
-    HC: THeaderControl;
-    LV: TListView;
     ToFilter: TDateEdit;
     TypeFilterLabel: TLabel;
     FromFilterLabel: TLabel;
@@ -101,11 +99,10 @@ type
     FindButton: TToolButton;
     MaxSizeUpDown: TUpDown;
     MinSizeUpDown: TUpDown;
-    VirtualStringTree1: TVirtualStringTree;
+    VST: TVirtualStringTree;
     procedure ClearBtnClick(Sender: TObject);
 
-    procedure LVData(Sender: TObject; Item: TListItem);
-    procedure LVDblClick(Sender: TObject);
+
     procedure ApplyBtnClick(Sender: TObject);
     procedure FindButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -132,12 +129,18 @@ type
     procedure NewButtonClick(Sender: TObject);
     procedure ShareButtonClick(Sender: TObject);
     procedure ShareMenuClose(Sender: TObject);
-
-
-
-
-
-
+    procedure VSTChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure VSTDblClick(Sender: TObject);
+    procedure VSTFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex);
+    procedure VSTFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure VSTGetImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean;
+      var ImageIndex: Integer);
+    procedure VSTGetNodeDataSize(Sender: TBaseVirtualTree;
+      var NodeDataSize: Integer);
+    procedure VSTGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex; TextType: TVSTTextType; var CellText: String);
 
   private
     { private declarations }
@@ -172,6 +175,16 @@ uses
   bxm_AboutFrm,
   bxm_TickFrm;
 
+type
+  PTreeData = ^TTreeData;
+  TTreeData = record
+    Column0: string;
+    Column1: string;
+    Column2: string;
+    Column3: string;
+    Column4: string;
+  end;
+
 var
   ListSortAscending: boolean;
   ListSortColumn: longint;
@@ -198,18 +211,14 @@ begin
   Types.Sorted := TRUE;
 
   List := TList.Create;
-  for I := 0 to HC.Sections.Count - 1 do
-  begin
-    LV.Columns.Add.Caption := HC.Sections[I].Text;
-  end;
   ListSortColumn := 0;
   ListSortAscending := TRUE;
 
-
-
-
   {$IFDEF MSWINDOWS}
-  LV.BorderStyle := bsSingle;
+  VST.BorderStyle := bsSingle;
+  {$ENDIF}
+  {$IFDEF UNIX}
+  VST.BorderStyle := bsNone;
   {$ENDIF}
 
   Adjust;
@@ -247,7 +256,107 @@ begin
     SearchPanel.Enabled := FALSE;
     FindButton.Down     := FALSE;
   end;
+end;
 
+procedure TMainFrm.VSTChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
+begin
+  VST.Refresh;
+end;
+
+procedure TMainFrm.VSTDblClick(Sender: TObject);
+var
+  Data: PTreeData;
+begin
+  if Assigned(VST.FocusedNode) then
+  begin
+    Data := VST.GetNodeData(VST.FocusedNode);
+    if Data^.Column2 = '.folderclose' then
+    begin
+      PathFilter.Text :=
+        Data^.Column4 +
+        Data^.Column0 +
+        PathDelim;
+      ApplyBtnClick(Self);
+    end;
+  end;
+end;
+
+procedure TMainFrm.VSTFocusChanged(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex);
+begin
+  VST.Refresh;
+end;
+
+procedure TMainFrm.VSTFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
+var
+  Data: PTreeData;
+begin
+  Data := VST.GetNodeData(Node);
+  if Assigned(Data) then
+  begin
+    Data^.Column0 := '';
+    Data^.Column1 := '';
+    Data^.Column2 := '';
+    Data^.Column3 := '';
+    Data^.Column4 := '';
+  end;
+end;
+
+procedure TMainFrm.VSTGetImageIndex(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
+  var Ghosted: Boolean; var ImageIndex: Integer);
+var
+  Data: PTreeData;
+  S: string;
+begin
+  if Column = 0 then
+  begin
+    Data := VST.GetNodeData(Node);
+    S := LowerCase(Data^.Column2);
+
+    if S = '.avi'         then ImageIndex := 0  else
+    if S = '.bat'         then ImageIndex := 1  else
+    if S = '.bmp'         then ImageIndex := 2  else
+    if S = '.png'         then ImageIndex := 2  else
+    if S = '.cddrive'     then ImageIndex := 3  else
+    if S = '.doc'         then ImageIndex := 4  else
+    if S = '.exe'         then ImageIndex := 5  else
+    if S = '.folderclose' then ImageIndex := 6  else
+    if S = '.folderopen'  then ImageIndex := 7  else
+    if S = '.harddrive'   then ImageIndex := 8  else
+    if S = '.html'        then ImageIndex := 9  else
+    if S = '.mp3'         then ImageIndex := 10 else
+    if S = '.deb'         then ImageIndex := 11 else
+    if S = '.pkg'         then ImageIndex := 11 else
+    if S = '.ppd'         then ImageIndex := 12 else
+    if S = '.ttf'         then ImageIndex := 13 else
+    if S = '.txt'         then ImageIndex := 14 else
+    if S = '.unknow'      then ImageIndex := 15 else
+    if S = '.wab'         then ImageIndex := 16 else
+    if S = '.xls'         then ImageIndex := 17 else ImageIndex := 15;
+  end;
+end;
+
+procedure TMainFrm.VSTGetNodeDataSize(Sender: TBaseVirtualTree;
+  var NodeDataSize: Integer);
+begin
+  NodeDataSize := SizeOf(TTreeData);
+end;
+
+procedure TMainFrm.VSTGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
+  Column: TColumnIndex; TextType: TVSTTextType; var CellText: String);
+var
+  Data: PTreeData;
+begin
+  Data := VST.GetNodeData(Node);
+  if Assigned(Data) then
+    case Column of
+      0: CellText := Data^.Column0;
+      1: CellText := Data^.Column1;
+      2: CellText := Data^.Column2;
+      3: CellText := Data^.Column3;
+      4: CellText := Data^.Column4;
+    end;
 end;
 
 function CompareItem(Item1, Item2: pointer): longint;
@@ -303,50 +412,51 @@ end;
 procedure TMainFrm.ApplyBtnClick(Sender: TObject);
 var
   I: longint;
-  Item: TParserItem;
+  Data: PTreeData;
+  PI: TParserItem;
   RES: boolean;
 begin
-  LV.BeginUpdate;
-  LV.Clear;
-
   List.Clear;
   for I := 0 to ParserList.Count - 1 do
   begin
-    Item := ParserList.Items[I];
+    PI := ParserList.Items[I];
 
     RES := TRUE;
-    if MatchesMask(Item.ItemName, NameFilter.Text, FileNameCaseSensitive) = FALSE then
-    begin
-      RES := FALSE;
-    end;
+    if MatchesMask(PI.ItemName, NameFilter.Text, FileNameCaseSensitive) = FALSE then RES := FALSE;
+    if MatchesMask(PI.ItemType, TypeFilter.Text, FileNameCaseSensitive) = FALSE then RES := FALSE;
+    if MatchesMask(PI.ItemPath, PathFilter.Text, FileNameCaseSensitive) = FALSE then RES := FALSE;
 
-    if MatchesMask(Item.ItemType, TypeFilter.Text, FileNameCaseSensitive) = FALSE then
-    begin
-      RES := FALSE;
-    end;
-
-    if MatchesMask(Item.ItemPath, PathFilter.Text, FileNameCaseSensitive) = FALSE then
-    begin
-      RES := FALSE;
-    end;
-
-    if RES then List.Add(Item);
+    if RES then List.Add(PI);
   end;
   List.Sort(CompareItem);
 
-  LV.Items.Count := List.Count;
-  LV.EndUpdate;
-
   if Names.Find(NameFilter.Text, I) = FALSE then
   begin
-    Names.Add(NameFilter.Text);
     NameFilter.AddItem(NameFilter.Text, nil);
+    Names.Add(NameFilter.Text);
   end;
+
+  VST.BeginUpdate;
+  VST.Clear;
+  for I := 0 to List.Count - 1 do
+  begin
+    PI := TParserItem(List.Items[I]);
+
+    Data := VST.GetNodeData(VST.AddChild(nil));
+    Data^.Column0 := PI.ItemName;
+    Data^.Column1 := PI.ItemSize;
+    Data^.Column2 := PI.ItemType;
+    Data^.Column3 := PI.ItemTime;
+    Data^.Column4 := PI.ItemPath;
+  end;
+  VST.EndUpdate;
 end;
 
 procedure TMainFrm.ClearBtnClick(Sender: TObject);
 var
   I: longint;
+  Data: PTreeData;
+  PI: TParserItem;
 begin
   NameFilter.Text := '*';
   PathFilter.Text := '*';
@@ -358,70 +468,28 @@ begin
   FromFilter.Text := '';
   ToFilter.Text   := '';
 
-  LV.BeginUpdate;
-  LV.Clear;
-
   List.Clear;
   for I := 0 to ParserList.Count - 1 do
     List.Add(ParserList.Items[I]);
   List.Sort(CompareItem);
 
-  LV.Items.Count := List.Count;
-  LV.EndUpdate;
+  VST.BeginUpdate;
+  VST.Clear;
+  for I := 0 to List.Count - 1 do
+  begin
+    PI := TParserItem(List.Items[I]);
+
+    Data := VST.GetNodeData(VST.AddChild(nil));
+    Data^.Column0 := PI.ItemName;
+    Data^.Column1 := PI.ItemSize;
+    Data^.Column2 := PI.ItemType;
+    Data^.Column3 := PI.ItemTime;
+    Data^.Column4 := PI.ItemPath;
+  end;
+  VST.EndUpdate;
 end;
 
 
-
-
-procedure TMainFrm.LVData(Sender: TObject; Item: TListItem);
-var
-  ItemType: string;
-  PI: TParserItem;
-begin
-  PI := TParserItem(List.Items[Item.Index]);
-
-  Item.Caption   := PI.ItemName;
-  Item.SubItems.Add(PI.ItemSize);
-  Item.SubItems.Add(PI.ItemType);
-  Item.SubItems.Add(PI.ItemTime);
-  Item.SubItems.Add(PI.ItemPath);
-
-  ItemType := LowerCase(PI.ItemType);
-
-  if ItemType = '.avi'         then Item.ImageIndex := 0  else
-  if ItemType = '.bat'         then Item.ImageIndex := 1  else
-  if ItemType = '.bmp'         then Item.ImageIndex := 2  else
-  if ItemType = '.png'         then Item.ImageIndex := 2  else
-  if ItemType = '.cddrive'     then Item.ImageIndex := 3  else
-  if ItemType = '.doc'         then Item.ImageIndex := 4  else
-  if ItemType = '.exe'         then Item.ImageIndex := 5  else
-  if ItemType = '.folderclose' then Item.ImageIndex := 6  else
-  if ItemType = '.folderopen'  then Item.ImageIndex := 7  else
-  if ItemType = '.harddrive'   then Item.ImageIndex := 8  else
-  if ItemType = '.html'        then Item.ImageIndex := 9  else
-  if ItemType = '.mp3'         then Item.ImageIndex := 10 else
-  if ItemType = '.deb'         then Item.ImageIndex := 11 else
-  if ItemType = '.pkg'         then Item.ImageIndex := 11 else
-  if ItemType = '.ppd'         then Item.ImageIndex := 12 else
-  if ItemType = '.ttf'         then Item.ImageIndex := 13 else
-  if ItemType = '.txt'         then Item.ImageIndex := 14 else
-  if ItemType = '.unknow'      then Item.ImageIndex := 15 else
-  if ItemType = '.wab'         then Item.ImageIndex := 16 else
-  if ItemType = '.xls'         then Item.ImageIndex := 17 else
-                                    Item.ImageIndex := 15;
-end;
-
-procedure TMainFrm.LVDblClick(Sender: TObject);
-begin
-  if LV.SelCount = 1 then
-    if LV.Selected.SubItems[1] = '.folderclose' then
-    begin
-      PathFilter.Text :=
-        LV.Selected.SubItems[3] +
-        LV.Selected.Caption + PathDelim;
-      ApplyBtnClick(Self);
-    end;
-end;
 
 procedure TMainFrm.HeaderControlSectionClick(
   HeaderControl: TCustomHeaderControl; Section: THeaderSection);
@@ -449,18 +517,24 @@ procedure TMainFrm.Adjust;
 var
   I, J, ColumnWidth: longint;
 begin
-  LV.BeginUpdate;
-  LV.ScrollBars := ssNone;
-  LV.AutoWidthLastColumn := FALSE;
+  VST.BeginUpdate;
 
-  HC.Sections[4].Width :=
-    - HC.Sections[0].Width
-    - HC.Sections[1].Width
-    - HC.Sections[2].Width
-    - HC.Sections[3].Width + HC.Width - 25;
 
-  for I := 0 to HC.Sections.Count - 1 do
-     LV.Columns[I].Width := HC.Sections[I].Width;
+
+  //HC.Sections[4].Width :=
+  //  - HC.Sections[0].Width
+  //  - HC.Sections[1].Width
+  //  - HC.Sections[2].Width
+  //  - HC.Sections[3].Width + HC.Width - 25;
+
+  //for I := 0 to HC.Sections.Count - 1 do
+  //begin
+  //  LV.Columns[I].Width := HC.Sections[I].Width;
+  //  VST.Header.Columns[I].Width := HC.Sections[I].Width;
+  //end;
+
+
+
   (*
   for I := LV.Columns.Count - 1 downto 0 do
   begin
@@ -476,14 +550,14 @@ begin
       LV.Columns[I].Width := 0;
   end;
   *)
-  LV.ScrollBars := ssAutoVertical;
-  LV.EndUpdate;
+
+  VSt.EndUpdate;
 end;
 
 procedure TMainFrm.IdleTimerStartTimer(Sender: TObject);
 begin
   DisableButtons;
-  LV.Clear;
+  VST.Clear;
 
   TickFrm := TTickFrm. Create(Self);
   with TickFrm.ActionLabel do
@@ -556,14 +630,10 @@ begin
 
     ClearBtnClick(Sender);
 
-
-
     for I := 0 to Parser.Count - 1 do
     begin
       TickFrm.DetailsReport.Lines.Add(Parser.Messages[I]);
     end;
-
-
 
   end else
 
@@ -578,7 +648,6 @@ begin
 
   FreeAndNil(Parser);
   FreeAndNil(TickFrm);
-
   EnableButtons;
 end;
 
@@ -590,10 +659,8 @@ begin
   ToolBar.Buttons[3].Enabled := FALSE;
   ToolBar.Buttons[4].Enabled := FALSE;
 
-  HC.Enabled := FALSE;
-  HC.Visible := FALSE;
-  LV.Enabled := FALSE;
-  LV.Visible := FALSE;
+  VST.Enabled := FALSE;
+  VST.Visible := FALSE;
 end;
 
 procedure TMainFrm.DisableButtons;
@@ -604,10 +671,8 @@ begin
   ToolBar.Buttons[3].Enabled := FALSE;
   ToolBar.Buttons[4].Enabled := FALSE;
 
-  HC.Enabled := FALSE;
-  HC.Visible := FALSE;
-  LV.Enabled := FALSE;
-  LV.Visible := FALSE;
+  VST.Enabled := FALSE;
+  VST.Visible := FALSE;
 end;
 
 procedure TMainFrm.EnableButtons;
@@ -618,10 +683,8 @@ begin
   ToolBar.Buttons[3].Enabled := TRUE;
   ToolBar.Buttons[4].Enabled := TRUE;
 
-  HC.Enabled := TRUE;
-  HC.Visible := TRUE;
-  LV.Enabled := TRUE;
-  LV.Visible := TRUE;
+  VST.Enabled := TRUE;
+  VST.Visible := TRUE;
 end;
 
 procedure TMainFrm.MenuButtonClick(Sender: TObject);
@@ -657,6 +720,8 @@ procedure TMainFrm.ShareMenuClose(Sender: TObject);
 begin
   ShareButton.Down := FALSE;
 end;
+
+
 
 
 

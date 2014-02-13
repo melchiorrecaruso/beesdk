@@ -10,7 +10,7 @@ uses
   Forms,
   lazcontrols,
 
-  bxm_mainfrm;
+  bxm_mainfrm, virtualtreeview_package, lclextensions_package;
 
 {$R *.res}
 
