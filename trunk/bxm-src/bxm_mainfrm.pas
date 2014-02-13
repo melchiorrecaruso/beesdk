@@ -211,11 +211,11 @@ begin
   Types.Sorted := TRUE;
 
   List := TList.Create;
-  ListSortColumn := 0;
+  ListSortColumn    := 0;
   ListSortAscending := TRUE;
 
   {$IFDEF MSWINDOWS}
-  VST.BorderStyle := bsSingle;
+  VST.BorderStyle := bsNone;
   {$ENDIF}
   {$IFDEF UNIX}
   VST.BorderStyle := bsNone;
@@ -720,15 +720,6 @@ procedure TMainFrm.ShareMenuClose(Sender: TObject);
 begin
   ShareButton.Down := FALSE;
 end;
-
-
-
-
-
-
-
-
-
 
 procedure TMainFrm.AboutMenuItemClick(Sender: TObject);
 begin
