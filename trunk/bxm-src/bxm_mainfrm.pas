@@ -48,7 +48,7 @@ uses
   SysUtils,
   // ---
   bxm_Plugins,
-  bxm_IconList;
+  bxm_IconList, VirtualTrees;
 
 type
 
@@ -101,6 +101,7 @@ type
     FindButton: TToolButton;
     MaxSizeUpDown: TUpDown;
     MinSizeUpDown: TUpDown;
+    VirtualStringTree1: TVirtualStringTree;
     procedure ClearBtnClick(Sender: TObject);
 
     procedure LVData(Sender: TObject; Item: TListItem);

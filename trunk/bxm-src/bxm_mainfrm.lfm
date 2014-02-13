@@ -191,15 +191,15 @@ object MainFrm: TMainFrm
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Control = ApplyBtn
       Left = 285
-      Height = 21
-      Top = 26
+      Height = 27
+      Top = 28
       Width = 480
       Anchors = [akTop, akLeft, akRight]
       AutoSize = False
       BorderSpacing.Top = 6
       BorderSpacing.Right = 25
       CharCase = ecLowerCase
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 0
     end
     object ApplyBtn: TBitBtn
@@ -209,8 +209,8 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = PathFilter
       AnchorSideBottom.Side = asrBottom
       Left = 790
-      Height = 21
-      Top = 26
+      Height = 27
+      Top = 28
       Width = 84
       Anchors = [akTop, akRight, akBottom]
       AutoSize = True
@@ -229,8 +229,8 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = MinSize
       AnchorSideBottom.Side = asrBottom
       Left = 790
-      Height = 21
-      Top = 76
+      Height = 27
+      Top = 86
       Width = 84
       Anchors = [akTop, akRight, akBottom]
       AutoSize = True
@@ -246,11 +246,11 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = NameFilterLabel
       AnchorSideTop.Side = asrBottom
       Left = 10
-      Height = 21
-      Top = 26
+      Height = 27
+      Top = 28
       Width = 250
       BorderSpacing.Top = 6
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 3
     end
     object NameFilterLabel: TLabel
@@ -258,9 +258,9 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = ShapeTop
       AnchorSideTop.Side = asrBottom
       Left = 10
-      Height = 13
+      Height = 15
       Top = 7
-      Width = 49
+      Width = 54
       BorderSpacing.Left = 10
       BorderSpacing.Top = 6
       Caption = 'File name:'
@@ -271,9 +271,9 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = NameFilter
       AnchorSideTop.Side = asrBottom
       Left = 10
-      Height = 13
-      Top = 57
-      Width = 41
+      Height = 15
+      Top = 65
+      Width = 45
       BorderSpacing.Left = 10
       BorderSpacing.Top = 10
       Caption = 'Min size:'
@@ -285,9 +285,9 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = ShapeTop
       AnchorSideTop.Side = asrBottom
       Left = 285
-      Height = 13
+      Height = 15
       Top = 7
-      Width = 45
+      Width = 48
       BorderSpacing.Left = 25
       BorderSpacing.Top = 6
       Caption = 'File path:'
@@ -297,9 +297,9 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = NameFilter
       AnchorSideTop.Side = asrBottom
       Left = 150
-      Height = 13
-      Top = 57
-      Width = 45
+      Height = 15
+      Top = 65
+      Width = 47
       BorderSpacing.Top = 10
       Caption = 'Max size:'
       ParentColor = False
@@ -309,8 +309,8 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = MinSizeLabel
       AnchorSideTop.Side = asrBottom
       Left = 10
-      Height = 21
-      Top = 76
+      Height = 27
+      Top = 86
       Width = 100
       BorderSpacing.Top = 6
       TabOrder = 4
@@ -320,8 +320,8 @@ object MainFrm: TMainFrm
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Control = MaxSizeUpDown
       Left = 142
-      Height = 21
-      Top = 76
+      Height = 27
+      Top = 86
       Width = 100
       Anchors = [akTop, akRight]
       BorderSpacing.Top = 6
@@ -334,8 +334,8 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = MaxSize
       AnchorSideBottom.Side = asrBottom
       Left = 242
-      Height = 21
-      Top = 76
+      Height = 27
+      Top = 86
       Width = 18
       Anchors = [akTop, akRight, akBottom]
       Min = 0
@@ -352,8 +352,8 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = MinSize
       AnchorSideBottom.Side = asrBottom
       Left = 110
-      Height = 21
-      Top = 76
+      Height = 27
+      Top = 86
       Width = 18
       Anchors = [akTop, akLeft, akBottom]
       Min = 0
@@ -367,9 +367,9 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = PathFilter
       AnchorSideTop.Side = asrBottom
       Left = 285
-      Height = 13
-      Top = 57
-      Width = 45
+      Height = 15
+      Top = 65
+      Width = 47
       BorderSpacing.Top = 10
       Caption = 'File type:'
       ParentColor = False
@@ -379,8 +379,8 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = FromFilterLabel
       AnchorSideTop.Side = asrBottom
       Left = 420
-      Height = 21
-      Top = 76
+      Height = 27
+      Top = 86
       Width = 120
       CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
       OKCaption = 'OK'
@@ -398,8 +398,8 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = Label3
       AnchorSideTop.Side = asrBottom
       Left = 580
-      Height = 21
-      Top = 76
+      Height = 27
+      Top = 86
       Width = 120
       CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
       OKCaption = 'OK'
@@ -418,9 +418,9 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = PathFilter
       AnchorSideTop.Side = asrBottom
       Left = 420
-      Height = 13
-      Top = 57
-      Width = 53
+      Height = 15
+      Top = 65
+      Width = 58
       BorderSpacing.Left = 15
       BorderSpacing.Top = 10
       Caption = 'From date:'
@@ -432,8 +432,8 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = PathFilter
       AnchorSideTop.Side = asrBottom
       Left = 580
-      Height = 13
-      Top = 57
+      Height = 15
+      Top = 65
       Width = 41
       BorderSpacing.Left = 40
       BorderSpacing.Top = 10
@@ -445,11 +445,11 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = TypeFilterLabel
       AnchorSideTop.Side = asrBottom
       Left = 285
-      Height = 21
-      Top = 76
+      Height = 27
+      Top = 86
       Width = 120
       BorderSpacing.Top = 6
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 10
     end
   end
@@ -461,11 +461,11 @@ object MainFrm: TMainFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 0
-    Height = 467
-    Top = 203
-    Width = 884
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    Left = 16
+    Height = 184
+    Top = 208
+    Width = 712
+    Anchors = []
     AutoSort = False
     BorderSpacing.Top = 10
     BorderStyle = bsNone
@@ -532,6 +532,19 @@ object MainFrm: TMainFrm
     Anchors = [akTop, akLeft, akRight]
     Font.Style = [fsBold]
     ParentFont = False
+  end
+  object VirtualStringTree1: TVirtualStringTree
+    Left = 185
+    Height = 234
+    Top = 403
+    Width = 638
+    BorderStyle = bsNone
+    DefaultText = 'Node'
+    Header.AutoSizeIndex = 0
+    Header.Columns = <>
+    Header.DefaultHeight = 17
+    Header.MainColumn = -1
+    TabOrder = 5
   end
   object MainMenu: TPopupMenu
     AutoPopup = False
