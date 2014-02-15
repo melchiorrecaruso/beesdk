@@ -129,16 +129,12 @@ type
     procedure NewButtonClick(Sender: TObject);
     procedure ShareButtonClick(Sender: TObject);
     procedure ShareMenuClose(Sender: TObject);
-    procedure VSTChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure VSTDblClick(Sender: TObject);
-    procedure VSTFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Column: TColumnIndex);
-    procedure VSTFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
+
     procedure VSTGetImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean;
       var ImageIndex: Integer);
-    procedure VSTGetNodeDataSize(Sender: TBaseVirtualTree;
-      var NodeDataSize: Integer);
+
     procedure VSTGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: String);
 
@@ -174,16 +170,6 @@ uses
   bxm_AddFrm,
   bxm_AboutFrm,
   bxm_TickFrm;
-
-type
-  PTreeData = ^TTreeData;
-  TTreeData = record
-    Column0: string;
-    Column1: string;
-    Column2: string;
-    Column3: string;
-    Column4: string;
-  end;
 
 var
   ListSortAscending: boolean;
@@ -258,47 +244,21 @@ begin
   end;
 end;
 
-procedure TMainFrm.VSTChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
-begin
-  VST.Refresh;
-end;
-
 procedure TMainFrm.VSTDblClick(Sender: TObject);
 var
-  Data: PTreeData;
+  Data: TParserItem;
 begin
   if Assigned(VST.FocusedNode) then
   begin
-    Data := VST.GetNodeData(VST.FocusedNode);
-    if Data^.Column2 = '.folderclose' then
+    Data := TParserItem(List.Items[VST.FocusedNode^.Index]);
+    if Data.ItemType = '.folderclose' then
     begin
       PathFilter.Text :=
-        Data^.Column4 +
-        Data^.Column0 +
+        Data.ItemPath +
+        Data.ItemName +
         PathDelim;
       ApplyBtnClick(Self);
     end;
-  end;
-end;
-
-procedure TMainFrm.VSTFocusChanged(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; Column: TColumnIndex);
-begin
-  VST.Refresh;
-end;
-
-procedure TMainFrm.VSTFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
-var
-  Data: PTreeData;
-begin
-  Data := VST.GetNodeData(Node);
-  if Assigned(Data) then
-  begin
-    Data^.Column0 := '';
-    Data^.Column1 := '';
-    Data^.Column2 := '';
-    Data^.Column3 := '';
-    Data^.Column4 := '';
   end;
 end;
 
@@ -306,13 +266,13 @@ procedure TMainFrm.VSTGetImageIndex(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
   var Ghosted: Boolean; var ImageIndex: Integer);
 var
-  Data: PTreeData;
+  Data: TParserItem;
   S: string;
 begin
   if Column = 0 then
   begin
-    Data := VST.GetNodeData(Node);
-    S := LowerCase(Data^.Column2);
+    Data := TParserItem(List.Items[Node.Index]);
+    S := LowerCase(Data.ItemType);
 
     if S = '.avi'         then ImageIndex := 0  else
     if S = '.bat'         then ImageIndex := 1  else
@@ -337,25 +297,19 @@ begin
   end;
 end;
 
-procedure TMainFrm.VSTGetNodeDataSize(Sender: TBaseVirtualTree;
-  var NodeDataSize: Integer);
-begin
-  NodeDataSize := SizeOf(TTreeData);
-end;
-
 procedure TMainFrm.VSTGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
   Column: TColumnIndex; TextType: TVSTTextType; var CellText: String);
 var
-  Data: PTreeData;
+  Data: TParserItem;
 begin
-  Data := VST.GetNodeData(Node);
+  Data := TParserItem(List.Items[Node.Index]);
   if Assigned(Data) then
     case Column of
-      0: CellText := Data^.Column0;
-      1: CellText := Data^.Column1;
-      2: CellText := Data^.Column2;
-      3: CellText := Data^.Column3;
-      4: CellText := Data^.Column4;
+      0: CellText := Data.ItemName;
+      1: CellText := Data.ItemSize;
+      2: CellText := Data.ItemType;
+      3: CellText := Data.ItemTime;
+      4: CellText := Data.ItemPath;
     end;
 end;
 
@@ -412,7 +366,6 @@ end;
 procedure TMainFrm.ApplyBtnClick(Sender: TObject);
 var
   I: longint;
-  Data: PTreeData;
   PI: TParserItem;
   RES: boolean;
 begin
@@ -439,24 +392,13 @@ begin
   VST.BeginUpdate;
   VST.Clear;
   for I := 0 to List.Count - 1 do
-  begin
-    PI := TParserItem(List.Items[I]);
-
-    Data := VST.GetNodeData(VST.AddChild(nil));
-    Data^.Column0 := PI.ItemName;
-    Data^.Column1 := PI.ItemSize;
-    Data^.Column2 := PI.ItemType;
-    Data^.Column3 := PI.ItemTime;
-    Data^.Column4 := PI.ItemPath;
-  end;
+    VST.GetNodeData(VST.AddChild(nil));
   VST.EndUpdate;
 end;
 
 procedure TMainFrm.ClearBtnClick(Sender: TObject);
 var
   I: longint;
-  Data: PTreeData;
-  PI: TParserItem;
 begin
   NameFilter.Text := '*';
   PathFilter.Text := '*';
@@ -476,16 +418,7 @@ begin
   VST.BeginUpdate;
   VST.Clear;
   for I := 0 to List.Count - 1 do
-  begin
-    PI := TParserItem(List.Items[I]);
-
-    Data := VST.GetNodeData(VST.AddChild(nil));
-    Data^.Column0 := PI.ItemName;
-    Data^.Column1 := PI.ItemSize;
-    Data^.Column2 := PI.ItemType;
-    Data^.Column3 := PI.ItemTime;
-    Data^.Column4 := PI.ItemPath;
-  end;
+    VST.GetNodeData(VST.AddChild(nil));
   VST.EndUpdate;
 end;
 
