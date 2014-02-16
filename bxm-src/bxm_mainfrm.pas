@@ -313,7 +313,7 @@ begin
     end;
 end;
 
-function CompareItem(Item1, Item2: pointer): longint;
+function CompareItem(Item1, Item2: pointer): longint; inline;
 var
   P1, P2: TParserItem;
   P1IsDir, P2IsDir: boolean;
@@ -389,11 +389,12 @@ begin
     Names.Add(NameFilter.Text);
   end;
 
-  VST.BeginUpdate;
+  // VST.BeginUpdate;
   VST.Clear;
-  for I := 0 to List.Count - 1 do
-    VST.GetNodeData(VST.AddChild(nil));
-  VST.EndUpdate;
+  VST.RootNodeCount := List.Count;
+  //for I := 0 to List.Count - 1 do
+  //  VST.GetNodeData(VST.AddChild(nil));
+  // VST.EndUpdate;
 end;
 
 procedure TMainFrm.ClearBtnClick(Sender: TObject);
@@ -415,14 +416,13 @@ begin
     List.Add(ParserList.Items[I]);
   List.Sort(CompareItem);
 
-  VST.BeginUpdate;
+  /// VST.BeginUpdate;
   VST.Clear;
-  for I := 0 to List.Count - 1 do
-    VST.GetNodeData(VST.AddChild(nil));
-  VST.EndUpdate;
+  VST.RootNodeCount := List.Count;
+  //for I := 0 to List.Count - 1 do
+  //  VST.GetNodeData(VST.AddChild(nil));
+  // VST.EndUpdate;
 end;
-
-
 
 procedure TMainFrm.HeaderControlSectionClick(
   HeaderControl: TCustomHeaderControl; Section: THeaderSection);
