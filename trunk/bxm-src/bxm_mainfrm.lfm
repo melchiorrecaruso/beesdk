@@ -193,15 +193,15 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = NameFilter
       AnchorSideBottom.Side = asrBottom
       Left = 285
-      Height = 27
-      Top = 28
+      Height = 21
+      Top = 26
       Width = 480
       Anchors = [akTop, akLeft, akRight, akBottom]
       AutoSize = False
       BorderSpacing.Top = 6
       BorderSpacing.Right = 25
       CharCase = ecLowerCase
-      ItemHeight = 0
+      ItemHeight = 13
       TabOrder = 0
     end
     object ApplyBtn: TBitBtn
@@ -211,8 +211,8 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = PathFilter
       AnchorSideBottom.Side = asrBottom
       Left = 790
-      Height = 27
-      Top = 28
+      Height = 21
+      Top = 26
       Width = 84
       Anchors = [akTop, akRight, akBottom]
       AutoSize = True
@@ -231,8 +231,8 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = MinSize
       AnchorSideBottom.Side = asrBottom
       Left = 790
-      Height = 27
-      Top = 86
+      Height = 21
+      Top = 76
       Width = 84
       Anchors = [akTop, akRight, akBottom]
       AutoSize = True
@@ -248,11 +248,11 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = NameFilterLabel
       AnchorSideTop.Side = asrBottom
       Left = 10
-      Height = 27
-      Top = 28
+      Height = 21
+      Top = 26
       Width = 250
       BorderSpacing.Top = 6
-      ItemHeight = 0
+      ItemHeight = 13
       TabOrder = 3
     end
     object NameFilterLabel: TLabel
@@ -260,9 +260,9 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = ShapeTop
       AnchorSideTop.Side = asrBottom
       Left = 10
-      Height = 15
+      Height = 13
       Top = 7
-      Width = 54
+      Width = 49
       BorderSpacing.Left = 10
       BorderSpacing.Top = 6
       Caption = 'File name:'
@@ -273,9 +273,9 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = NameFilter
       AnchorSideTop.Side = asrBottom
       Left = 10
-      Height = 15
-      Top = 65
-      Width = 45
+      Height = 13
+      Top = 57
+      Width = 41
       BorderSpacing.Left = 10
       BorderSpacing.Top = 10
       Caption = 'Min size:'
@@ -287,9 +287,9 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = ShapeTop
       AnchorSideTop.Side = asrBottom
       Left = 285
-      Height = 15
+      Height = 13
       Top = 7
-      Width = 48
+      Width = 45
       BorderSpacing.Left = 25
       BorderSpacing.Top = 6
       Caption = 'File path:'
@@ -299,9 +299,9 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = NameFilter
       AnchorSideTop.Side = asrBottom
       Left = 150
-      Height = 15
-      Top = 65
-      Width = 47
+      Height = 13
+      Top = 57
+      Width = 45
       BorderSpacing.Top = 10
       Caption = 'Max size:'
       ParentColor = False
@@ -311,8 +311,8 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = MinSizeLabel
       AnchorSideTop.Side = asrBottom
       Left = 10
-      Height = 27
-      Top = 86
+      Height = 21
+      Top = 76
       Width = 100
       BorderSpacing.Top = 6
       TabOrder = 4
@@ -322,8 +322,8 @@ object MainFrm: TMainFrm
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Control = MaxSizeUpDown
       Left = 142
-      Height = 27
-      Top = 86
+      Height = 21
+      Top = 76
       Width = 100
       Anchors = [akTop, akRight]
       BorderSpacing.Top = 6
@@ -336,8 +336,8 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = MaxSize
       AnchorSideBottom.Side = asrBottom
       Left = 242
-      Height = 27
-      Top = 86
+      Height = 21
+      Top = 76
       Width = 18
       Anchors = [akTop, akRight, akBottom]
       Min = 0
@@ -354,8 +354,8 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = MinSize
       AnchorSideBottom.Side = asrBottom
       Left = 110
-      Height = 27
-      Top = 86
+      Height = 21
+      Top = 76
       Width = 18
       Anchors = [akTop, akLeft, akBottom]
       Min = 0
@@ -369,9 +369,9 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = PathFilter
       AnchorSideTop.Side = asrBottom
       Left = 285
-      Height = 15
-      Top = 65
-      Width = 47
+      Height = 13
+      Top = 57
+      Width = 45
       BorderSpacing.Top = 10
       Caption = 'File type:'
       ParentColor = False
@@ -381,8 +381,8 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = FromFilterLabel
       AnchorSideTop.Side = asrBottom
       Left = 420
-      Height = 27
-      Top = 86
+      Height = 21
+      Top = 76
       Width = 120
       CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
       OKCaption = 'OK'
@@ -400,8 +400,8 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = Label3
       AnchorSideTop.Side = asrBottom
       Left = 580
-      Height = 27
-      Top = 86
+      Height = 21
+      Top = 76
       Width = 120
       CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
       OKCaption = 'OK'
@@ -420,9 +420,9 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = PathFilter
       AnchorSideTop.Side = asrBottom
       Left = 420
-      Height = 15
-      Top = 65
-      Width = 58
+      Height = 13
+      Top = 57
+      Width = 53
       BorderSpacing.Left = 15
       BorderSpacing.Top = 10
       Caption = 'From date:'
@@ -434,8 +434,8 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = PathFilter
       AnchorSideTop.Side = asrBottom
       Left = 580
-      Height = 15
-      Top = 65
+      Height = 13
+      Top = 57
       Width = 41
       BorderSpacing.Left = 40
       BorderSpacing.Top = 10
@@ -447,11 +447,11 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = TypeFilterLabel
       AnchorSideTop.Side = asrBottom
       Left = 285
-      Height = 27
-      Top = 86
+      Height = 21
+      Top = 76
       Width = 120
       BorderSpacing.Top = 6
-      ItemHeight = 0
+      ItemHeight = 13
       TabOrder = 10
     end
   end
@@ -604,7 +604,8 @@ object MainFrm: TMainFrm
     Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
     Header.Style = hsXPStyle
     Images = IconList
-    ScrollBarOptions.ScrollBars = ssAutoBoth
+    ScrollBarOptions.AlwaysVisible = True
+    ScrollBarOptions.ScrollBars = ssAutoVertical
     TabOrder = 3
     TreeOptions.MiscOptions = [toFullRepaintOnResize, toInitOnSave, toReportMode, toToggleOnDblClick, toWheelPanning, toEditOnClick]
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
