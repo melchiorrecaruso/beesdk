@@ -23,7 +23,7 @@
 
   Modifyed:
 
-    v1.0.0 build 2210 - 2014.01.15 by Melchiorre Caruso.
+    v1.0.0 build 2210 - 2014.01.16 by Melchiorre Caruso.
 }
 
 unit libbx_stream;
@@ -172,4 +172,4 @@ begin
 end;
 
 end.
-
+
