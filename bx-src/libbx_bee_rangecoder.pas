@@ -196,6 +196,10 @@ begin
     Inc(CumFreq, Freq[I]);
     Inc(I);
   end;
+
+
+
+
   // Count TotFreq...
   TotFreq := CumFreq;
   I := Length(Freq);
@@ -203,6 +207,10 @@ begin
     Dec(I);
     Inc(TotFreq, Freq[I]);
   until I = aSymbol;
+
+
+  // writeln(aSymbol, '  CumF=', CumFreq, ' - F[aSymbol]=', Freq[aSymbol] , ' - TotF=', TotFreq);
+
   // Encode...
   BeeRangeEnc_Encode(Self, CumFreq, Freq[aSymbol], TotFreq);
   // Return Result...
@@ -285,4 +293,4 @@ begin
   Result := aSymbol;
 end;
 
-end.
+end.

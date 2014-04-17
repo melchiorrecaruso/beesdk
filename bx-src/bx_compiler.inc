@@ -28,7 +28,7 @@
 }
 
 {*$DEFINE DEBUG}
-{*$DEFINE BEEPAS}
+{$DEFINE BEEPAS}
 {$INLINE OFF}
 
-
+
