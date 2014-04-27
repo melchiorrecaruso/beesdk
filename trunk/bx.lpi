@@ -111,7 +111,7 @@
         <TopLine Value="18"/>
         <CursorPos X="24" Y="68"/>
         <FoldState Value=" T3ja061v"/>
-        <UsageCount Value="172"/>
+        <UsageCount Value="173"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -121,7 +121,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="436"/>
         <CursorPos X="21" Y="456"/>
-        <UsageCount Value="39"/>
+        <UsageCount Value="40"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
@@ -132,7 +132,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="114"/>
         <CursorPos X="1" Y="95"/>
-        <UsageCount Value="32"/>
+        <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
@@ -143,7 +143,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="125"/>
         <CursorPos X="26" Y="140"/>
-        <UsageCount Value="29"/>
+        <UsageCount Value="30"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
@@ -154,7 +154,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="31"/>
         <CursorPos X="57" Y="35"/>
-        <UsageCount Value="17"/>
+        <UsageCount Value="18"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
@@ -163,9 +163,10 @@
         <UnitName Value="bx_commandline"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="852"/>
-        <CursorPos X="3" Y="856"/>
-        <UsageCount Value="10"/>
+        <TopLine Value="29"/>
+        <CursorPos X="1" Y="369"/>
+        <FoldState Value=" T3lN0n7 pjEka067a"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
@@ -175,7 +176,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="14" Y="11"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
@@ -185,10 +186,10 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="129"/>
-        <CursorPos X="36" Y="197"/>
+        <TopLine Value="111"/>
+        <CursorPos X="3" Y="68"/>
         <FoldState Value=" T3jb04311f"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
@@ -197,9 +198,9 @@
         <UnitName Value="libbx_bee_modeller"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="428"/>
+        <TopLine Value="425"/>
         <CursorPos X="56" Y="467"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
@@ -322,8 +323,8 @@
         <Caret Line="211" Column="23" TopLine="177"/>
       </Position29>
       <Position30>
-        <Filename Value="bx-src\libbx_bee_modeller.pas"/>
-        <Caret Line="1" Column="1" TopLine="467"/>
+        <Filename Value="bx-src\libbx_bee_rangecoder.pas"/>
+        <Caret Line="197" Column="36" TopLine="250"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
