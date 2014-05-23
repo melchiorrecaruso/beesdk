@@ -165,7 +165,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="29"/>
         <CursorPos X="1" Y="369"/>
-        <FoldState Value=" T3lN0n7 pjEka067a"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -186,7 +185,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="111"/>
+        <TopLine Value="135"/>
         <CursorPos X="3" Y="68"/>
         <FoldState Value=" T3jb04311f"/>
         <UsageCount Value="11"/>
@@ -205,7 +204,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="bx-src\bx_archiver.pas"/>
         <Caret Line="1828" Column="27" TopLine="1796"/>
@@ -322,10 +321,6 @@
         <Filename Value="bx-src\libbx_bee_rangecoder.pas"/>
         <Caret Line="211" Column="23" TopLine="177"/>
       </Position29>
-      <Position30>
-        <Filename Value="bx-src\libbx_bee_rangecoder.pas"/>
-        <Caret Line="197" Column="36" TopLine="250"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
