@@ -90,7 +90,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="10">
+    <Units Count="11">
       <Unit0>
         <Filename Value="bx.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -117,7 +117,7 @@
       <Unit2>
         <Filename Value="bx-src\bx_archiver.pas"/>
         <UnitName Value="bx_archiver"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="436"/>
         <CursorPos X="21" Y="456"/>
@@ -128,7 +128,7 @@
       <Unit3>
         <Filename Value="bx-src\bx_dirscanner.pas"/>
         <UnitName Value="bx_dirscanner"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="114"/>
         <CursorPos X="1" Y="95"/>
@@ -150,7 +150,7 @@
       <Unit5>
         <Filename Value="bx-src\bx_messages.pas"/>
         <UnitName Value="bx_messages"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="31"/>
         <CursorPos X="57" Y="35"/>
@@ -161,7 +161,7 @@
       <Unit6>
         <Filename Value="bx-src\bx_commandline.pas"/>
         <UnitName Value="bx_commandline"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="29"/>
         <CursorPos X="1" Y="369"/>
@@ -182,10 +182,9 @@
       <Unit8>
         <Filename Value="bx-src\libbx_bee_rangecoder.pas"/>
         <UnitName Value="libbx_bee_rangecoder"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="135"/>
+        <TopLine Value="68"/>
         <CursorPos X="3" Y="68"/>
         <FoldState Value=" T3jb04311f"/>
         <UsageCount Value="11"/>
@@ -195,7 +194,7 @@
       <Unit9>
         <Filename Value="bx-src\libbx_bee_modeller.pas"/>
         <UnitName Value="libbx_bee_modeller"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="425"/>
         <CursorPos X="56" Y="467"/>
@@ -203,8 +202,20 @@
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
+      <Unit10>
+        <Filename Value="bx-src\libbx_bee_common.pas"/>
+        <UnitName Value="libbx_bee_common"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="86"/>
+        <CursorPos X="14" Y="97"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit10>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="bx-src\bx_archiver.pas"/>
         <Caret Line="1828" Column="27" TopLine="1796"/>
@@ -321,6 +332,10 @@
         <Filename Value="bx-src\libbx_bee_rangecoder.pas"/>
         <Caret Line="211" Column="23" TopLine="177"/>
       </Position29>
+      <Position30>
+        <Filename Value="bx-src\libbx_bee_common.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
