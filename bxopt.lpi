@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="9"/>
+    <Version Value="12"/>
     <PathDelim Value="\"/>
     <General>
       <Flags>
         <LRSInOutputDirectory Value="False"/>
+        <CompatibilityMode Value="True"/>
       </Flags>
-      <MainUnit Value="0"/>
       <UseAppBundle Value="False"/>
-      <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <BuildModes Count="1" Active="release">
       <Item1 Name="release" Default="True"/>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
-      <IgnoreBinaries Value="False"/>
-      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
-      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <FormatVersion Value="1"/>
-        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
-      </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default">
+          <local>
+            <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T &apos;Lazarus Run Output&apos; -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
+          </local>
+        </Mode0>
+      </Modes>
     </RunParams>
     <RequiredPackages Count="1">
       <Item1>
@@ -36,9 +36,6 @@
         <Filename Value="bxopt.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BxOpt"/>
-        <EditorIndex Value="0"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="19" Y="10"/>
         <UsageCount Value="83"/>
         <Loaded Value="True"/>
@@ -52,7 +49,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BxOpt_mainfrm"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="93"/>
         <CursorPos X="38" Y="114"/>
         <ComponentState Value="1"/>
@@ -70,8 +66,6 @@
       <Unit3>
         <Filename Value="C:\FPC\lazarus\lcl\interfacebase.pp"/>
         <UnitName Value="InterfaceBase"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
@@ -109,7 +103,6 @@
         <Filename Value="..\bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
         <TopLine Value="211"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="8"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
@@ -139,7 +132,6 @@
       <Unit12>
         <Filename Value="..\..\bee\source\bee_modeller.pas"/>
         <UnitName Value="Bee_Modeller"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="134"/>
         <CursorPos X="3" Y="68"/>
         <UsageCount Value="11"/>
@@ -149,7 +141,6 @@
         <Filename Value="beeopt_optimizer.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeOpt_Optimizer"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="682"/>
         <CursorPos X="11" Y="697"/>
         <FoldState Value=" T3lA2H8 piYjS2A772Q"/>
@@ -159,25 +150,20 @@
       <Unit14>
         <Filename Value="..\..\bee\source\bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\..\bee\source\bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="33"/>
-        <CursorPos X="1" Y="40"/>
+        <CursorPos Y="40"/>
         <UsageCount Value="24"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\..\bee\source\bee_streamcoder.pas"/>
         <UnitName Value="Bee_StreamCoder"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="42"/>
         <CursorPos X="27" Y="192"/>
         <UsageCount Value="9"/>
@@ -186,16 +172,13 @@
       <Unit17>
         <Filename Value="..\..\bee\source\bee_configuration.pas"/>
         <UnitName Value="Bee_Configuration"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="31"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="35"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
         <Filename Value="..\..\bee\source\bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="24"/>
         <CursorPos X="19" Y="35"/>
         <UsageCount Value="28"/>
@@ -204,25 +187,20 @@
       <Unit19>
         <Filename Value="..\..\bee\source\bee_blowfish.pas"/>
         <UnitName Value="Bee_BlowFish"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="7"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\..\beelib\source\beelib_streamcoder.pas"/>
         <UnitName Value="BeeLib_StreamCoder"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="10"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
         <Filename Value="..\..\bee\source\beelib_streamcoder.pas"/>
         <UnitName Value="BeeLib_StreamCoder"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="13"/>
         <CursorPos X="105" Y="43"/>
         <UsageCount Value="7"/>
@@ -231,7 +209,6 @@
       <Unit22>
         <Filename Value="..\..\bee\source\beelib_configuration.pas"/>
         <UnitName Value="BeeLib_Configuration"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="33"/>
         <CursorPos X="25" Y="54"/>
         <UsageCount Value="33"/>
@@ -240,7 +217,6 @@
       <Unit23>
         <Filename Value="..\..\bee\source\bee_liblink.pas"/>
         <UnitName Value="Bee_LibLink"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="17"/>
         <CursorPos X="88" Y="51"/>
         <UsageCount Value="33"/>
@@ -248,8 +224,6 @@
       </Unit23>
       <Unit24>
         <Filename Value="C:\Documents and Settings\Quacquero\Desktop\1.0.0\BeeOpt\source\BeeOpt_Form.pas"/>
-        <UnitName Value="BeeOpt_Form"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="446"/>
         <CursorPos X="41" Y="486"/>
         <UsageCount Value="19"/>
@@ -258,16 +232,13 @@
       <Unit25>
         <Filename Value="..\..\bee\source\bee_consts.pas"/>
         <UnitName Value="Bee_Consts"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="31"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="23"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit25>
       <Unit26>
         <Filename Value="..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="130"/>
         <CursorPos X="37" Y="155"/>
         <UsageCount Value="30"/>
@@ -275,7 +246,6 @@
       </Unit26>
       <Unit27>
         <Filename Value="C:\Programmi\FPC\2.4.4\source\rtl\objpas\classes\classesh.inc"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="760"/>
         <CursorPos X="15" Y="784"/>
         <UsageCount Value="9"/>
@@ -284,7 +254,6 @@
       <Unit28>
         <Filename Value="..\..\bee\source\bee_bufstream.pas"/>
         <UnitName Value="Bee_BufStream"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="78"/>
         <CursorPos X="3" Y="91"/>
         <UsageCount Value="20"/>
@@ -293,22 +262,18 @@
       <Unit29>
         <Filename Value="..\..\bee\source\bee_assembler.pas"/>
         <UnitName Value="Bee_Assembler"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="19" Y="32"/>
         <UsageCount Value="20"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit29>
       <Unit30>
         <Filename Value="C:\Programmi\FPC\2.6.0\source\rtl\objpas\classes\classesh.inc"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="274"/>
         <CursorPos X="14" Y="305"/>
         <UsageCount Value="9"/>
       </Unit30>
       <Unit31>
         <Filename Value="beeopt.include\compiler.inc"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="13"/>
         <CursorPos X="18" Y="27"/>
         <UsageCount Value="10"/>
@@ -316,9 +281,8 @@
       </Unit31>
       <Unit32>
         <Filename Value="..\..\bee\source\bee.include\compiler.inc"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="14"/>
-        <CursorPos X="1" Y="28"/>
+        <CursorPos Y="28"/>
         <UsageCount Value="8"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit32>
@@ -329,8 +293,6 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="bxopt_Mainfrm"/>
         <EditorIndex Value="1"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="9" Y="5"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
@@ -342,7 +304,6 @@
         <UnitName Value="bxopt_Optimizer"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="24"/>
         <CursorPos X="26" Y="34"/>
         <FoldState Value=" T7iICD2 T3l8277 pj0jR24A piZjK274]I1]9{o222!"/>
@@ -353,8 +314,6 @@
       <Unit35>
         <Filename Value="bx-src\bx_compiler.inc"/>
         <EditorIndex Value="6"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="17" Y="11"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
@@ -362,8 +321,6 @@
       </Unit35>
       <Unit36>
         <Filename Value="..\branches\1.0.0\Bee\source\Bee_Configuration.pas"/>
-        <UnitName Value="Bee_Configuration"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="105"/>
         <CursorPos X="3" Y="180"/>
         <UsageCount Value="9"/>
@@ -372,16 +329,12 @@
       <Unit37>
         <Filename Value="bx-src\bx_filestream.pas"/>
         <UnitName Value="bx_FileStream"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit37>
       <Unit38>
         <Filename Value="bx-src\bx_stream.pas"/>
         <UnitName Value="bx_Stream"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="103"/>
         <CursorPos X="19" Y="121"/>
         <UsageCount Value="9"/>
@@ -389,9 +342,7 @@
       </Unit38>
       <Unit39>
         <Filename Value="bx-src\bx_archiver.pas"/>
-        <UnitName Value="bx_archiver"/>
         <EditorIndex Value="5"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="1870"/>
         <CursorPos X="80" Y="1886"/>
         <UsageCount Value="13"/>
@@ -401,7 +352,6 @@
       <Unit40>
         <Filename Value="bx-src\bx_liblink.pas"/>
         <UnitName Value="bx_LibLink"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="59"/>
         <CursorPos X="30" Y="73"/>
         <UsageCount Value="13"/>
@@ -410,17 +360,13 @@
       <Unit41>
         <Filename Value="bx-src\bx_coder.pas"/>
         <UnitName Value="bx_Coder"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="166"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit41>
       <Unit42>
         <Filename Value="bx-src\bx_application.pas"/>
-        <UnitName Value="bx_application"/>
         <EditorIndex Value="4"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="749"/>
         <CursorPos X="32" Y="788"/>
         <UsageCount Value="12"/>
@@ -430,7 +376,6 @@
       <Unit43>
         <Filename Value="bx-src\bx_configuration.pas"/>
         <UnitName Value="bx_Configuration"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="45"/>
         <CursorPos X="17" Y="80"/>
         <UsageCount Value="12"/>
@@ -438,9 +383,7 @@
       </Unit43>
       <Unit44>
         <Filename Value="bx-src\bx_common.pas"/>
-        <UnitName Value="bx_common"/>
         <EditorIndex Value="3"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="25"/>
         <CursorPos X="30" Y="39"/>
         <UsageCount Value="12"/>
@@ -450,9 +393,7 @@
       <Unit45>
         <Filename Value="..\branches\0.7.9.45\bee\source\bee_configuration.pas"/>
         <UnitName Value="Bee_Configuration"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="141"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="11"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit45>
@@ -556,7 +497,7 @@
       </Position24>
       <Position25>
         <Filename Value="bxopt-src\bxopt_optimizer.pas"/>
-        <Caret Line="897" Column="1" TopLine="479"/>
+        <Caret Line="897" TopLine="479"/>
       </Position25>
       <Position26>
         <Filename Value="bxopt-src\bxopt_optimizer.pas"/>
@@ -588,7 +529,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="bx-src"/>
-      <Libraries Value="bx-src\libbx.c;C:\MinGW32\lib"/>
+      <Libraries Value="bx-src\libbx.c;C:\MinGW32\lib\"/>
       <OtherUnitFiles Value="bxopt-src"/>
       <UnitOutputDirectory Value="..\temp"/>
     </SearchPaths>
@@ -620,12 +561,6 @@
         </Win32>
       </Options>
     </Linking>
-    <Other>
-      <CompilerMessages>
-        <UseMsgFile Value="True"/>
-      </CompilerMessages>
-      <CompilerPath Value="$(CompPath)"/>
-    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="2">
@@ -637,5 +572,4 @@
       </Item2>
     </Exceptions>
   </Debugging>
-  <EditorMacros Count="0"/>
-</CONFIG>
+</CONFIG>
