@@ -23,7 +23,7 @@
     </RunParams>
     <Units Count="4">
       <Unit0>
-        <Filename Value="BeeSfx.dpr"/>
+        <Filename Value="BeeSfx.lpr"/>
         <IsPartOfProject Value="True"/>
         <CursorPos X="1" Y="33"/>
         <TopLine Value="17"/>

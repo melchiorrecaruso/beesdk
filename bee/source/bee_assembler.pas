@@ -29,7 +29,11 @@
 
 unit Bee_Assembler;
 
+{$MODE DELPHI}
 {$I compiler.inc}
+{$IFDEF FPC}
+  {$ASMMODE INTEL}
+{$ENDIF}
 
 interface
 
@@ -38,7 +42,7 @@ procedure CopyBytes(const Source, Dest; Count: cardinal);
 procedure FillCardinal(const Data; const Count, Value: cardinal);
 procedure AddCardinal(const Data; const Count, Value: cardinal);
 procedure ClearCardinal(const Data; const Count: cardinal);
-procedure MoveCardinalUnchecked(const Source, Dest; Count: cardinal);
+procedure MovePointerUnchecked(const Source, Dest; Count: cardinal);
 
 function MulDiv(A, B, C: cardinal): cardinal;
 function MulDecDiv(A, B, C: cardinal): cardinal;
@@ -46,6 +50,7 @@ function MulDecDiv(A, B, C: cardinal): cardinal;
 implementation
 
 procedure CopyBytes(const Source, Dest; Count: cardinal);
+{$IFDEF CPUI386}
 asm
   xchg esi, Source
   xchg edi, Dest
@@ -58,8 +63,32 @@ asm
   mov  esi, Source
   mov  edi, Dest
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+asm
+  push rsi
+  push rdi
+  mov  rsi, Source
+  mov  rdi, Dest
+  mov  eax, Count
+  mov  ecx, eax
+  shr  ecx, 3
+  rep  movsq
+  mov  ecx, eax
+  and  ecx, $07
+  rep  movsb
+  pop  rdi
+  pop  rsi
+end;
+{$ELSE}
+begin
+  System.Move(Source, PByte(@Dest)^, Count);
+end;
+{$ENDIF}
+{$ENDIF}
 
 procedure FillCardinal(const Data; const Count, Value: cardinal);
+{$IFDEF CPUI386}
 asm
   push edi
   mov  edi, Data
@@ -68,17 +97,74 @@ asm
   rep  stosd
   pop  edi
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+asm
+  push rdi
+  mov  rdi, Data
+  mov  eax, Value
+  mov  ecx, Count
+  rep  stosd
+  pop  rdi
+end;
+{$ELSE}
+var
+  P: ^cardinal;
+  I: cardinal;
+begin
+  P := @Data;
+  for I := 1 to Count do
+  begin
+    P^ := Value;
+    Inc(P);
+  end;
+end;
+{$ENDIF}
+{$ENDIF}
 
 procedure AddCardinal(const Data; const Count, Value: cardinal);
+{$IFDEF CPUI386}
 asm
-  @1:
-  add [Data], Value
-  add Data, 4
-  dec Count
-  jne @1
+  test Count, Count
+  jz   @done
+@next:
+  add  [Data], Value
+  add  Data, 4
+  dec  Count
+  jne  @next
+@done:
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+asm
+  mov  rax, Data
+  mov  ecx, Count
+  test ecx, ecx
+  jz   @done
+@next:
+  add  dword ptr [rax], Value
+  add  rax, 4
+  dec  ecx
+  jne  @next
+@done:
+end;
+{$ELSE}
+var
+  P: ^cardinal;
+  I: cardinal;
+begin
+  P := @Data;
+  for I := 1 to Count do
+  begin
+    Inc(P^, Value);
+    Inc(P);
+  end;
+end;
+{$ENDIF}
+{$ENDIF}
 
 procedure ClearCardinal(const Data; const Count: cardinal);
+{$IFDEF CPUI386}
 asm
   mov  ecx, Count
   mov  edx, edi
@@ -87,8 +173,25 @@ asm
   rep  stosd
   mov  edi, edx
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+asm
+  push rdi
+  mov  rdi, Data
+  mov  ecx, Count
+  xor  eax, eax
+  rep  stosd
+  pop  rdi
+end;
+{$ELSE}
+begin
+  FillChar(PByte(@Data)^, Count * SizeOf(cardinal), 0);
+end;
+{$ENDIF}
+{$ENDIF}
 
-procedure MoveCardinalUnchecked(const Source, Dest; Count: cardinal);
+procedure MovePointerUnchecked(const Source, Dest; Count: cardinal);
+{$IFDEF CPUI386}
 asm
   xchg esi, Source
   xchg edi, Dest
@@ -96,19 +199,67 @@ asm
   mov  esi, Source
   mov  edi, Dest
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+asm
+  push rsi
+  push rdi
+  mov  rsi, Source
+  mov  rdi, Dest
+  mov  ecx, Count
+  rep  movsq
+  pop  rdi
+  pop  rsi
+end;
+{$ELSE}
+begin
+  System.Move(Source, PByte(@Dest)^, Count * SizeOf(Pointer));
+end;
+{$ENDIF}
+{$ENDIF}
 
 function MulDiv(A, B, C: cardinal): cardinal;
+{$IFDEF CPUI386}
 asm
-  mul  B
-  div  C
+  mul B
+  div C
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+asm
+  mov eax, A
+  mul B
+  div C
+end;
+{$ELSE}
+begin
+  Result := (uint64(A) * B) div C;
+end;
+{$ENDIF}
+{$ENDIF}
 
-function MulDecDiv(A, B, C: cardinal): cardinal; 
+function MulDecDiv(A, B, C: cardinal): cardinal;
+{$IFDEF CPUI386}
 asm
-  mul  B
-  sub  eax, 1
-  sbb  edx, 0
-  div  C
+  mul B
+  sub eax, 1
+  sbb edx, 0
+  div C
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+asm
+  mov eax, A
+  mul B
+  sub eax, 1
+  sbb edx, 0
+  div C
+end;
+{$ELSE}
+begin
+  Result := (uint64(A) * B - 1) div C;
+end;
+{$ENDIF}
+{$ENDIF}
 
 end.

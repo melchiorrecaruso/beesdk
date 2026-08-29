@@ -27,7 +27,7 @@
     </RunParams>
     <Units Count="18">
       <Unit0>
-        <Filename Value="bee.dpr"/>
+        <Filename Value="bee.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
         <CursorPos X="20" Y="37"/>
@@ -332,7 +332,6 @@
     <CodeGeneration>
       <SmartLinkUnit Value="True"/>
       <Generate Value="Faster"/>
-      <TargetProcessor Value="1"/>
       <Optimizations>
         <VariablesInRegisters Value="True"/>
         <UncertainOptimizations Value="True"/>

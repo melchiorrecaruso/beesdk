@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<CONFIG>
-  <Compiler Value="C:\Programmi\FPC\2.2.0\bin\i386-win32\ppc386.exe" Date="925473388"/>
-  <Params Value="-Rintel -S2dh -CX -Og3ru -XX -vewnhi -l -Fi..\ -Fi..\..\..\..\bee\source\ -Fisource\ -Fu..\ -Fu..\..\..\..\bee\source\ -Fusource\ -Fu..\..\..\..\..\..\lazarus\lcl\units\i386-win32\ -Fu..\..\..\..\..\..\lazarus\lcl\units\i386-win32\win32\ -Fu..\..\..\..\..\..\lazarus\packager\units\i386-win32\ -Fu. -ozipapp.exe -dLCL -dLCLwin32 zipapp.lpr"/>
-</CONFIG>

@@ -1,0 +1,9 @@
+/build/
+/bee/source/build/
+/beeopt/build/
+/corpora/
+/*.dat
+/*.tbl
+*.o
+*.ppu
+*.compiled

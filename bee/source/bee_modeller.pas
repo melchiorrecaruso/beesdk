@@ -480,7 +480,7 @@ begin
 
   // Update NodeList...
   if ListCount > Table.Level then
-    MoveCardinalUnchecked(List[1], List[0], ListCount - 1)
+    MovePointerUnchecked(List[1], List[0], ListCount - 1)
   else
     Inc(ListCount);
 

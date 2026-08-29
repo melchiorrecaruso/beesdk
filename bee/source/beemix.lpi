@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="12"/>
+    <PathDelim Value="\"/>
+    <General><MainUnit Value="0"/><UseAppBundle Value="False"/></General>
+    <BuildModes Count="1" Active="Release"><Item1 Name="Release" Default="True"/></BuildModes>
+    <Units Count="1"><Unit0><Filename Value="beemix.lpr"/><IsPartOfProject Value="True"/><UnitName Value="BeeMix"/></Unit0></Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target><Filename Value="..\..\build\beemix"/></Target>
+    <SearchPaths><IncludeFiles Value="bee-include"/><UnitOutputDirectory Value="..\..\build\units"/></SearchPaths>
+    <Parsing><SyntaxOptions><SyntaxMode Value="ObjFPC"/></SyntaxOptions></Parsing>
+    <CodeGeneration><Optimizations><OptimizationLevel Value="3"/></Optimizations></CodeGeneration>
+    <Linking><LinkSmart Value="True"/></Linking>
+  </CompilerOptions>
+</CONFIG>
