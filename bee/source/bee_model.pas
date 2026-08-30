@@ -6,12 +6,14 @@ unit Bee_Model;
 interface
 
 uses
-  Classes, SysUtils, Math, Bee_Assembler, Bee_RangeCoder;
+  Classes, SysUtils, Math, IniFiles, Bee_Assembler, Bee_RangeCoder;
 
 const
   BeeIncrement = 8;
   BeeMaxExportedOrders = 17;
   BeeMaxTableLevel = 15;
+  BeeTableTextFormat = 'BEE-TABLE';
+  BeeTableTextVersion = 1;
 
 type
   TBeeTableParameters = array of Byte;
@@ -113,7 +115,10 @@ function BeeTableColumnCount(Bits: Cardinal): Cardinal;
 function BeeCreateDefaultTable(Bits: Cardinal): TBeeTableParameters;
 procedure BeeLoadTable(const FileName: string; Bits: Cardinal;
   out Table: TBeeTableParameters);
-procedure BeeSaveTable(const FileName: string; const Table: TBeeTableParameters);
+procedure BeeSaveTable(const FileName: string; Bits: Cardinal;
+  const Table: TBeeTableParameters); overload;
+procedure BeeSaveTable(const FileName: string;
+  const Table: TBeeTableParameters); overload;
 
 implementation
 
@@ -156,39 +161,106 @@ begin
   end;
 end;
 
+function BeeTableValuesToText(const Table: TBeeTableParameters): string;
+var I: Integer;
+begin
+  Result := '';
+  for I := 0 to High(Table) do
+  begin
+    if I > 0 then Result := Result + ',';
+    Result := Result + IntToStr(Table[I]);
+  end;
+end;
+
+procedure BeeTextToTable(const Value: string; Bits: Cardinal;
+  out Table: TBeeTableParameters);
+var Values: TStringList; I, Parameter, ExpectedSize: Integer;
+begin
+  ExpectedSize := BeeTableByteSize(Bits);
+  Values := TStringList.Create;
+  try
+    Values.StrictDelimiter := True;
+    Values.Delimiter := ',';
+    Values.DelimitedText := Value;
+    if Values.Count <> ExpectedSize then
+      raise EStreamError.CreateFmt('Table contains %d values; expected %d',
+        [Values.Count, ExpectedSize]);
+    SetLength(Table, ExpectedSize);
+    for I := 0 to ExpectedSize - 1 do
+    begin
+      Parameter := StrToInt(Trim(Values[I]));
+      if (Parameter < 0) or (Parameter > 255) then
+        raise EStreamError.CreateFmt('Table value %d is outside 0..255', [I]);
+      Table[I] := Parameter;
+    end;
+  finally
+    Values.Free;
+  end;
+end;
+
 procedure BeeLoadTable(const FileName: string; Bits: Cardinal;
   out Table: TBeeTableParameters);
 var
-  Stream: TFileStream;
+  Ini: TMemIniFile;
+  StoredBits, StoredSize, Version: Integer;
+  Format, Values: string;
 begin
   if SameText(FileName, 'default') then
   begin
     Table := BeeCreateDefaultTable(Bits);
     Exit;
   end;
-  Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  Ini := TMemIniFile.Create(FileName);
   try
-    if Stream.Size <> BeeTableByteSize(Bits) then
-      raise EStreamError.CreateFmt('Table %s must contain %d bytes',
-        [FileName, BeeTableByteSize(Bits)]);
-    SetLength(Table, Stream.Size);
-    Stream.ReadBuffer(Table[0], Length(Table));
+    Format := Ini.ReadString('BeeTable', 'Format', '');
+    Version := Ini.ReadInteger('BeeTable', 'Version', 0);
+    StoredBits := Ini.ReadInteger('BeeTable', 'Bits', 0);
+    StoredSize := Ini.ReadInteger('BeeTable', 'Size', 0);
+    Values := Ini.ReadString('BeeTable', 'Values', '');
+    if (Format <> BeeTableTextFormat) or (Version <> BeeTableTextVersion) then
+      raise EStreamError.Create('Unsupported Bee table text format');
+    if (StoredBits <> Integer(Bits)) or
+      (StoredSize <> Integer(BeeTableByteSize(Bits))) then
+      raise EStreamError.Create('Bee table geometry does not match the model');
+    BeeTextToTable(Values, Bits, Table);
   finally
-    Stream.Free;
+    Ini.Free;
   end;
 end;
 
-procedure BeeSaveTable(const FileName: string; const Table: TBeeTableParameters);
-var
-  Stream: TFileStream;
+procedure BeeSaveTable(const FileName: string; Bits: Cardinal;
+  const Table: TBeeTableParameters);
+var Lines: TStringList;
 begin
-  Stream := TFileStream.Create(FileName, fmCreate);
+  if Length(Table) <> Integer(BeeTableByteSize(Bits)) then
+    raise ERangeError.CreateFmt('A %d-bit Bee table must contain %d values',
+      [Bits, BeeTableByteSize(Bits)]);
+  Lines := TStringList.Create;
   try
-    if Length(Table) > 0 then
-      Stream.WriteBuffer(Table[0], Length(Table));
+    Lines.Add('[BeeTable]');
+    Lines.Add('Format=' + BeeTableTextFormat);
+    Lines.Add('Version=' + IntToStr(BeeTableTextVersion));
+    Lines.Add('Bits=' + IntToStr(Bits));
+    Lines.Add('Size=' + IntToStr(Length(Table)));
+    Lines.Add('Values=' + BeeTableValuesToText(Table));
+    Lines.SaveToFile(FileName);
   finally
-    Stream.Free;
+    Lines.Free;
   end;
+end;
+
+procedure BeeSaveTable(const FileName: string;
+  const Table: TBeeTableParameters);
+var Bits: Cardinal;
+begin
+  for Bits in [Cardinal(1), Cardinal(2), Cardinal(4), Cardinal(8)] do
+    if Length(Table) = Integer(BeeTableByteSize(Bits)) then
+    begin
+      BeeSaveTable(FileName, Bits, Table);
+      Exit;
+    end;
+  raise ERangeError.CreateFmt('Cannot infer Bee table bit width from %d values',
+    [Length(Table)]);
 end;
 
 constructor TBeeModel.Create(ABits: Cardinal);
