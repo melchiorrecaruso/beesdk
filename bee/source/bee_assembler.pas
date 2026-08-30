@@ -29,6 +29,8 @@
 
 unit Bee_Assembler;
 
+{$MODE OBJFPC}
+{$ASMMODE INTEL}
 {$I compiler.inc}
 
 interface
@@ -38,7 +40,7 @@ procedure CopyBytes(const Source, Dest; Count: cardinal);
 procedure FillCardinal(const Data; const Count, Value: cardinal);
 procedure AddCardinal(const Data; const Count, Value: cardinal);
 procedure ClearCardinal(const Data; const Count: cardinal);
-procedure MoveCardinalUnchecked(const Source, Dest; Count: cardinal);
+procedure MovePointerUnchecked(const Source, Dest; Count: cardinal);
 
 function MulDiv(A, B, C: cardinal): cardinal;
 function MulDecDiv(A, B, C: cardinal): cardinal;
@@ -46,6 +48,8 @@ function MulDecDiv(A, B, C: cardinal): cardinal;
 implementation
 
 procedure CopyBytes(const Source, Dest; Count: cardinal);
+{$IFDEF CPUI386}
+assembler; nostackframe;
 asm
   xchg esi, Source
   xchg edi, Dest
@@ -58,8 +62,34 @@ asm
   mov  esi, Source
   mov  edi, Dest
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+assembler; nostackframe;
+asm
+  push rsi
+  push rdi
+  mov  rsi, Source
+  mov  rdi, Dest
+  mov  eax, Count
+  mov  ecx, eax
+  shr  ecx, 3
+  rep  movsq
+  mov  ecx, eax
+  and  ecx, $07
+  rep  movsb
+  pop  rdi
+  pop  rsi
+end;
+{$ELSE}
+begin
+  System.Move(Source, PByte(@Dest)^, Count);
+end;
+{$ENDIF}
+{$ENDIF}
 
 procedure FillCardinal(const Data; const Count, Value: cardinal);
+{$IFDEF CPUI386}
+assembler; nostackframe;
 asm
   push edi
   mov  edi, Data
@@ -68,47 +98,239 @@ asm
   rep  stosd
   pop  edi
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+assembler; nostackframe;
+asm
+  push rdi
+  mov  rdi, Data
+  mov  eax, Value
+  mov  ecx, Count
+  rep  stosd
+  pop  rdi
+end;
+{$ELSE}
+var
+  P: ^cardinal;
+  I: cardinal;
+begin
+  P := @Data;
+  for I := 1 to Count do
+  begin
+    P^ := Value;
+    Inc(P);
+  end;
+end;
+{$ENDIF}
+{$ENDIF}
 
 procedure AddCardinal(const Data; const Count, Value: cardinal);
+{$IFDEF CPUI386}
+assembler; nostackframe;
 asm
-  @1:
-  add [Data], Value
-  add Data, 4
-  dec Count
-  jne @1
+  cmp    Count, 16
+  jne    @generic
+  movd   xmm0, Value
+  pshufd xmm0, xmm0, 0
+  movdqu xmm1, [eax +  0]
+  paddd  xmm1, xmm0
+  movdqu [eax +  0], xmm1
+  movdqu xmm1, [eax + 16]
+  paddd  xmm1, xmm0
+  movdqu [eax + 16], xmm1
+  movdqu xmm1, [eax + 32]
+  paddd  xmm1, xmm0
+  movdqu [eax + 32], xmm1
+  movdqu xmm1, [eax + 48]
+  paddd  xmm1, xmm0
+  movdqu [eax + 48], xmm1
+  jmp    @done
+@generic:
+  add    dword ptr [eax], Value
+  add    eax, 4
+  dec    Count
+  jne    @generic
+@done:
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+assembler; nostackframe;
+asm
+  mov    rax, Data
+  cmp    Count, 16
+  jne    @generic
+  movd   xmm0, Value
+  pshufd xmm0, xmm0, 0
+  movdqu xmm1, [rax +  0]
+  paddd  xmm1, xmm0
+  movdqu [rax +  0], xmm1
+  movdqu xmm1, [rax + 16]
+  paddd  xmm1, xmm0
+  movdqu [rax + 16], xmm1
+  movdqu xmm1, [rax + 32]
+  paddd  xmm1, xmm0
+  movdqu [rax + 32], xmm1
+  movdqu xmm1, [rax + 48]
+  paddd  xmm1, xmm0
+  movdqu [rax + 48], xmm1
+  jmp    @done
+@generic:
+  add    dword ptr [rax], Value
+  add    rax, 4
+  dec    Count
+  jne    @generic
+@done:
+end;
+{$ELSE}
+var
+  P: ^cardinal;
+  I: cardinal;
+begin
+  P := @Data;
+  for I := 1 to Count do
+  begin
+    Inc(P^, Value);
+    Inc(P);
+  end;
+end;
+{$ENDIF}
+{$ENDIF}
 
 procedure ClearCardinal(const Data; const Count: cardinal);
+{$IFDEF CPUI386}
+assembler; nostackframe;
 asm
-  mov  ecx, Count
-  mov  edx, edi
-  mov  edi, Data
-  xor  eax, eax
-  rep  stosd
-  mov  edi, edx
+  cmp    Count, 16
+  jne    @generic
+  pxor   xmm0, xmm0
+  movdqu [eax +  0], xmm0
+  movdqu [eax + 16], xmm0
+  movdqu [eax + 32], xmm0
+  movdqu [eax + 48], xmm0
+  jmp    @done
+@generic:
+  push   edi
+  mov    edi, Data
+  mov    ecx, Count
+  xor    eax, eax
+  rep    stosd
+  pop    edi
+@done:
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+assembler; nostackframe;
+asm
+  mov    rax, Data
+  cmp    Count, 16
+  jne    @generic
+  pxor   xmm0, xmm0
+  movdqu [rax +  0], xmm0
+  movdqu [rax + 16], xmm0
+  movdqu [rax + 32], xmm0
+  movdqu [rax + 48], xmm0
+  jmp    @done
+@generic:
+  push   rdi
+  mov    rdi, Data
+  mov    ecx, Count
+  xor    eax, eax
+  rep    stosd
+  pop    rdi
+@done:
+end;
+{$ELSE}
+begin
+  FillChar(PByte(@Data)^, Count * SizeOf(cardinal), 0);
+end;
+{$ENDIF}
+{$ENDIF}
 
-procedure MoveCardinalUnchecked(const Source, Dest; Count: cardinal);
+procedure MovePointerUnchecked(const Source, Dest; Count: cardinal);
+{$IFDEF CPUI386}
+assembler; nostackframe;
 asm
-  xchg esi, Source
-  xchg edi, Dest
-  rep  movsd
-  mov  esi, Source
-  mov  edi, Dest
+  push esi
+  test Count, Count
+  jz   @done
+@next:
+  mov  esi, dword ptr [Source]
+  mov  dword ptr [Dest], esi
+  add  Source, 4
+  add  Dest, 4
+  dec  Count
+  jne  @next
+@done:
+  pop  esi
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+assembler; nostackframe;
+asm
+  test Count, Count
+  jz   @done
+@next:
+  mov  r10, qword ptr [Source]
+  mov  qword ptr [Dest], r10
+  add  Source, 8
+  add  Dest, 8
+  dec  Count
+  jne  @next
+@done:
+end;
+{$ELSE}
+begin
+  System.Move(Source, PByte(@Dest)^, Count * SizeOf(Pointer));
+end;
+{$ENDIF}
+{$ENDIF}
 
 function MulDiv(A, B, C: cardinal): cardinal;
+{$IFDEF CPUI386}
+assembler; nostackframe;
 asm
   mul  B
   div  C
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+assembler; nostackframe;
+asm
+  mov eax, A
+  mul B
+  div C
+end;
+{$ELSE}
+begin
+  Result := (uint64(A) * B) div C;
+end;
+{$ENDIF}
+{$ENDIF}
 
-function MulDecDiv(A, B, C: cardinal): cardinal; 
+function MulDecDiv(A, B, C: cardinal): cardinal;
+{$IFDEF CPUI386}
+assembler; nostackframe;
 asm
   mul  B
   sub  eax, 1
   sbb  edx, 0
   div  C
 end;
+{$ELSE}
+{$IFDEF CPUX86_64}
+assembler; nostackframe;
+asm
+  mov eax, A
+  mul B
+  sub eax, 1
+  sbb edx, 0
+  div C
+end;
+{$ELSE}
+begin
+  Result := (uint64(A) * B - 1) div C;
+end;
+{$ENDIF}
+{$ENDIF}
 
 end.
