@@ -31,7 +31,7 @@
 
 unit Bee_Modeller;
 
-{$MODE OBJFPC}
+{$MODE DELPHI}
 {$POINTERMATH ON}
 {$I compiler.inc}
 
@@ -56,7 +56,8 @@ type
 
   // Modeller's node information...
 
-  TNode = record
+  { Avoid alignment padding in Win64 nodes. }
+  TNode = packed record
     Next, Up: PNode;                    // Next node of this or high level
     K: word;                            // Frequency of this symbol
     C: byte;                            // This symbol itself
@@ -79,6 +80,11 @@ type
     procedure FreshSolid;
     function UpdateModel(aSymbol: cardinal): cardinal;
 
+    { Access for the stand-alone coder and mixer. }
+    procedure PrepareSymbol(TablePartIndex: cardinal);
+    procedure LearnSymbol(aSymbol: cardinal);
+    procedure FinishByte;
+
   private
     procedure Add(aSymbol: cardinal);
     procedure CreateChild(Parent: PNode);
@@ -86,6 +92,8 @@ type
     procedure Cut_Tail(I, J: PPNode);
     function Tail(Node: PNode): PNode;
     procedure Account;
+    procedure PrepareStep;
+    procedure LearnStep;
     procedure Step;
 
   private
@@ -116,6 +124,9 @@ type
     Freq:  TFreq;                       // Symbol frequencyes...
     Part:  ^TTableCol;                  // Part of parameters Table...
     Table: TTable;                      // Parameters Table...
+
+  public
+    property Frequencies: TFreq read Freq;
   end;
 
 implementation
@@ -141,32 +152,32 @@ end;
 
 procedure TBaseCoder.SetTable(const T: TTableParameters);
 var
-  Index: integer;
+  I: integer;
   P: ^integer;
   aPart: ^TTableCol;
 begin
   P := @Table;
-  Index := 1;
+  I := 1;
   repeat
-    P^ := integer(T[Index]) + 1;
+    P^ := integer(T[I]) + 1;
     Inc(P);
-    Inc(Index);
-  until Index > SizeOf(T);
+    Inc(I);
+  until I > SizeOf(T);
 
   Table.Level := Table.Level - 1;
   Table.Level := Table.Level and $F;
 
-  for Index := 0 to 1 do
+  for I := 0 to 1 do
   begin
-    aPart := @Table.T[Index];
-    aPart^[0] := aPart^[0] + 256;
+    aPart := @Table.T[I];
+    aPart[0] := aPart[0] + 256;
     // Weight of first-encoutered deterministic symbol
-    aPart^[MaxSymbol + 2] := aPart^[MaxSymbol + 2] + 32;
+    aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32;
     // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
-    aPart^[MaxSymbol + 3] := Increment * aPart^[MaxSymbol + 3] shl 2;
-    aPart^[MaxSymbol + 4] := aPart^[MaxSymbol + 4] div 8;
+    aPart[MaxSymbol + 3] := Increment * aPart[MaxSymbol + 3] shl 2;
+    aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8;
     // Zero-valued parameter allowed...
-    aPart^[MaxSymbol + 5] := Round(IntPower(1.082, aPart^[MaxSymbol + 5]));
+    aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5]));
     // Lowest value of interval 
   end;
 end;
@@ -198,11 +209,11 @@ begin
   Root := CurrentFreeNode;
   Inc(CurrentFreeNode);
 
-  Root^.Next := nil;
-  Root^.Up := nil;
-  Root^.K  := Increment;
-  Root^.C  := 0;
-  Root^.A  := 1;
+  Root.Next := nil;
+  Root.Up := nil;
+  Root.K  := Increment;
+  Root.C  := 0;
+  Root.A  := 1;
 
   LowestPos := -integer(MaxCounter);
 end;
@@ -235,67 +246,67 @@ begin
   if Result = LastFreeNode then
   begin
     Result := Tear;
-    Link := Result^.Tear;
-    if Result^.Next <> nil then
+    Link := Result.Tear;
+    if Result.Next <> nil then
     begin
-      Result^.Next^.Tear := Link;
-      Link := Result^.Next;
+      Result.Next.Tear := Link;
+      Link := Result.Next;
     end;
-    if Result^.Up <> nil then
+    if Result.Up <> nil then
     begin
-      Result^.Up^.Tear := Link;
-      Link := Result^.Up;
+      Result.Up.Tear := Link;
+      Link := Result.Up;
     end;
     Tear := Link;
   end
   else
     Inc(CurrentFreeNode);
 
-  Result^.Next := Parent^.Up;
-  Parent^.Up := Result;
-  Result^.Up := nil;
-  Result^.K := Increment;
-  Address  := Parent^.A;
-  Result^.C := Heap[Address and MaxCounter].D;
-  Result^.A := Address + 1;
+  Result.Next := Parent.Up;
+  Parent.Up := Result;
+  Result.Up := nil;
+  Result.K := Increment;
+  Address  := Parent.A;
+  Result.C := Heap[Address and MaxCounter].D;
+  Result.A := Address + 1;
 end;
 
 procedure TBaseCoder.Cut;
 var
   P: PNode;
-  Cursor, EndCursor: PPNode;
+  I, J: PPNode;
   Bound: integer;
 begin
   if Cuts = nil then SetLength(Cuts, MaxCounter + 1);
 
-  Cursor := @Cuts[0];
-  EndCursor := Cursor;
-  Inc(EndCursor);
-  Cursor^ := Root;
+  I := @Cuts[0];
+  J := I;
+  Inc(J);
+  I^ := Root;
   Bound := SafeCounter * 3 div 4;
 
   repeat
-    P := Cursor^^.Up;
+    P := I^.Up;
     repeat
       Dec(Bound);
-      if P^.Up <> nil then
-        if P^.A > LowestPos then
+      if P.Up <> nil then
+        if P.A > LowestPos then
         begin
-          EndCursor^ := P;
-          Inc(EndCursor);
+          J^ := P;
+          Inc(J);
         end
         else
         begin
-          P^.Up^.Tear := Tear;
-          Tear := P^.Up;
-          P^.Up := nil;
+          P.Up.Tear := Tear;
+          Tear := P.Up;
+          P.Up := nil;
         end;
-      P := P^.Next;
+      P := P.Next;
     until P = nil;
-    Inc(Cursor);
-  until (Cursor = EndCursor) or (Bound < 0);
+    Inc(I);
+  until (I = J) or (Bound < 0);
 
-  if Cursor <> EndCursor then Cut_Tail(Cursor, EndCursor);
+  if I <> J then Cut_Tail(I, J);
 
   Counter := integer(SafeCounter * 3 div 4) - Bound + 1;
   ListCount := 0;
@@ -307,9 +318,9 @@ var
 begin
   P := Tear;
   repeat
-    I^^.Up^.Tear := P;
-    P := I^^.Up;
-    I^^.Up := nil;
+    I^.Up.Tear := P;
+    P := I^.Up;
+    I^.Up := nil;
     Inc(I);
   until I = J;
   Tear := P;
@@ -326,56 +337,56 @@ begin
   IncreaseIndex := Q;
   repeat
     P := List[I];
-    if P^.Up <> nil then
+    if P.Up <> nil then
     begin
-      P := P^.Up;
+      P := P.Up;
       if IncreaseIndex = 0 then IncreaseIndex := I;
-      if P^.Next <> nil then
+      if P.Next <> nil then
       begin
         // Undetermined context ...
-        K := P^.K * Part^[MaxSymbol + 2] shr 5;
+        K := P.K * Part[MaxSymbol + 2] shr 5;
         Stored := P;
-        P := P^.Next;
+        P := P.Next;
         J := 1;
         repeat
           Inc(J);
-          Inc(K, P^.K);
-          P := P^.Next;
+          Inc(K, P.K);
+          P := P.Next;
         until P = nil;
-        Inc(Q, Part^[J]);
+        Inc(Q, Part[J]);
         // Account:
         K := R div (K + Q);
         P := Stored;
-        J := K * P^.K * Part^[MaxSymbol + 2] shr 5;
+        J := K * P.K * Part[MaxSymbol + 2] shr 5;
         Dec(R, J);
-        Inc(Freq[P^.C], J);
-        P := P^.Next;
+        Inc(Freq[P.C], J);
+        P := P.Next;
         repeat
-          J := K * P^.K;
+          J := K * P.K;
           Dec(R, J);
-          Inc(Freq[P^.C], J);
-          P := P^.Next;
+          Inc(Freq[P.C], J);
+          P := P.Next;
         until P = nil;
       end
       else
       begin
         // Determined context ...
-        K := P^.K * Part^[1] div Increment + 256;
+        K := P.K * Part[1] div Increment + 256;
         K := (R div K) shl 8;
-        Inc(Freq[P^.C], R - K);
+        Inc(Freq[P.C], R - K);
         R := K;
       end;
     end
-    else if P^.A > LowestPos then
+    else if P.A > LowestPos then
     begin
       // Determined context, encountered at first time ...
       CreateChild(P);
-      K := R div Part^[0] shl 8;
-      Inc(Freq[P^.Up^.C], R - K);
+      K := R div Part[0] shl 8;
+      Inc(Freq[P.Up.C], R - K);
       R := K;
     end;
     Inc(I);
-  until (I = ListCount) or (R <= Part^[MaxSymbol + 5]);
+  until (I = ListCount) or (R <= Part[MaxSymbol + 5]);
   ListCount := I;
 end;
 
@@ -384,29 +395,29 @@ var
   P: PNode;
   C: byte;
 begin
-  Node^.A := Pos;
-  Result := Node^.Up;
+  Node.A := Pos;
+  Result := Node.Up;
 
   if Result = nil then
     CreateChild(Node)
   else
   begin
     C := Symbol;
-    if Result^.C <> C then
+    if Result.C <> C then
     begin
       repeat
         P := Result;
-        Result := Result^.Next;
+        Result := Result.Next;
         if Result = nil then
         begin
           CreateChild(Node);
           Break;
         end
-        else if Result^.C = C then
+        else if Result.C = C then
         begin
-          P^.Next  := Result^.Next;
-          Result^.Next := Node^.Up;
-          Node^.Up := Result;
+          P.Next  := Result.Next;
+          Result.Next := Node.Up;
+          Node.Up := Result;
           Break;
         end;
       until False;
@@ -414,10 +425,7 @@ begin
   end;
 end;
 
-procedure TBaseCoder.Step;
-var
-  Index, J: cardinal;
-  P: PNode;
+procedure TBaseCoder.PrepareStep;
 begin
   ClearCardinal(Freq[0], MaxSymbol + 1);
   R := MaxFreq - MaxSymbol - 1;
@@ -427,42 +435,67 @@ begin
   // Update aSymbol...
   AddCardinal(Freq[0], MaxSymbol + 1, R shr BitChain + 1);
 
-  Symbol := FCodec.UpdateSymbol(Freq, Symbol);
+end;
+
+procedure TBaseCoder.LearnStep;
+var
+  I, J: cardinal;
+  P: PNode;
+begin
   Add(Symbol);
 
   if ListCount > 0 then
   begin
     // Update frequencies...
-    Index := 0;
+    I := 0;
     repeat
-      P := List[Index];
-      if Index = IncreaseIndex then
-        Inc(P^.K, Increment)             // Special case...
+      P := List[I];
+      if I = IncreaseIndex then
+        Inc(P.K, Increment)             // Special case...
       else
-        Inc(P^.K, Part^[MaxSymbol + 4]);  // General case...
+        Inc(P.K, Part[MaxSymbol + 4]);  // General case...
 
-      if P^.K > Part^[MaxSymbol + 3] then
+      if P.K > Part[MaxSymbol + 3] then
         repeat
-          P^.K := P^.K shr 1;
-          P := P^.Next;
+          P.K := P.K shr 1;
+          P := P.Next;
         until P = nil;
-      Inc(Index);
-    until Index > IncreaseIndex;
+      Inc(I);
+    until I > IncreaseIndex;
 
     // Update Tree:
-    Index := 0;
-    J := Index;
+    I := 0;
+    J := I;
     repeat
-      P := Tail(List[Index]);
+      P := Tail(List[I]);
       if P <> nil then
       begin
         List[J] := P;
         Inc(J);
       end;
-      Inc(Index);
-    until Index = ListCount;
+      Inc(I);
+    until I = ListCount;
     ListCount := J;
   end;
+end;
+
+procedure TBaseCoder.Step;
+begin
+  PrepareStep;
+  Symbol := FCodec.UpdateSymbol(Freq, Symbol);
+  LearnStep;
+end;
+
+procedure TBaseCoder.PrepareSymbol(TablePartIndex: cardinal);
+begin
+  Part := @Table.T[Min(TablePartIndex, TableCols - 1)];
+  PrepareStep;
+end;
+
+procedure TBaseCoder.LearnSymbol(aSymbol: cardinal);
+begin
+  Symbol := aSymbol;
+  LearnStep;
 end;
 
 function TBaseCoder.UpdateModel(aSymbol: cardinal): cardinal;
@@ -477,6 +510,11 @@ begin
   Step;
   Inc(Result, Symbol);
 
+  FinishByte;
+end;
+
+procedure TBaseCoder.FinishByte;
+begin
   // Reduce tree...
   if SafeCounter < Counter then Cut;
 
