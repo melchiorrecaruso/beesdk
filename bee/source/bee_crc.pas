@@ -1,6 +1,6 @@
 {
   Copyright (c) 1998 Dmitry Auzhin;
-            (c) 1999-2007 Andrew Filinsky.
+            (c) 1999-2026 Andrew Filinsky.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,11 +25,13 @@
   Modifyed:
 
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky.
+  v0.7.9 build 0601 - 2026.09.12 by Melchiorre Caruso.
+
 }
 
 unit Bee_Crc;
 
-{$I compiler.inc}
+{$MODE OBJFPC}{$H+}
 
 interface
 
