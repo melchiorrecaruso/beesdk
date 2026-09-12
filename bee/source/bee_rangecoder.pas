@@ -1,6 +1,6 @@
 {
   Copyright (c) 2003 Evgeny Shelwien;
-  Copyright (c) 2003-2007 Andrew Filinsky
+  Copyright (c) 2003-2026 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -40,11 +40,13 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky.
+  v0.7.9 build 0601 - 2007.12.01 by Melchiorre Caruso.
+
 }
 
 unit Bee_RangeCoder;
 
-{$I compiler.inc}
+{$MODE OBJFPC}{$H+}
 
 interface
 
@@ -97,9 +99,11 @@ end;
 procedure TRangeCoder.StartEncode;
 begin
   Range := $FFFFFFFF;
-  Low := 0;
+  Low   := 0;
+  Code  := 0;
   FFNum := 0;
   Carry := 0;
+  Cache := 0;
 end;
 
 procedure TRangeCoder.StartDecode;
