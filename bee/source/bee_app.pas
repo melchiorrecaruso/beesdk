@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2007 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2026 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,11 +30,13 @@
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
   v0.7.9 build 0551 - 2007.12.18 by Melchiorre Caruso.
+  v0.7.9 build 0601 - 2026.09.12 by Melchiorre Caruso.
 }
 
 unit Bee_App;
 
-{$I compiler.inc}
+{$MODE OBJFPC}{$H+}
+{$DEFINE CONSOLEAPPLICATION}
 
 interface
 
@@ -193,7 +195,7 @@ end;
 
 procedure TBeeApp.DisplayUsage;
 begin
-                                       AppInterface^.OnDisplay.Data.Msg := (Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
+                                        AppInterface^.OnDisplay.Data.Msg := (Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
   Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := (Cr + '  Commands:' + Cr);
   Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    a   Add files to archive');
   Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    d   Delete files from archive');
@@ -482,7 +484,7 @@ begin
   end;
 end;
 
-procedure TBeeApp.ProcessFilesToExtract;
+procedure TBeeApp.ProcessFilesToExtract(Headers: THeaders);
 var
   I: integer;
 begin
@@ -502,7 +504,7 @@ end;
 
 // OvewWrite file processing
 
-procedure TBeeApp.ProcessFilesToOverWrite;
+procedure TBeeApp.ProcessFilesToOverWrite(Headers: THeaders);
 begin
   if (uOption = False) and (fOption = False) then
     ProcessFilesToOverWriteDefault(Headers)
@@ -676,7 +678,7 @@ end;
 
 // Sequences processing
 
-procedure TBeeApp.ProcessFilesToFresh;
+procedure TBeeApp.ProcessFilesToFresh(Headers: THeaders);
 var
   I, J, BackTear, NextTear: integer;
 begin
@@ -711,7 +713,7 @@ begin
   Inc(GeneralSize, Headers.GetPackedSize(toCopy));
 end;
 
-procedure TBeeApp.ProcessFilesToDelete;
+procedure TBeeApp.ProcessFilesToDelete(Headers: THeaders);
 var
   I, J, BackTear, NextTear: integer;
 begin
@@ -789,9 +791,11 @@ begin
         if not Terminated then
         begin
           if THeader(Headers.Items[J]).Action = toSwap then
-            Result := Decoder.DecodeStrm(Headers.Items[J], pmNorm, SwapFile)
+            Result := Decoder.DecodeStrm(THeader(Headers.Items[J]), pmNorm,
+              SwapFile)
           else
-            Result := Decoder.DecodeStrm(Headers.Items[J], pmSkip, SwapFile);
+            Result := Decoder.DecodeStrm(THeader(Headers.Items[J]), pmSkip,
+              SwapFile);
         end else
           Result := True;
 
@@ -806,7 +810,7 @@ begin
   end;
 end;
 
-procedure TBeeApp.ProcessFilesDeleted;
+procedure TBeeApp.ProcessFilesDeleted(Headers: THeaders);
 var
   I: integer;
 begin
@@ -848,7 +852,8 @@ begin
     end;
 end;
 
-procedure TBeeApp.ProcessFilesToDecode;
+procedure TBeeApp.ProcessFilesToDecode(Headers: THeaders;
+  aAction: THeaderAction);
 var
   I, J: integer;
   iDictionary, iTable, iTear: integer;
@@ -964,10 +969,10 @@ begin
           if not Terminated then
           begin
             case THeader(Headers.Items[I]).Action of
-              toCopy:   Encoder.CopyStrm  (Headers.Items[I], emNorm, ArcFile);
-              toSwap:   Encoder.EncodeStrm(Headers.Items[I], emNorm, SwapFile);
-              toFresh:  Encoder.EncodeFile(Headers.Items[I], emNorm);
-              toUpdate: Encoder.EncodeFile(Headers.Items[I], emNorm);
+              toCopy:   Encoder.CopyStrm  (THeader(Headers.Items[I]), emNorm, ArcFile);
+              toSwap:   Encoder.EncodeStrm(THeader(Headers.Items[I]), emNorm, SwapFile);
+              toFresh:  Encoder.EncodeFile(THeader(Headers.Items[I]), emNorm);
+              toUpdate: Encoder.EncodeFile(THeader(Headers.Items[I]), emNorm);
             end;
           end;
         Encoder.Destroy;
@@ -1066,10 +1071,10 @@ begin
         if Terminated = False then
         begin
           case THeader(Headers.Items[I]).Action of
-            toExtract: Return := Decoder.DecodeFile(Headers.Items[I], pmNorm);
-            toTest:    Return := Decoder.DecodeFile(Headers.Items[I], pmTest);
-            toSkip:    Return := Decoder.DecodeFile(Headers.Items[I], pmSkip);
-            toQuit:    Return := Decoder.Decodefile(Headers.Items[I], pmQuit);
+            toExtract: Return := Decoder.DecodeFile(THeader(Headers.Items[I]), pmNorm);
+            toTest: Return := Decoder.DecodeFile   (THeader(Headers.Items[I]), pmTest);
+            toSkip: Return := Decoder.DecodeFile   (THeader(Headers.Items[I]), pmSkip);
+            toQuit: Return := Decoder.Decodefile   (THeader(Headers.Items[I]), pmQuit);
           end;
           if Return = False then Break;
         end;
@@ -1151,8 +1156,10 @@ begin
           if not Terminated then
           begin
             case THeader(Headers.Items[I]).Action of
-              toCopy:   Encoder.CopyStrm(Headers.Items[I], emNorm, ArcFile);
-              toSwap:   Encoder.EncodeStrm(Headers.Items[I], emNorm, SwapFile);
+              toCopy: Encoder.CopyStrm(THeader(Headers.Items[I]), emNorm,
+                        ArcFile);
+              toSwap: Encoder.EncodeStrm(THeader(Headers.Items[I]), emNorm,
+                        SwapFile);
               toDelete: begin
                           AppInterface^.OnDisplay.Data.Msg := (msgDeleting + THeader(Headers.Items[I]).Name);
                           Sync(AppInterface^.OnDisplay.Method);
@@ -1283,7 +1290,7 @@ begin
       for I := 0 to Headers.Count - 1 do
         if not Terminated then
         begin
-          Encoder.CopyStrm(Headers.Items[I], emNorm, ArcFile);
+          Encoder.CopyStrm(THeader(Headers.Items[I]), emNorm, ArcFile);
         end;
       Encoder.Destroy;
       Headers.WriteItems(TmpFile);
@@ -1365,7 +1372,7 @@ begin
       for I := 0 to Info.Count - 1 do
         if THeader(Info.Items[I]).Action = toList then
         begin
-          P := Info.Items[I];
+          P := THeader(Info.Items[I]);
 
           Version := Info.GetBack(I, foVersion);
           if (Version > -1) and (Version < Info.Count) then
