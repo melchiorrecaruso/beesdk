@@ -28,11 +28,13 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
   v0.7.9 build 0515 - 2007.12.02 by Melchiorre Caruso.
+  v0.7.9 build 0061 - 2026.09.12 by Melchiorre Caruso.
+
 }
 
 unit Bee_Common;
 
-{$I compiler.inc}
+{$MODE OBJFPC}{$H+}
 
 interface
 
