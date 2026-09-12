@@ -1,5 +1,6 @@
 {
-  Copyright (c) 2003-2007 Andrew Filinsky
+  Copyright (c) 2003-2026 Andrew Filinsky and Melchiorre Caruso
+
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,13 +26,13 @@
   v0.7.9 build 0383 - 2007.06.27 by Andrew Filinsky;
 
   v0.7.9 build 0515 - 2007.12.02 by Melchiorre Caruso.
+  v0.7.9 build 0601 - 2026.09.12 by Melchiorre Caruso.
 }
 
 unit Bee_Assembler;
 
 {$MODE OBJFPC}
 {$ASMMODE INTEL}
-{$I compiler.inc}
 
 interface
 
