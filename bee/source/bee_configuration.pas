@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2007 Andrew Filinsky
+  Copyright (c) 2003-2026 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,11 +25,12 @@
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
   
   v0.7.9 build 0312 - 2007.02.16 by Andrew Filinsky.
+  v0.7.9 build 0061 - 2026.09.12 by Melchiorre Caruso.
 }
 
 unit Bee_Configuration;
 
-{$I compiler.inc}
+{$MODE OBJFPC}{$H+}
 
 interface
 
