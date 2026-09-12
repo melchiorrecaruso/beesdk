@@ -35,16 +35,17 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
   v0.7.9 build 0551 - 2007.12.15 by Melchiorre Caruso.
+  v0.7.9 build 0601 - 2026.09.12 by Melchiorre Caruso.
 }
 
 program Bee;
 
-{$I compiler.inc}
+{$MODE OBJFPC}{$H+}
 
 uses
-  {$IFDEF FPC} {$IFDEF UNIX}
+  {$IFDEF UNIX}
   cThreads,
-  {$ENDIF} {$ENDIF}
+  {$ENDIF}
   Classes,
   SysUtils,
 
@@ -84,17 +85,17 @@ type
   var
     I: integer;
   begin
-    AppInterface.OnFatalError.Method := OnFatalError;
-    AppInterface.OnOverWrite.Method := OnOverWrite;
-    AppInterface.OnWarning.Method := OnWarning;
-    AppInterface.OnDisplay.Method := OnDisplay;
-    AppInterface.OnRequest.Method := OnRequest;
-    AppInterface.OnRename.Method := OnRename;
-    AppInterface.OnClear.Method := OnClear;
-    AppInterface.OnError.Method := OnError;
-    AppInterface.OnList.Method := OnList;
-    AppInterface.OnTick.Method := OnTick;
-    AppInterface.OnKey.Method := OnKey;
+    AppInterface.OnFatalError.Method := @OnFatalError;
+    AppInterface.OnOverWrite.Method := @OnOverWrite;
+    AppInterface.OnWarning.Method := @OnWarning;
+    AppInterface.OnDisplay.Method := @OnDisplay;
+    AppInterface.OnRequest.Method := @OnRequest;
+    AppInterface.OnRename.Method := @OnRename;
+    AppInterface.OnClear.Method := @OnClear;
+    AppInterface.OnError.Method := @OnError;
+    AppInterface.OnList.Method := @OnList;
+    AppInterface.OnTick.Method := @OnTick;
+    AppInterface.OnKey.Method := @OnKey;
 
     SetLength(AppKey, 0);
     AppParams := TStringList.Create;
