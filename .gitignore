@@ -1,0 +1,35 @@
+# Build directories and copied test corpora
+/build/
+/**/build/
+/**/build32/
+/**/build64/
+
+# Free Pascal compiler and linker output
+*.o
+*.ppu
+*.a
+*.exe
+*.dll
+*.so
+*.dylib
+*.compiled
+*.map
+*.dbg
+*.or
+link.res
+ppas.bat
+
+# Lazarus local session and backup files
+*.lps
+*.bak
+*.tmp
+*~
+
+# BeeOpt generated and recovery files
+*.state
+*.state.Err
+*.table
+*.table.Err
+
+# Local modeller tests
+/bee/tests/
