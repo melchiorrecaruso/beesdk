@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2007 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2026 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,11 +29,13 @@
   v0.7.9 build 0360 - 2006.12.28 by Melchiorre Caruso;
   
   v0.7.9 build 0487 - 2007.11.17 by Melchiorre Caruso;
+  v0.7.9 build 0601 - 2026.09.12 by Melchiorre Caruso;
+
 }
 
 unit Bee_BlowFish;
 
-{$I compiler.inc}
+{$MODE OBJFPC}{$H+}
 
 interface
 
@@ -282,7 +284,7 @@ begin
   fStarted := False;
 end;
 
-procedure TBlowFish.Initialize;
+procedure TBlowFish.Initialize(const Key: string);
 var
   i, j, k: integer;
   Data, Datal, Datar: cardinal;
@@ -362,7 +364,7 @@ begin
   fStarted := False;
 end;
 
-function TBlowFish.F;
+function TBlowFish.F(Input: cardinal): cardinal;
 var
   PInput: ^LArray;
 begin
@@ -437,7 +439,7 @@ begin
   pXr^ := Xr;
 end;
 
-procedure TBlowFish.Start;
+procedure TBlowFish.Start(const Key: string);
 begin
   if Length(Key) < MinKeyLength then
   begin
