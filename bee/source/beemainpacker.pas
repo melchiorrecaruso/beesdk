@@ -31,7 +31,7 @@
   v0.7.9 build 0602 - 2026.10.25 by Melchiorre Caruso.
 }
 
-unit Bee_MainPacker;
+unit BeeMainPacker;
 
 {$MODE OBJFPC}{$H+}
 {$R-}{$Q-}{$S-}{$I-}
@@ -41,11 +41,12 @@ interface
 uses
   Classes,      // TStream
 
-  Bee_App,
-  Bee_Codec,    // TSecondaryEncoder, TSecondaryDecoder...
-  Bee_Headers,
-  Bee_Modeller, // TBaseCoder...
-  Bee_Interface;
+  BeeApp,
+  BeeCodec,     // TSecondaryEncoder, TSecondaryDecoder...
+  BeeHeaders,
+  BeeModeller,  // TBaseCoder...
+  BeeMixer,     // TBeeMixer
+  BeeInterface;
 
 // Extracting Modes:
 //   pmNorm  Extract files
@@ -76,11 +77,16 @@ type
   private
     function GetKey(Header: THeader): string;
     procedure EncodeData(SrcFile: TStream; Header: THeader);
+    procedure EncodeByte(Value: byte); inline;
+    procedure SyncMixer(Header: THeader);
   private
     App: TBeeApp;
     Stream: TStream;
     PPM: TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
+    Mixer: TBeeMixer;     // created with the first member coded by it
+    UseMixer: boolean;    // the current member is coded by the mixer
+    Dictionary: cardinal; // dictionary level of the model
   end;
 
 // Decoder ...
@@ -95,11 +101,16 @@ type
   private
     function GetKey(Header: THeader): string;
     procedure DecodeData(Header: THeader; DstFile: TStream; var Crc: cardinal);
+    function DecodeByte: byte; inline;
+    procedure SyncMixer(Header: THeader);
   private
     App: TBeeApp;
     Stream: TStream;
     PPM: TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
+    Mixer: TBeeMixer;     // created with the first member coded by it
+    UseMixer: boolean;    // the current member is coded by the mixer
+    Dictionary: cardinal; // dictionary level of the model
   end;
 
 implementation
@@ -107,11 +118,11 @@ implementation
 uses
   SysUtils,     // FileSetAttr...
 
-  Bee_Crc,      // UpdCrc32...
-  Bee_Files,    // TBufferizedReader
-  Bee_Common,   // Diag...
-  Bee_BlowFish,
-  Bee_Exe_Filter;
+  BeeCrc,       // UpdCrc32...
+  BeeFiles,     // TBufferizedReader
+  BeeCommon,    // Diag...
+  BeeBlowFish,
+  BeeExeFilter;
 
 /// TEncoder
 
@@ -125,8 +136,32 @@ end;
 
 destructor TEncoder.Destroy;
 begin
+  Mixer.Free;
   PPM.Free;
   SecondaryCodec.Free;
+end;
+
+// Keeps the mixer in step with the PPM model: the same dictionary level and
+// a restart wherever the model restarts. Encoder and decoder call it at the
+// same members, so their mixers stay identical.
+
+procedure TEncoder.SyncMixer(Header: THeader);
+begin
+  if foDictionary in Header.Flags then
+    Dictionary := Header.Dictionary;
+  if Mixer <> nil then
+    if foDictionary in Header.Flags then
+      Mixer.SetDictionaryLevel(Dictionary)
+    else
+      if foTear in Header.Flags then Mixer.Reset;
+end;
+
+procedure TEncoder.EncodeByte(Value: byte);
+begin
+  if UseMixer then
+    Mixer.EncodeByte(Value, SecondaryCodec)
+  else
+    PPM.UpdateModel(Value);
 end;
 
 function TEncoder.GetKey(Header: THeader): string;
@@ -146,7 +181,9 @@ begin
 end;
 
 // Encodes Header.Size bytes of SrcFile. With the exe filter enabled an
-// executable is coded as its filtered image, preceded by its length.
+// executable is coded as its filtered image, preceded by its length; with
+// the mixer enabled every byte is coded by the mixer instead of the plain
+// PPM model.
 
 procedure TEncoder.EncodeData(SrcFile: TStream; Header: THeader);
 var
@@ -162,12 +199,23 @@ begin
   if App.ExeFilter then
     Load := BeeExeLoad(SrcFile, Header.Size, Header.Crc, Buffer);
 
+  UseMixer := App.Mixer;
+  if UseMixer then
+  begin
+    Include(Header.Flags, foMixer);
+    if Mixer = nil then
+    begin
+      Mixer := TBeeMixer.Create(PPM);
+      Mixer.SetDictionaryLevel(Dictionary);
+    end;
+  end;
+
   SecondaryCodec.Start;
   if Load = elFiltered then
   begin
     Include(Header.Flags, foFilter);
     Len := Length(Buffer);
-    for I := 0 to 3 do PPM.UpdateModel(byte(Len shr (I * 8)));
+    for I := 0 to 3 do EncodeByte(byte(Len shr (I * 8)));
   end;
 
   Stopped := False;
@@ -179,7 +227,7 @@ begin
       if Stopped then Break;
     end;
     if I < Header.Size then Inc(App.RemainSize);
-    PPM.UpdateModel(Buffer[I]);
+    EncodeByte(Buffer[I]);
   end;
 
   if (Load = elStream) and (not Stopped) then
@@ -192,7 +240,7 @@ begin
       Inc(App.RemainSize);
       SrcFile.Read(Symbol, 1);
       UpdCrc32(Header.Crc, Symbol);
-      PPM.UpdateModel(Symbol);
+      EncodeByte(Symbol);
     end;
   SecondaryCodec.Flush;
 end;
@@ -213,7 +261,9 @@ begin
     PPM.FreshFlexible
   else
     PPM.FreshSolid;
+  SyncMixer(Header);
   Exclude(Header.Flags, foFilter);
+  Exclude(Header.Flags, foMixer);
 
   Header.StartPos := Stream.Seek(0, 1); // stream flush
   Header.Crc := cardinal(-1);
@@ -273,6 +323,7 @@ begin
     Include(Header.Flags, foTear);
     Include(Header.Flags, foMoved);
     Exclude(Header.Flags, foFilter);
+    Exclude(Header.Flags, foMixer);
     Stream.Size := Header.StartPos;
 
     Dec(App.RemainSize, Header.Size);
@@ -298,7 +349,9 @@ begin
     PPM.FreshFlexible
   else
     PPM.FreshSolid;
+  SyncMixer(Header);
   Exclude(Header.Flags, foFilter);
+  Exclude(Header.Flags, foMixer);
 
   SrcPosition := 0;
   SrcFile := SrcStrm;
@@ -356,6 +409,7 @@ begin
     Include(Header.Flags, foTear);
     Include(Header.Flags, foMoved);
     Exclude(Header.Flags, foFilter);
+    Exclude(Header.Flags, foMixer);
     Stream.Size := Header.StartPos;
     Header.StartPos := SrcPosition;
 
@@ -381,6 +435,7 @@ begin
     PPM.FreshFlexible
   else
     PPM.FreshSolid;
+  SyncMixer(Header);
 
   SrcFile := SrcStrm;
 
@@ -429,8 +484,32 @@ end;
 
 destructor TDecoder.Destroy;
 begin
+  Mixer.Free;
   PPM.Free;
   SecondaryCodec.Free;
+end;
+
+// Keeps the mixer in step with the PPM model: the same dictionary level and
+// a restart wherever the model restarts. Encoder and decoder call it at the
+// same members, so their mixers stay identical.
+
+procedure TDecoder.SyncMixer(Header: THeader);
+begin
+  if foDictionary in Header.Flags then
+    Dictionary := Header.Dictionary;
+  if Mixer <> nil then
+    if foDictionary in Header.Flags then
+      Mixer.SetDictionaryLevel(Dictionary)
+    else
+      if foTear in Header.Flags then Mixer.Reset;
+end;
+
+function TDecoder.DecodeByte: byte;
+begin
+  if UseMixer then
+    Result := Mixer.DecodeByte(SecondaryCodec)
+  else
+    Result := PPM.UpdateModel(0);
 end;
 
 function TDecoder.GetKey(Header: THeader): string;
@@ -455,6 +534,13 @@ var
   I: integer;
   Stopped: boolean;
 begin
+  UseMixer := foMixer in Header.Flags;
+  if UseMixer and (Mixer = nil) then
+  begin
+    Mixer := TBeeMixer.Create(PPM);
+    Mixer.SetDictionaryLevel(Dictionary);
+  end;
+
   if not (foFilter in Header.Flags) then
   begin
     for I := 1 to Header.Size do
@@ -464,7 +550,7 @@ begin
         if App.Tick then Break;
       end;
       Inc(App.RemainSize);
-      Symbol := PPM.UpdateModel(0);
+      Symbol := DecodeByte;
       UpdCrc32(Crc, Symbol);
       DstFile.Write(Symbol, 1);
     end;
@@ -472,7 +558,7 @@ begin
   end;
 
   Len := 0;
-  for I := 0 to 3 do Len := Len or (cardinal(PPM.UpdateModel(0)) shl (I * 8));
+  for I := 0 to 3 do Len := Len or (cardinal(DecodeByte) shl (I * 8));
   if (Header.Size <= 0) or (Len > BeeExeFilteredSizeLimit(Header.Size)) then
   begin
     Crc := not Header.Crc;
@@ -489,7 +575,7 @@ begin
       if Stopped then Break;
     end;
     if I < Header.Size then Inc(App.RemainSize);
-    Buffer[I] := PPM.UpdateModel(0);
+    Buffer[I] := DecodeByte;
   end;
   if Stopped then Exit;
 
@@ -518,6 +604,7 @@ begin
     PPM.FreshFlexible
   else
     PPM.FreshSolid;
+  SyncMixer(Header);
 
   case Mode of
     pmSkip: App.AppInterface^.OnDisplay.Data.Msg := msgSkipping   + Header.Name;
@@ -612,6 +699,7 @@ begin
     PPM.FreshFlexible
   else
     PPM.FreshSolid;
+  SyncMixer(Header);
 
   case Mode of
     pmSkip: App.AppInterface^.OnDisplay.Data.Msg := msgSkipping + Header.Name;

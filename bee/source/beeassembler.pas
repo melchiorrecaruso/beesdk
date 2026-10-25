@@ -29,7 +29,7 @@
   v0.7.9 build 0601 - 2026.09.12 by Melchiorre Caruso.
 }
 
-unit Bee_Assembler;
+unit BeeAssembler;
 
 {$MODE OBJFPC}
 {$ASMMODE INTEL}

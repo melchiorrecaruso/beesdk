@@ -31,7 +31,7 @@
   v0.7.9 build 0602 - 2026.10.25 by Melchiorre Caruso.
 }
 
-unit Bee_Headers;
+unit BeeHeaders;
 
 {$MODE OBJFPC}{$H+}
 {$R-}{$Q-}{$S-}{$I-}
@@ -45,7 +45,7 @@ uses
   Classes,  // TList
   SysUtils, // TSearchRec
 
-  Bee_Configuration;
+  BeeConfiguration;
 
 // Id marker
 
@@ -57,13 +57,15 @@ const
 type
   THeaderFlag =
     (foVersion, foMethod, foDictionary, foTable, foTear, foMoved, foLast,
-    foPassword, foFilter, fo10Unused, fo11Unused, fo12Unused, fo13Unused, fo14Unused,
+    foPassword, foFilter, foMixer, fo11Unused, fo12Unused, fo13Unused, fo14Unused,
     fo15Unused, fo16Unused, fo17Unused, fo18Unused, fo19Unused, fo20Unused, fo21Unused,
     fo22Unused, fo23Unused, fo24Unused, fo25Unused, fo26Unused, fo27Unused, fo28Unused,
     fo29Unused, fo30Unused, fo31Unused, fo32Unused);
 
-// foFilter: the member is coded as a preprocessed image (Bee_Exe_Filter);
+// foFilter: the member is coded as a preprocessed image (BeeExeFilter);
 // the image identifies its filter and format version.
+// foMixer: the member is coded by the context mixer (BeeMixer) instead of
+// the plain PPM model.
 
 type
   THeaderFlags = set of THeaderFlag;
@@ -179,9 +181,9 @@ implementation
 
 uses
   LazFileUtils,
-  Bee_Files,
-  Bee_Common,
-  Bee_Exe_Filter;
+  BeeFiles,
+  BeeCommon,
+  BeeExeFilter;
 
 function TableExtension(const FileName: string): string;
 begin
@@ -294,7 +296,7 @@ begin
   SetLength(Name, J);
   if Stream.Read(Name[1], J) <> J then Fail;
 
-  Name := Bee_Common.DoDirSeparators(Name);
+  Name := BeeCommon.DoDirSeparators(Name);
 end;
 
 destructor THeader.Destroy;
@@ -341,7 +343,7 @@ end;
 
 function THeader.GetName: string;
 begin
-  Result := Option + Bee_Common.DeleteFileDrive(Name);
+  Result := Option + BeeCommon.DeleteFileDrive(Name);
 end;
 
 /// Sort header list
@@ -1021,12 +1023,12 @@ begin
 
   if (Length(Mask) > 0) and (Mask[Length(Mask)] = PathDelim) then
   begin
-    Mask := Bee_Common.IncludeTrailingBackSlash(Mask) + '*';
+    Mask := BeeCommon.IncludeTrailingBackSlash(Mask) + '*';
     Recursive := True;
   end else
-    if Bee_Common.DirectoryExists(Mask) then
+    if BeeCommon.DirectoryExists(Mask) then
     begin
-      Mask := Bee_Common.IncludeTrailingBackSlash(Mask) + '*';
+      Mask := BeeCommon.IncludeTrailingBackSlash(Mask) + '*';
       Recursive := True;
     end;
 
@@ -1040,7 +1042,7 @@ begin
       if (FileNameMatch(RecName, Mask)) then
         if (FileNameMatch(RecName, xOption) = False) then
         begin
-          J := SortHeaders.SearchItem(cdOption + Bee_Common.DeleteFileDrive(RecName));
+          J := SortHeaders.SearchItem(cdOption + BeeCommon.DeleteFileDrive(RecName));
           if not (fOption xor uOption) then
           begin
             if (J = nil) then
@@ -1074,7 +1076,7 @@ begin
     begin
       if Recursive and (Rec.Name <> '.') and (Rec.Name <> '..') then
       begin
-        ScanFileSystem(SortHeaders, Bee_Common.IncludeTrailingBackSlash(RecName) +
+        ScanFileSystem(SortHeaders, BeeCommon.IncludeTrailingBackSlash(RecName) +
           ExtractFileName(Mask) + '!', Size);
       end;
     end;

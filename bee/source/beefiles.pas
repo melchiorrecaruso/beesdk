@@ -32,7 +32,7 @@
 
 }
 
-unit Bee_Files;
+unit BeeFiles;
 
 {$MODE OBJFPC}{$H+}
 
@@ -42,7 +42,7 @@ uses
   Classes,
   SysUtils,
 
-  Bee_BlowFish;
+  BeeBlowFish;
 
 type
   TFileReader = class(TFileStream)
@@ -94,8 +94,8 @@ type
 implementation
 
 uses
-  Bee_Common,
-  Bee_Assembler; // Low-level routines ...
+  BeeCommon,
+  BeeAssembler;  // Low-level routines ...
 
 // class TFileReader...
 
@@ -103,7 +103,7 @@ constructor TFileReader.Create(const AFileName: string; Mode: word);
 begin
   if Mode = fmCreate then
   begin
-    Bee_Common.ForceDirectories(ExtractFilePath(AFileName));
+    BeeCommon.ForceDirectories(ExtractFilePath(AFileName));
   end;
   BlowFish := TBlowFish.Create;
   Readed := 0;
@@ -168,7 +168,7 @@ constructor TFileWriter.Create(const AFileName: string; Mode: word);
 begin
   if Mode = fmCreate then
   begin
-    Bee_Common.ForceDirectories(ExtractFilePath(AFileName));
+    BeeCommon.ForceDirectories(ExtractFilePath(AFileName));
   end;
   BlowFish := TBlowFish.Create;
   BufferSize := 0;

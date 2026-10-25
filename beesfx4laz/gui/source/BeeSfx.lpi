@@ -32,8 +32,8 @@
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="..\..\..\Bee\source\bee_common.pas"/>
-        <UnitName Value="Bee_Common"/>
+        <Filename Value="..\..\..\Bee\source\beecommon.pas"/>
+        <UnitName Value="BeeCommon"/>
         <CursorPos X="41" Y="200"/>
         <TopLine Value="182"/>
         <UsageCount Value="10"/>

@@ -338,8 +338,8 @@
         <UsageCount Value="200"/>
       </Unit32>
       <Unit33>
-        <Filename Value="..\..\Bee\source\bee_modeller.pas"/>
-        <UnitName Value="Bee_Modeller"/>
+        <Filename Value="..\..\Bee\source\beemodeller.pas"/>
+        <UnitName Value="BeeModeller"/>
         <CursorPos X="29" Y="373"/>
         <TopLine Value="458"/>
         <UsageCount Value="10"/>
@@ -407,8 +407,8 @@
         <UsageCount Value="8"/>
       </Unit41>
       <Unit42>
-        <Filename Value="..\..\bee\source\bee_app.pas"/>
-        <UnitName Value="Bee_App"/>
+        <Filename Value="..\..\bee\source\beeapp.pas"/>
+        <UnitName Value="BeeApp"/>
         <CursorPos X="40" Y="151"/>
         <TopLine Value="146"/>
         <UsageCount Value="11"/>
@@ -421,8 +421,8 @@
         <UsageCount Value="5"/>
       </Unit43>
       <Unit44>
-        <Filename Value="..\..\bee\source\bee_interface.pas"/>
-        <UnitName Value="Bee_Interface"/>
+        <Filename Value="..\..\bee\source\beeinterface.pas"/>
+        <UnitName Value="BeeInterface"/>
         <CursorPos X="3" Y="182"/>
         <TopLine Value="162"/>
         <UsageCount Value="10"/>
@@ -734,8 +734,8 @@
         <UsageCount Value="5"/>
       </Unit89>
       <Unit90>
-        <Filename Value="..\..\bee\source\bee_common.pas"/>
-        <UnitName Value="Bee_Common"/>
+        <Filename Value="..\..\bee\source\beecommon.pas"/>
+        <UnitName Value="BeeCommon"/>
         <CursorPos X="27" Y="453"/>
         <TopLine Value="445"/>
         <UsageCount Value="11"/>
@@ -810,8 +810,8 @@
         <UsageCount Value="6"/>
       </Unit100>
       <Unit101>
-        <Filename Value="..\..\Bee\source\bee_headers.pas"/>
-        <UnitName Value="Bee_Headers"/>
+        <Filename Value="..\..\Bee\source\beeheaders.pas"/>
+        <UnitName Value="BeeHeaders"/>
         <CursorPos X="74" Y="811"/>
         <TopLine Value="804"/>
         <UsageCount Value="10"/>
@@ -913,8 +913,8 @@
         <UsageCount Value="6"/>
       </Unit116>
       <Unit117>
-        <Filename Value="..\..\bee\source\bee_files.pas"/>
-        <UnitName Value="Bee_Files"/>
+        <Filename Value="..\..\bee\source\beefiles.pas"/>
+        <UnitName Value="BeeFiles"/>
         <CursorPos X="1" Y="110"/>
         <TopLine Value="17"/>
         <UsageCount Value="10"/>
@@ -927,29 +927,29 @@
         <UsageCount Value="10"/>
       </Unit118>
       <Unit119>
-        <Filename Value="..\..\Bee\source\bee_codec.pas"/>
-        <UnitName Value="bee_codec"/>
+        <Filename Value="..\..\Bee\source\beecodec.pas"/>
+        <UnitName Value="beecodec"/>
         <CursorPos X="45" Y="55"/>
         <TopLine Value="39"/>
         <UsageCount Value="6"/>
       </Unit119>
       <Unit120>
-        <Filename Value="..\..\Bee\source\bee_configuration.pas"/>
-        <UnitName Value="bee_configuration"/>
+        <Filename Value="..\..\Bee\source\beeconfiguration.pas"/>
+        <UnitName Value="beeconfiguration"/>
         <CursorPos X="29" Y="108"/>
         <TopLine Value="92"/>
         <UsageCount Value="6"/>
       </Unit120>
       <Unit121>
-        <Filename Value="..\..\Bee\source\bee_crc.pas"/>
-        <UnitName Value="Bee_Crc"/>
+        <Filename Value="..\..\Bee\source\beecrc.pas"/>
+        <UnitName Value="BeeCrc"/>
         <CursorPos X="56" Y="119"/>
         <TopLine Value="103"/>
         <UsageCount Value="10"/>
       </Unit121>
       <Unit122>
-        <Filename Value="..\..\bee\source\bee_mainpacker.pas"/>
-        <UnitName Value="Bee_MainPacker"/>
+        <Filename Value="..\..\bee\source\beemainpacker.pas"/>
+        <UnitName Value="BeeMainPacker"/>
         <CursorPos X="41" Y="132"/>
         <TopLine Value="109"/>
         <UsageCount Value="11"/>
@@ -1230,22 +1230,22 @@
         <UsageCount Value="10"/>
       </Unit164>
       <Unit165>
-        <Filename Value="..\..\Bee4Laz\source\Bee_Assembler.pas"/>
-        <UnitName Value="Bee_Assembler"/>
+        <Filename Value="..\..\Bee4Laz\source\beeassembler.pas"/>
+        <UnitName Value="BeeAssembler"/>
         <CursorPos X="3" Y="51"/>
         <TopLine Value="27"/>
         <UsageCount Value="10"/>
       </Unit165>
       <Unit166>
-        <Filename Value="..\..\Bee4Laz\source\bee_headers.pas"/>
-        <UnitName Value="Bee_Headers"/>
+        <Filename Value="..\..\Bee4Laz\source\beeheaders.pas"/>
+        <UnitName Value="BeeHeaders"/>
         <CursorPos X="73" Y="101"/>
         <TopLine Value="81"/>
         <UsageCount Value="10"/>
       </Unit166>
       <Unit167>
-        <Filename Value="..\..\Bee4Laz\source\bee_modeller.pas"/>
-        <UnitName Value="Bee_Modeller"/>
+        <Filename Value="..\..\Bee4Laz\source\beemodeller.pas"/>
+        <UnitName Value="BeeModeller"/>
         <CursorPos X="3" Y="366"/>
         <TopLine Value="1"/>
         <UsageCount Value="10"/>

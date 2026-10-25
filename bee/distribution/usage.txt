@@ -1,5 +1,5 @@
-The Bee 0.7.9 build 0521 archiver utility, freeware version, Dec 2007.
-(C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.
+The Bee 0.7.9 build 0602 archiver utility, freeware version, Oct 2026.
+(C) 1999-2026 Andrew Filinsky and Melchiorre Caruso.
 
   Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>
 
@@ -35,4 +35,30 @@ The Bee 0.7.9 build 0521 archiver utility, freeware version, Dec 2007.
     cfg<filename> use specified configuration file
     pri<priority> set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)
 
+    -exe-filter   preprocess executables (x86, x64, ARM64; found by content)
+    -mixer        context mixing on the PPM model (smaller, slower, more memory)
+
   Use BeeOpt to make most optimal parameters.
+
+  Notes on the long options (two dashes on the command line, e.g. --mixer):
+
+    --exe-filter  Executables (PE and ELF for x86, x86-64 and ARM64) are
+                  recognized from their content, not from the extension,
+                  and transformed before compression; other files are
+                  stored as usual. Typical gain on executables: 5-18%.
+
+    --mixer       Codes data with a context mixer on top of the PPM model.
+                  On the reference corpora (Calgary, Canterbury, Silesia)
+                  archives are 7-12% smaller than with PPM alone at d5, but
+                  compression and extraction are several times slower
+                  (about 3x at d5, up to 9x with small dictionaries). The
+                  mixer needs 2^(14+d) * 1152 bytes of memory in addition
+                  to the dictionary: 18 MiB at d0, 72 MiB at d2, 576 MiB
+                  from d5 upwards.
+
+    Both options apply to the a and d commands (d recodes the files that
+    follow a deleted one in a solid archive), are off by default and can
+    be combined. Extraction needs no option: the archive records how each
+    file was coded. Archives created with them can be extracted only by
+    Bee 0.7.9 build 0602 or later; without them, archives are the same as
+    before.

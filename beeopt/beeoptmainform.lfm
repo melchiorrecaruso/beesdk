@@ -1,0 +1,315 @@
+object MainForm: TMainForm
+  Left = 641
+  Height = 292
+  Top = 104
+  Width = 352
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = 'Bee optimizer'
+  Icon.Data = {
+    FE0200000000010001002020100001000400E802000016000000280000002000
+    0000400000000100040000000000000000000000000000000000000000000000
+    0000000000004080FF0000FFFF00000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000002000000020000000000000000000002222200022222000000000000
+    0000002222222022222220000000000000000022222220222222200000000000
+    0000002222222022222220000000000000000002222200022222000000000000
+    0000000002000100020001000000000000000000000111110001111100000000
+    0000000000111111101111111000000000000000001111111011111110000000
+    0000000000111111101111111000000000000000000111110001111100000000
+    0000000002000100010001000000000000000002222200011111000000000000
+    0000002222222011111110000000000000000022222220111111100000000000
+    0000002222222011111110000000000000000002222200011111000000000000
+    0000000002000200010001000000010000000000000222220001111100011111
+    0000000000222222201111111011111110000000002222222011111110111111
+    1000000000222222201111111011111110000000000222220001111100011111
+    0000000000000200000001000000010000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000FFFFFFFFFBFBFFFFFBFBFFFFF1F1FFFFC0407FFF80001FFF80003FFF8000
+    3FFF80003FFF80001FFFC00005FFF00001FFF80003FFF80003FFF80003FFF000
+    01FFC00004FF80001FFF80003FFF80003FFF80003FFF80001F1FC0000404F000
+    0001F8000003F8000003F8000003F0000001C4040404DF1F1F1FFFBFBFBFFFBF
+    BFBF
+  }
+  ClientHeight = 292
+  ClientWidth = 352
+  Constraints.MinHeight = 292
+  Constraints.MinWidth = 352
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  ParentFont = True
+  Position = poScreenCenter
+  ShowHint = True
+  LCLVersion = '4.99.0.0'
+  object PageControl: TPageControl
+    Left = 2
+    Height = 267
+    Top = 2
+    Width = 348
+    ActivePage = TabProgress
+    Align = alClient
+    BorderSpacing.Around = 2
+    TabIndex = 0
+    TabOrder = 0
+    object TabProgress: TTabSheet
+      Caption = 'Progress...'
+      ClientHeight = 237
+      ClientWidth = 340
+      object LabelCorpus: TLabel
+        AnchorSideLeft.Control = TabProgress
+        AnchorSideTop.Control = TabProgress
+        Left = 6
+        Height = 15
+        Top = 10
+        Width = 145
+        BorderSpacing.Left = 6
+        BorderSpacing.Top = 10
+        Caption = 'Optimization of Corpus:'
+        ParentColor = False
+      end
+      object LabelCorpusValue: TLabel
+        AnchorSideLeft.Control = LabelCorpus
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = LabelCorpus
+        Left = 181
+        Height = 15
+        Top = 10
+        Width = 145
+        BorderSpacing.Left = 30
+        Caption = '...'
+        ParentColor = False
+        ShowHint = True
+      end
+      object LabelAge: TLabel
+        AnchorSideTop.Control = LabelCorpus
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = LabelCorpus
+        AnchorSideRight.Side = asrBottom
+        Left = 6
+        Height = 15
+        Top = 40
+        Width = 145
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 15
+        Caption = 'Variants Estimated:'
+        ParentColor = False
+      end
+      object LabelAgeValue: TLabel
+        AnchorSideLeft.Control = LabelCorpusValue
+        AnchorSideTop.Control = LabelAge
+        Left = 181
+        Height = 15
+        Top = 40
+        Width = 145
+        Caption = '?'
+        ParentColor = False
+      end
+      object LabelImprovementCount: TLabel
+        AnchorSideTop.Control = LabelAge
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = LabelAge
+        AnchorSideRight.Side = asrBottom
+        Left = 6
+        Height = 15
+        Top = 61
+        Width = 145
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 6
+        Caption = 'Improvements:'
+        ParentColor = False
+      end
+      object LabelImprovementCountValue: TLabel
+        AnchorSideLeft.Control = LabelCorpusValue
+        AnchorSideTop.Control = LabelImprovementCount
+        Left = 181
+        Height = 15
+        Top = 61
+        Width = 145
+        Caption = '?'
+        ParentColor = False
+      end
+      object LabelImprovementRate: TLabel
+        AnchorSideTop.Control = LabelCompressed
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = LabelCompressed
+        AnchorSideRight.Side = asrBottom
+        Left = 6
+        Height = 15
+        Top = 175
+        Width = 145
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 6
+        Caption = 'Percent of Improvements:'
+        ParentColor = False
+      end
+      object LabelImprovementRateValue: TLabel
+        AnchorSideLeft.Control = LabelCorpusValue
+        AnchorSideTop.Control = LabelImprovementRate
+        Left = 181
+        Height = 15
+        Top = 175
+        Width = 145
+        Caption = '0.000%'
+        ParentColor = False
+      end
+      object LabelPopulation: TLabel
+        AnchorSideTop.Control = LabelImprovementCount
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = LabelImprovementCount
+        AnchorSideRight.Side = asrBottom
+        Left = 6
+        Height = 15
+        Top = 82
+        Width = 145
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 6
+        Caption = 'Compression Level:'
+        ParentColor = False
+      end
+      object LabelPopulationValue: TLabel
+        AnchorSideLeft.Control = LabelCorpusValue
+        AnchorSideTop.Control = LabelPopulation
+        Left = 181
+        Height = 15
+        Top = 82
+        Width = 145
+        Caption = '?'
+        ParentColor = False
+      end
+      object LabelDictionary: TLabel
+        AnchorSideTop.Control = LabelPopulation
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = LabelPopulation
+        AnchorSideRight.Side = asrBottom
+        Left = 6
+        Height = 15
+        Top = 103
+        Width = 145
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 6
+        Caption = 'Dictionary Level:'
+        ParentColor = False
+      end
+      object LabelDictionaryValue: TLabel
+        AnchorSideLeft.Control = LabelCorpusValue
+        AnchorSideTop.Control = LabelDictionary
+        Left = 181
+        Height = 15
+        Top = 103
+        Width = 145
+        Caption = '?'
+        ParentColor = False
+      end
+      object LabelSample: TLabel
+        AnchorSideTop.Control = LabelDictionary
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = LabelDictionary
+        AnchorSideRight.Side = asrBottom
+        Left = 6
+        Height = 15
+        Top = 133
+        Width = 145
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 15
+        Caption = 'Size of Sample Files:'
+        ParentColor = False
+      end
+      object LabelSampleValue: TLabel
+        AnchorSideLeft.Control = LabelCorpusValue
+        AnchorSideTop.Control = LabelSample
+        Left = 181
+        Height = 15
+        Top = 133
+        Width = 145
+        Caption = '?'
+        ParentColor = False
+      end
+      object LabelCompressed: TLabel
+        AnchorSideTop.Control = LabelSample
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = LabelSample
+        AnchorSideRight.Side = asrBottom
+        Left = 6
+        Height = 15
+        Top = 154
+        Width = 145
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 6
+        Caption = 'Best Size of Packed:'
+        ParentColor = False
+      end
+      object LabelCompressedValue: TLabel
+        AnchorSideLeft.Control = LabelCorpusValue
+        AnchorSideTop.Control = LabelCompressed
+        Left = 181
+        Height = 15
+        Top = 154
+        Width = 145
+        Caption = '?'
+        ParentColor = False
+      end
+      object LabelThreads: TLabel
+        AnchorSideTop.Control = LabelImprovementRate
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = LabelImprovementRate
+        AnchorSideRight.Side = asrBottom
+        Left = 6
+        Height = 15
+        Top = 196
+        Width = 145
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 6
+        Caption = 'Active Threads:'
+        ParentColor = False
+      end
+      object LabelThreadsValue: TLabel
+        AnchorSideLeft.Control = LabelCorpusValue
+        AnchorSideTop.Control = LabelThreads
+        Left = 181
+        Height = 15
+        Top = 196
+        Width = 145
+        Caption = '?'
+        ParentColor = False
+      end
+    end
+    object TabAbout: TTabSheet
+      Caption = 'About'
+      ClientHeight = 237
+      ClientWidth = 340
+      ImageIndex = 1
+      object LabelAbout: TLabel
+        Left = 6
+        Height = 221
+        Top = 10
+        Width = 328
+        Align = alClient
+        AutoSize = False
+        BorderSpacing.Left = 6
+        BorderSpacing.Top = 10
+        BorderSpacing.Right = 6
+        BorderSpacing.Bottom = 6
+        Caption = 'BeeOpt for Lazarus'#13#10#13#10'Genetic optimizer for the Bee compression model parameters.'#13#10#13#10'The application is configured from the command line and displays the current optimization status in this window.'
+        ParentColor = False
+        WordWrap = True
+      end
+    end
+  end
+  object StatusBar: TStatusBar
+    Left = 0
+    Height = 23
+    Top = 269
+    Width = 352
+    Align = alBottom
+    SimplePanel = True
+  end
+  object TimerClose: TTimer
+    Interval = 200
+    OnTimer = TimerCloseTimer
+    Left = 320
+    Top = 240
+  end
+end

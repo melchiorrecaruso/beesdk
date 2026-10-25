@@ -1,6 +1,5 @@
 {
-  Copyright (c) 2003 Evgeny Shelwien;
-  Copyright (c) 2003-2026 Andrew Filinsky
+  Copyright (c) 2003-2007 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,43 +16,24 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Contains:
+{ Unit contains classes:
 
-  TRangeCoder class, 
-  
-    kind of RangeCoder 
-      (based on Eugeny Shelwien's shindler_var1 
-        (based on Shindler's rangecoder), MaxFreq = 2^24); 
-    It uses MulDiv opcode extension.
+  TRangeCoder, range coder (based on Eugeny Shelwien's shindler_var1
+  (based on Shindler's rangecoder), MaxFreq = 2^24 (?));
 
-  Created:
+  Created: Evgeny Shelwien, Feb 2003.
 
-  v0.1.0 build 0001 - 2003.02.01 by Evgeny Shelwien.
-
-  Translated:
-
-  v0.1.1 build 0002 - 2003.03.01 by Andrew Filinsky.
-
-  Modifyed:
-
-  v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
-  v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
-  
-  v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky.
-  v0.7.9 build 0601 - 2007.12.01 by Melchiorre Caruso.
-  v0.7.9 build 0602 - 2026.10.25 by Melchiorre Caruso.
-
+  Translated: Andrew Filinsky, Mar 2003.
 }
 
-unit Bee_RangeCoder;
+unit BeeRangeCoder1;
 
-{$MODE OBJFPC}{$H+}
+{$I compiler.inc}
 
 interface
 
 uses
-  Classes,       // TStream, ...
-  Bee_Assembler; // Low-level routines ...
+  Classes; // TStream, ...
 
 const
   TOP = 1 shl 24;
@@ -75,10 +55,10 @@ type
     procedure Decode(CumFreq, Freq, TotFreq: cardinal);
   private
     procedure ShiftLow;
-    function InputByte: cardinal;
-    procedure OutputByte(aValue: cardinal);
+    procedure OutTgtByte(Value: byte);
+    function InpSrcByte: byte;
   private
-    FStream: TStream;
+    Stream: TStream;
     Range: cardinal;
     Low: cardinal;
     Code: cardinal;
@@ -94,17 +74,15 @@ implementation
 constructor TRangeCoder.Create(aStream: TStream);
 begin
   inherited Create;
-  FStream := aStream;
+  Stream := aStream;
 end;
 
 procedure TRangeCoder.StartEncode;
 begin
   Range := $FFFFFFFF;
-  Low   := 0;
-  Code  := 0;
+  Low := 0;
   FFNum := 0;
   Carry := 0;
-  Cache := 0;
 end;
 
 procedure TRangeCoder.StartDecode;
@@ -113,31 +91,31 @@ var
 begin
   StartEncode;
   for I := 0 to NUM do
-  begin
-    Code := Code shl 8 + InputByte;
-  end;
+    code := code shl 8 + InpSrcByte;
 end;
 
 procedure TRangeCoder.FinishEncode;
 var
   I: integer;
 begin
-  for I := 0 to NUM do ShiftLow;
+  for I := 0 to NUM do
+    ShiftLow;
 end;
 
 procedure TRangeCoder.FinishDecode;
 begin
-  // nothing to do...
+  // Nothing to do...
 end;
 
-procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: cardinal);
+procedure TRangeCoder.Encode(cumFreq, freq, totFreq: cardinal);
 var
-  Tmp: cardinal;
+  tmp: cardinal;
 begin
-  Tmp := Low;
-  Low := Low + MulDiv(Range, CumFreq, TotFreq);
-  Carry := Carry + cardinal(Low < Tmp);
-  Range := MulDiv(Range, Freq, TotFreq);
+  tmp := low;
+  range := range div totFreq;
+  low := low + cumFreq * range;
+  Carry := Carry + cardinal(low < tmp);
+  range := range * freq;
   while Range < TOP do
   begin
     Range := Range shl 8;
@@ -145,36 +123,31 @@ begin
   end;
 end;
 
+function TRangeCoder.GetFreq(totFreq: cardinal): cardinal;
+begin
+  range  := range div totFreq;
+  Result := code div range;
+end;
+
 procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: cardinal);
 begin
-  Code := Code - MulDiv(Range, CumFreq, TotFreq);
-  Range := MulDiv(Range, Freq, TotFreq);
+  Code  := Code - CumFreq * Range;
+  Range := Range * Freq;
   while Range < TOP do
   begin
-    Code := Code shl 8 + InputByte;
+    Code  := Code shl 8 + InpSrcByte;
     Range := Range shl 8;
   end;
 end;
 
-function TRangeCoder.GetFreq(TotFreq: cardinal): cardinal;
-begin
-  // A valid stream always has Code < Range, hence Result < TotFreq.
-  // Corrupted data would overflow the division or let the caller search
-  // past the last symbol: return the last frequency and let the CRC fail.
-  if Code < Range then
-    Result := MulDecDiv(Code + 1, TotFreq, Range)
-  else
-    Result := TotFreq - 1;
-end;
-
 procedure TRangeCoder.ShiftLow;
 begin
-  if (Low < Thres) or (Carry <> 0) then
+  if ((Low < Thres) or (Carry <> 0)) then
   begin
-    OutputByte(Cache + Carry);
+    OutTgtByte(Cache + Carry);
     while FFNum <> 0 do
     begin
-      OutputByte(Carry - 1);
+      OutTgtByte(Carry - 1);
       Dec(FFNum);
     end;
     Cache := Low shr 24;
@@ -184,17 +157,14 @@ begin
   Low := Low shl 8;
 end;
 
-function TRangeCoder.InputByte: cardinal;
-var
-  Value: byte;
+procedure TRangeCoder.OutTgtByte(Value: byte);
 begin
-  FStream.Read(Value, 1);
-  Result := Value;
+  Stream.Write(Value, 1);
 end;
 
-procedure TRangeCoder.OutputByte(aValue: cardinal);
+function TRangeCoder.InpSrcByte: byte;
 begin
-  FStream.Write(aValue, 1);
+  Stream.Read(Result, 1);
 end;
 
 end.

@@ -16,7 +16,7 @@ uses
   StdCtrls,
   ComCtrls,
   // --
-  Bee_Interface,
+  BeeInterface,
   // --
   BeeGui_FormStorage,
   BeeGui_ArchiveListManager, ExtCtrls;
@@ -96,7 +96,7 @@ uses
   BeeGui_RenameFrm,
   BeeGui_SysUtils,
   // ---
-  Bee_App;
+  BeeApp;
 
 procedure TProgressFrm.FormCreate(Sender: TObject);
 begin

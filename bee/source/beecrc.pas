@@ -29,7 +29,7 @@
 
 }
 
-unit Bee_Crc;
+unit BeeCrc;
 
 {$MODE OBJFPC}{$H+}
 

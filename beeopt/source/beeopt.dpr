@@ -3,12 +3,12 @@ program BeeOpt;
 uses
   Forms,
   BeeOpt_Form in 'BeeOpt_Form.pas' {MainForm},
-  Bee_Configuration in '..\Bee_Configuration.pas',
-  Bee_Common in '..\Bee_Common.pas',
-  Bee_Files in '..\Bee_Files.pas',
-  Bee_Headers in '..\Bee_Headers.pas',
-  Bee_MainPacker in '..\Bee_MainPacker.pas',
-  Bee_Crc in '..\Bee_Crc.pas';
+  BeeConfiguration in '..\beeconfiguration.pas',
+  BeeCommon in '..\beecommon.pas',
+  BeeFiles in '..\beefiles.pas',
+  BeeHeaders in '..\beeheaders.pas',
+  BeeMainPacker in '..\beemainpacker.pas',
+  BeeCrc in '..\beecrc.pas';
 
 {$R *.RES}
 

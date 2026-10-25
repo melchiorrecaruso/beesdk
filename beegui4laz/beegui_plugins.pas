@@ -36,7 +36,7 @@ uses
   Process,
   SysUtils,
   // --
-  Bee_Interface,
+  BeeInterface,
   // --
   BeeGui_SysUtils;
 

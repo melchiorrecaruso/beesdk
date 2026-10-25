@@ -1,12 +1,12 @@
 [Closed Files]
-File_0=SourceModule,'D:\Projects\Archiver\Ant\Bee_Configuration.pas',0,1,30,1,33,0,0
+File_0=SourceModule,'D:\Projects\Archiver\Ant\beeconfiguration.pas',0,1,30,1,33,0,0
 File_1=SourceModule,'c:\program files\borland\delphi5\source\vcl\Classes.pas',0,1,1799,1,1810,0,0
-File_2=SourceModule,'D:\Projects\Archiver\Ant\Bee_Modeller.pas',0,1,260,1,272,0,0
-File_3=SourceModule,'D:\Projects\Archiver\Ant\Bee_Headers.pas',0,1,31,15,51,0,0
-File_4=SourceModule,'D:\Projects\Archiver\Ant\Bee_Crc.pas',0,1,49,22,60,0,0
-File_5=SourceModule,'D:\Projects\Archiver\Ant\Bee_MainPacker.pas',0,1,1,11,16,0,0
-File_6=SourceModule,'D:\Projects\Archiver\Ant\Bee_Codec.pas',0,1,1,1,1,0,0
-File_7=SourceModule,'D:\Delphi\Ant\Bee_RangeCoder0.pas',0,1,27,54,42,0,0
+File_2=SourceModule,'D:\Projects\Archiver\Ant\beemodeller.pas',0,1,260,1,272,0,0
+File_3=SourceModule,'D:\Projects\Archiver\Ant\beeheaders.pas',0,1,31,15,51,0,0
+File_4=SourceModule,'D:\Projects\Archiver\Ant\beecrc.pas',0,1,49,22,60,0,0
+File_5=SourceModule,'D:\Projects\Archiver\Ant\beemainpacker.pas',0,1,1,11,16,0,0
+File_6=SourceModule,'D:\Projects\Archiver\Ant\beecodec.pas',0,1,1,1,1,0,0
+File_7=SourceModule,'D:\Delphi\Ant\beerangecoder0.pas',0,1,27,54,42,0,0
 File_8=SourceModule,'D:\Delphi\Ant\Bee_BasePackerQ4.pas',0,1,1,5,14,0,0
 File_9=SourceModule,'E:\Delphi\Ant\BeeOpt\BeeOpt_Form.dfm',0,1,1,1,1,0,0
 

@@ -50,7 +50,7 @@ uses
   LibSyncMgr,
   XMLPropStorage,
   // --
-  Bee_Interface,
+  BeeInterface,
   BeeGui_IconList,
   BeeGui_AppViewer,
   BeeGui_AddTreeView,

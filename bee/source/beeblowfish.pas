@@ -33,7 +33,7 @@
 
 }
 
-unit Bee_BlowFish;
+unit BeeBlowFish;
 
 {$MODE OBJFPC}{$H+}
 

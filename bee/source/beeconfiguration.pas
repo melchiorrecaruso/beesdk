@@ -28,7 +28,7 @@
   v0.7.9 build 0061 - 2026.09.12 by Melchiorre Caruso.
 }
 
-unit Bee_Configuration;
+unit BeeConfiguration;
 
 {$MODE OBJFPC}{$H+}
 
@@ -77,7 +77,7 @@ type
 implementation
 
 uses
-  Bee_Common;
+  BeeCommon;
 
 (***************************************************************************)
 (* Class:  TConfiguration | methods                                        *)
@@ -208,13 +208,13 @@ end;
 
 procedure TConfigSection.PutData(const Name: string; var Data; aCount: integer);
 begin
-  Values[Name] := Bee_Common.Hex(Data, aCount);
+  Values[Name] := BeeCommon.Hex(Data, aCount);
 end;
 
 function TConfigSection.GetData(const Name: string; var Data; aCount: integer): boolean;
 begin
   FillChar(Data, aCount, 0);
-  Result := Bee_Common.HexToData(Values[Name], Data, aCount);
+  Result := BeeCommon.HexToData(Values[Name], Data, aCount);
 end;
 
 end.

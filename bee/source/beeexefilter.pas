@@ -52,7 +52,7 @@
   v0.7.9 build 0602 - 2026.10.25 by Melchiorre Caruso.
 }
 
-unit Bee_Exe_Filter;
+unit BeeExeFilter;
 
 {$MODE OBJFPC}{$H+}
 {$R-}{$Q-}{$S-}{$I-}
@@ -101,7 +101,7 @@ function BeeExeLoad(Source: TStream; Size: Integer; var Crc: Cardinal;
 implementation
 
 uses
-  Bee_Crc;
+  BeeCrc;
 
 const
   FormatMarker = Ord('X');

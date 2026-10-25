@@ -19,12 +19,12 @@ uses
   StdCtrls,
   Controls,
   RXShell,
-  Bee_Configuration,
-  Bee_Common,
-  Bee_Files,
-  Bee_Headers,
-  Bee_Codec,          // TSecondaryEncoder, TSecondaryDecoder...
-  Bee_Modeller;       // TBaseCoder...
+  BeeConfiguration,
+  BeeCommon,
+  BeeFiles,
+  BeeHeaders,
+  BeeCodec,           // TSecondaryEncoder, TSecondaryDecoder...
+  BeeModeller;        // TBaseCoder...
 
 const
   CrossoverProbability = 0.15; /// Вероятность кроссовера

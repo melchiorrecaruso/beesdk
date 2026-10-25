@@ -25,7 +25,7 @@
   Created: Andrew Filinsky, 2002;
 }
 
-unit Bee_RangeCoderB;
+unit BeeRangeCoderB;
 
 {$I compiler.inc}
 

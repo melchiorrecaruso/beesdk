@@ -1,4 +1,4 @@
-unit Bee_Model;
+unit BeeModel;
 
 {$MODE OBJFPC}
 {$H+}
@@ -7,8 +7,8 @@ unit Bee_Model;
 interface
 
 uses
-  Classes, SysUtils, IniFiles,
-  Bee_Codec, Bee_Configuration, Bee_Modeller, Bee_RangeCoder;
+  Classes, SysUtils,
+  BeeCodec, BeeConfiguration, BeeModeller, BeeRangeCoder;
 
 const
   BeeBits = BitChain;
@@ -18,8 +18,6 @@ const
   BeeTableColumnCount = TableCols;
   BeeTableColumnSize = TableSize + 1;
   BeeTableParameterCount = SizeOf(TTableParameters);
-  BeeTableTextFormat = 'BEE-TABLE';
-  BeeTableTextVersion = 1;
 
 type
   TBeeTableParameters = array of Byte;
@@ -32,29 +30,31 @@ const
      143, 133, 135, 128, 155, 207, 177, 225, 251, 253, 248, 73, 35,
      15, 107, 143);
 type
-  { Adapter for the text-table format and the stand-alone range coder.
+  { Adapter for byte tables and the stand-alone range coder.
     The PPM algorithm itself remains in the original TBaseCoder. }
   TBeeModel = class(TBaseCoder)
   public
     constructor Create;
     procedure SetDictionaryLevel(Level: Cardinal);
     procedure SetTable(const Parameters: TBeeTableParameters); reintroduce;
-    procedure PrepareMixerSymbol(PartIndex: Cardinal);
-    procedure LearnMixerSymbol(PartIndex, Symbol: Cardinal);
-    procedure FinishMixerByte(Value: Byte);
     procedure EncodeByte(Value: Byte; RangeCoder: TRangeCoder);
     function DecodeByte(RangeCoder: TRangeCoder): Byte;
   end;
 
-  TBeeNibbleModel = TBeeModel;
-
 function BeeCreateDefaultTable: TBeeTableParameters;
 function BeeDictionaryMemoryBytes(Level: Cardinal): Int64;
+{ A table is the hexadecimal string of its bytes, as in bee.ini. }
+function BeeTableToHex(const Table: TBeeTableParameters): string;
+function BeeHexToTable(const Hex: string; out Table: TBeeTableParameters): Boolean;
+
+{ Reads a table from a file holding bee.ini lines (".ext=<hex>") or a bare
+  hexadecimal string; 'default' gives the default table. }
 procedure BeeLoadTable(const FileName: string; out Table: TBeeTableParameters);
-procedure BeeSaveTable(const FileName: string;
-  const Table: TBeeTableParameters);
 
 implementation
+
+uses
+  BeeCommon;
 
 function BeeDictionaryMemoryBytes(Level: Cardinal): Int64;
 begin
@@ -69,93 +69,53 @@ begin
   Move(BeeLegacyDefaultTable[0], Result[0], BeeTableParameterCount);
 end;
 
-function BeeTableValuesToText(const Table: TBeeTableParameters): string;
-var
-  I: Integer;
+function BeeTableToHex(const Table: TBeeTableParameters): string;
 begin
-  Result := '';
-  for I := 0 to High(Table) do
-  begin
-    if I > 0 then Result := Result + ',';
-    Result := Result + IntToStr(Table[I]);
-  end;
+  if Length(Table) <> BeeTableParameterCount then
+    raise ERangeError.CreateFmt('A Bee table must contain %d values',
+      [BeeTableParameterCount]);
+  Result := BeeCommon.Hex(Table[0], BeeTableParameterCount);
 end;
 
-procedure BeeTextToTable(const Value: string; out Table: TBeeTableParameters);
-var
-  Values: TStringList;
-  I, Parameter: Integer;
+function BeeHexToTable(const Hex: string; out Table: TBeeTableParameters): Boolean;
 begin
-  Values := TStringList.Create;
-  try
-    Values.StrictDelimiter := True;
-    Values.Delimiter := ',';
-    Values.DelimitedText := Value;
-    if Values.Count <> BeeTableParameterCount then
-      raise EStreamError.CreateFmt('Table contains %d values; expected %d',
-        [Values.Count, BeeTableParameterCount]);
-    SetLength(Table, BeeTableParameterCount);
-    for I := 0 to BeeTableParameterCount - 1 do
-    begin
-      Parameter := StrToInt(Trim(Values[I]));
-      if (Parameter < 0) or (Parameter > 255) then
-        raise EStreamError.CreateFmt('Table value %d is outside 0..255', [I]);
-      Table[I] := Parameter;
-    end;
-  finally
-    Values.Free;
-  end;
+  SetLength(Table, BeeTableParameterCount);
+  Result := (Length(Hex) = 2 * BeeTableParameterCount) and
+    BeeCommon.HexToData(UpperCase(Hex), Table[0], BeeTableParameterCount);
+  if not Result then Table := nil;
 end;
 
 procedure BeeLoadTable(const FileName: string; out Table: TBeeTableParameters);
 var
-  Ini: TMemIniFile;
-  StoredBits, StoredSize, Version: Integer;
-  Format, Values: string;
+  Lines: TStringList;
+  I, Separator: Integer;
+  Line, Key: string;
 begin
   if SameText(FileName, 'default') then
   begin
     Table := BeeCreateDefaultTable;
     Exit;
   end;
-  Ini := TMemIniFile.Create(FileName);
-  try
-    Format := Ini.ReadString('BeeTable', 'Format', '');
-    Version := Ini.ReadInteger('BeeTable', 'Version', 0);
-    StoredBits := Ini.ReadInteger('BeeTable', 'Bits', 0);
-    StoredSize := Ini.ReadInteger('BeeTable', 'Size', 0);
-    Values := Ini.ReadString('BeeTable', 'Values', '');
-    if (Format <> BeeTableTextFormat) or (Version <> BeeTableTextVersion) then
-      raise EStreamError.Create('Unsupported Bee table text format');
-    if (StoredBits <> BeeBits) or
-      (StoredSize <> BeeTableParameterCount) then
-      raise EStreamError.Create('Bee table geometry does not match the model');
-    BeeTextToTable(Values, Table);
-  finally
-    Ini.Free;
-  end;
-end;
-
-procedure BeeSaveTable(const FileName: string;
-  const Table: TBeeTableParameters);
-var
-  Lines: TStringList;
-begin
-  if Length(Table) <> BeeTableParameterCount then
-    raise ERangeError.CreateFmt('A Bee table must contain %d values',
-      [BeeTableParameterCount]);
   Lines := TStringList.Create;
   try
-    Lines.Add('[BeeTable]');
-    Lines.Add('Format=' + BeeTableTextFormat);
-    Lines.Add('Version=' + IntToStr(BeeTableTextVersion));
-    Lines.Add('Bits=' + IntToStr(BeeBits));
-    Lines.Add('Size=' + IntToStr(Length(Table)));
-    Lines.Add('Values=' + BeeTableValuesToText(Table));
-    Lines.SaveToFile(FileName);
+    Lines.LoadFromFile(FileName);
+    for I := 0 to Lines.Count - 1 do
+    begin
+      Line := Trim(Lines[I]);
+      Separator := Pos('=', Line);
+      if Separator > 0 then
+      begin
+        Key := Copy(Line, 1, Separator - 1);
+        if SameText(Copy(Key, Length(Key) - 4, 5), '.Size') then Continue;
+        Line := Copy(Line, Separator + 1, MaxInt);
+      end;
+      if BeeHexToTable(Line, Table) then Exit;
+    end;
   finally
     Lines.Free;
   end;
+  raise EStreamError.CreateFmt('No %d-byte hexadecimal table in %s',
+    [BeeTableParameterCount, FileName]);
 end;
 
 constructor TBeeModel.Create;
@@ -163,21 +123,6 @@ begin
   inherited Create(nil);
   SetTable(BeeCreateDefaultTable);
   SetDictionaryLevel(3);
-end;
-
-procedure TBeeModel.PrepareMixerSymbol(PartIndex: Cardinal);
-begin
-  PrepareSymbol(PartIndex);
-end;
-
-procedure TBeeModel.LearnMixerSymbol(PartIndex, Symbol: Cardinal);
-begin
-  LearnSymbol(Symbol);
-end;
-
-procedure TBeeModel.FinishMixerByte(Value: Byte);
-begin
-  FinishByte;
 end;
 
 procedure TBeeModel.SetDictionaryLevel(Level: Cardinal);
@@ -189,7 +134,7 @@ end;
 
 procedure TBeeModel.SetTable(const Parameters: TBeeTableParameters);
 var
-  OriginalTable: Bee_Configuration.TTableParameters;
+  OriginalTable: BeeConfiguration.TTableParameters;
   I: Integer;
 begin
   if Length(Parameters) <> BeeTableParameterCount then

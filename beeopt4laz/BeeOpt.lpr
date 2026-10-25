@@ -8,12 +8,12 @@ uses
   Forms
   { add your units here },
   BeeOpt_Form in 'BeeOpt_Form.pas' {MainForm},
-  Bee_Configuration in '..\bee_configuration.pas',
-  Bee_Common in '..\bee_common.pas',
-  Bee_Files in '..\bee_files.pas',
-  Bee_Headers in '..\bee_headers.pas',
-  Bee_MainPacker in '..\bee_mainpacker.pas',
-  Bee_Crc in '..\bee_crc.pas';
+  BeeConfiguration in '..\beeconfiguration.pas',
+  BeeCommon in '..\beecommon.pas',
+  BeeFiles in '..\beefiles.pas',
+  BeeHeaders in '..\beeheaders.pas',
+  BeeMainPacker in '..\beemainpacker.pas',
+  BeeCrc in '..\beecrc.pas';
 
 begin
   Application.Initialize;

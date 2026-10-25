@@ -26,7 +26,7 @@
   Translated: Andrew Filinsky, Dec 2002;
 }
 
-unit Bee_RangeCoder0;
+unit BeeRangeCoder0;
 
 {$I compiler.inc}
 

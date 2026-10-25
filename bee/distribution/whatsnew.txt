@@ -1372,3 +1372,35 @@ Description of history of the Bee:
   [*] Bee_Files.pas, some changements for FPC compatibility.  
 
   v0.7.9 build 521 maked.
+
+2026.09.12
+
+  Update sources by Melchiorre Caruso:
+
+  [*] Sources ported to Free Pascal 3.x (ObjFPC mode) for Win32 and Win64;
+  [*] Bee_Assembler.pas, x86-64 versions of the assembler routines;
+  [*] Bee_Modeller.pas, explicit pointer dereferences, same PPM algorithm:
+      the compressed data is identical to that of the 2007 sources;
+  [*] compiler.inc removed, directives moved into the units;
+  [*] file name comparisons through LazFileUtils.
+
+  v0.7.9 build 601 maked.
+
+2026.10.25
+
+  Update sources by Melchiorre Caruso:
+
+  [+] Added "--exe-filter" option: executables (PE and ELF for x86, x86-64
+      and ARM64) are recognized from their content and transformed before
+      compression (Bee_Exe_Filter.pas);
+  [+] Added "--mixer" option: context mixing on top of the PPM model
+      (Bee_Mixer.pas);
+  [+] Header flags foFilter and foMixer mark the members coded with them;
+      the list command shows "x" and "+" after the method;
+  [*] Bee_RangeCoder.pas, corrupted data reports a CRC error instead of
+      an arithmetic overflow;
+  [*] Bee_Common.pas, FindClose resolved to SysUtils again (build fix);
+  [*] Bee_MainPacker.pas, a single coding routine for files and streams;
+  [*] Usage.txt, Matrix.txt updated.
+
+  v0.7.9 build 602 maked.

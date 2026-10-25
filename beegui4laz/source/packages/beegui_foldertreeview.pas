@@ -37,7 +37,7 @@ uses
   StdCtrls,
   LResources,
   /// ---
-  Bee_Common,
+  BeeCommon,
   /// ---
   BeeGui_IconList,
   BeeGui_SysUtils;

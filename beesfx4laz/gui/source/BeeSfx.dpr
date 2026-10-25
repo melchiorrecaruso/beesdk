@@ -25,10 +25,10 @@ uses
   SysUtils,
   Messages,
 
-  Bee_App,
-  Bee_Common,
-  Bee_BlowFish,
-  Bee_Interface;
+  BeeApp,
+  BeeCommon,
+  BeeBlowFish,
+  BeeInterface;
 
 {$R main.res}
 
@@ -210,7 +210,7 @@ var
                                  SendMessage (HW, WM_CLOSE, 0, 0);
                                  SetLength (PATH, MAX_PATH);
                                  SetLength (PATH, GetDlgItemText (HW, 104, PChar (PATH), MAX_PATH));
-                                 Bee_Common.ForceDirectories (PATH);
+                                 BeeCommon.ForceDirectories (PATH);
                                  SetCurrentDir (PATH);
                                  Sfx := TSfx.Create;
                                  Sfx.Run;

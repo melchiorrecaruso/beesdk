@@ -45,8 +45,8 @@
         <SyntaxHighlighter Value="None"/>
       </Unit1>
       <Unit2>
-        <Filename Value="..\..\..\Bee\source\bee_app.pas"/>
-        <UnitName Value="Bee_App"/>
+        <Filename Value="..\..\..\Bee\source\beeapp.pas"/>
+        <UnitName Value="BeeApp"/>
         <CursorPos X="35" Y="18"/>
         <TopLine Value="1"/>
         <UsageCount Value="10"/>

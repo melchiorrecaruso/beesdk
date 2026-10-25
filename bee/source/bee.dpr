@@ -49,9 +49,9 @@ uses
   Classes,
   SysUtils,
 
-  Bee_App,
-  Bee_Common,
-  Bee_Interface;
+  BeeApp,
+  BeeCommon,
+  BeeInterface;
 
 type
   TConsole = class

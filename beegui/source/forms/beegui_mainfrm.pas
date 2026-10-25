@@ -42,7 +42,7 @@ uses
   ExtCtrls,
   AppEvnts,
   // ---
-  Bee_Interface,
+  BeeInterface,
   // ---
   BeeGui_ConfigFrm,
   // ---
@@ -459,7 +459,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Bee_App,
+  BeeApp,
   // ---
   BeeGui_ZipApp,
   // ---

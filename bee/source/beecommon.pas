@@ -33,7 +33,7 @@
 
 }
 
-unit Bee_Common;
+unit BeeCommon;
 
 {$MODE OBJFPC}{$H+}
 
@@ -140,7 +140,7 @@ implementation
 
 uses
   LazFileUtils,
-  Bee_Assembler;
+  BeeAssembler;
 
 const
   HexaDecimals: array [0..15] of char = '0123456789ABCDEF';
@@ -286,8 +286,8 @@ begin
     iMaskPath := ExtractFilePath(iMask);
     for I := 1 to CharCount(iFileName, PathDelim) - CharCount(iMask, PathDelim) do
     begin
-      iMaskPath := Bee_Common.IncludeTrailingBackSlash(iMaskPath) +
-                   Bee_Common.IncludeTrailingBackSlash('*');
+      iMaskPath := BeeCommon.IncludeTrailingBackSlash(iMaskPath) +
+                   BeeCommon.IncludeTrailingBackSlash('*');
     end;
     iMask := iMaskPath + ExtractFileName(iMask);
   end;
@@ -353,8 +353,8 @@ function FixFileName(const FileName: string): string;
 var
   I: integer;
 begin
-  Result := Bee_Common.DoDirSeparators(FileName);
-  Result := Bee_Common.DeleteFileDrive(Result);
+  Result := BeeCommon.DoDirSeparators(FileName);
+  Result := BeeCommon.DeleteFileDrive(Result);
 
   I := System.Pos('*', Result);
   while I > 0 do
@@ -377,15 +377,15 @@ begin
     I := System.Pos('!', Result);
   end;
 
-  Result := Bee_Common.ExcludeTrailingBackSlash(Result);
+  Result := BeeCommon.ExcludeTrailingBackSlash(Result);
 end;
 
 function FixDirName(const DirName: string): string;
 var
   I: integer;
 begin
-  Result := Bee_Common.DoDirSeparators(DirName);
-  Result := Bee_Common.DeleteFileDrive(Result);
+  Result := BeeCommon.DoDirSeparators(DirName);
+  Result := BeeCommon.DeleteFileDrive(Result);
 
   I := System.Pos('*', Result);
   while I > 0 do
@@ -460,12 +460,12 @@ begin
   if Dir = '' then Exit;
 
   if Dir[Length(Dir)] = PathDelim then
-    Result := Bee_Common.ForceDirectories(Copy(Dir, 1, Length(Dir) - 1))
+    Result := BeeCommon.ForceDirectories(Copy(Dir, 1, Length(Dir) - 1))
   else
   begin
-    if Bee_Common.DirectoryExists(Dir) or (ExtractFilePath(Dir) = Dir) then Exit;
+    if BeeCommon.DirectoryExists(Dir) or (ExtractFilePath(Dir) = Dir) then Exit;
 
-    if Bee_Common.ForceDirectories(ExtractFilePath(Dir)) then
+    if BeeCommon.ForceDirectories(ExtractFilePath(Dir)) then
       Result := CreateDir(Dir)
     else
       Result := False;
@@ -494,7 +494,7 @@ begin
     begin
       Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
     end;
-    Result := Bee_Common.IncludeTrailingBackSlash(Path) + Result;
+    Result := BeeCommon.IncludeTrailingBackSlash(Path) + Result;
   until FileAge(Result) = -1;
 end;
 

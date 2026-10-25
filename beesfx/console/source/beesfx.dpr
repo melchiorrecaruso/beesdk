@@ -18,9 +18,9 @@ program BeeSfx;{ Contains:
 uses
   Classes,
   SysUtils,
-  Bee_App,
-  Bee_Common,
-  Bee_Interface;
+  BeeApp,
+  BeeCommon,
+  BeeInterface;
 
 type
   TSfx = class
@@ -160,7 +160,7 @@ begin
     Write(Cr + 'Set extraction path (empty for current path): ');
     Readln(ExtractionPath);
 
-    Bee_Common.ForceDirectories(ExtractionPath);
+    BeeCommon.ForceDirectories(ExtractionPath);
     if SetCurrentDir(ExtractionPath) then
     begin
       Write(Cr + 'Start extractor module ...' + Cr);

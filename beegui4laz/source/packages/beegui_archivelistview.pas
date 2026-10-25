@@ -40,7 +40,7 @@ uses
   Controls,
   ComCtrls,
   // ---
-  Bee_Common,
+  BeeCommon,
   BeeGui_IconList;
 
 { TArchiveListItem }

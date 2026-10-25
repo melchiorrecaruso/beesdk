@@ -42,7 +42,7 @@ uses
   AbZipKit,
   AbSelfEx,
   ///
-  Bee_Interface;
+  BeeInterface;
 
 type
   TZipApp = class(TApp)
@@ -149,7 +149,7 @@ uses
   {$ENDIF}
   SysUtils,       // faReadOnly, ...
   // ---
-  Bee_Common;
+  BeeCommon;
 
 /// TAbbreviaApp ...
 
@@ -285,7 +285,7 @@ procedure TZipApp.SetPriority(aPriority: integer); // Priority is 0..3
 begin
   {$IFDEF CONSOLEAPPLICATION}
     {$IFDEF MSWINDOWS}
-    Bee_Common.SetPriority(aPriority);
+    BeeCommon.SetPriority(aPriority);
     {$ELSE}
     case aPriority of
       0: Priority := tpIdle;
@@ -323,7 +323,7 @@ begin
       with Archive.Items[I] do
       begin
         Action := aAction;
-        FileName := Bee_Common.DoDirSeparators(FileName);
+        FileName := BeeCommon.DoDirSeparators(FileName);
       end;
     end;
   except
@@ -369,9 +369,9 @@ begin
              end;
         'Y': begin
                Delete(S, 1, 2);
-               if DirectoryExists(Bee_Common.ExcludeTrailingBackslash(S)) then
+               if DirectoryExists(BeeCommon.ExcludeTrailingBackslash(S)) then
                begin
-                 Archive.TempDirectory := Bee_Common.ExcludeTrailingBackslash(S);
+                 Archive.TempDirectory := BeeCommon.ExcludeTrailingBackslash(S);
                end;
              end;
         'A': begin
@@ -427,7 +427,7 @@ begin
                if FileNamePos('-cd', S) = 1 then
                begin
                  Delete(S, 1, 3);
-                 cdOption := Bee_Common.IncludeTrailingBackslash(Bee_Common.FixDirName(S));
+                 cdOption := BeeCommon.IncludeTrailingBackslash(BeeCommon.FixDirName(S));
                end;
              end;
         end; //end case
@@ -445,7 +445,7 @@ begin
       begin
         ArcName := FixArcName(S);
       end else
-        FileMasks.Add(Bee_Common.DoDirSeparators(S));
+        FileMasks.Add(BeeCommon.DoDirSeparators(S));
     end;
   end; // end for loop
 end;
@@ -572,8 +572,8 @@ begin
       Archive.ClearTags;
       for I := 0 to Archive.Count - 1 do
       begin
-        if Bee_Common.FileNameMatch(Archive.Items[I].FileName, FileMasks) then
-          if Bee_Common.FileNameMatch(Archive.Items[I].FileName, xOption) = False then
+        if BeeCommon.FileNameMatch(Archive.Items[I].FileName, FileMasks) then
+          if BeeCommon.FileNameMatch(Archive.Items[I].FileName, xOption) = False then
           begin
             Archive.Items[I].Tagged := True;
           end;
@@ -585,7 +585,7 @@ begin
           begin
             for I := 0 to Archive.Count - 1 do
               with Archive.Items[I] do
-                FileName := Bee_Common.DeleteFilePath(cdOption, FileName);
+                FileName := BeeCommon.DeleteFilePath(cdOption, FileName);
           end;
 
         'E': for I := 0 to Archive.Count - 1 do
@@ -632,8 +632,8 @@ begin
     begin
       for I := 0 to Archive.Count - 1 do
       begin
-        if Bee_Common.FileNameMatch(Archive.Items[I].FileName, FileMasks) then
-          if Bee_Common.FileNameMatch(Archive.Items[I].FileName, xOption) = False then
+        if BeeCommon.FileNameMatch(Archive.Items[I].FileName, FileMasks) then
+          if BeeCommon.FileNameMatch(Archive.Items[I].FileName, xOption) = False then
           begin
             Archive.Items[I].Action := aaDelete;
             Archive.ZipArchive.IsDirty := True;
@@ -682,8 +682,8 @@ begin
     begin
       for I := 0 to Archive.Count - 1 do
       begin
-        if Bee_Common.FileNameMatch(Archive.Items[I].FileName, FileMasks) then
-          if Bee_Common.FileNameMatch(Archive.Items[I].FileName, xOption) = False then
+        if BeeCommon.FileNameMatch(Archive.Items[I].FileName, FileMasks) then
+          if BeeCommon.FileNameMatch(Archive.Items[I].FileName, xOption) = False then
           begin
             Archive.Items[I].Action := aaRename;
           end;
@@ -703,7 +703,7 @@ begin
 
             Synchronize(AppInterface.OnRename);
 
-            NewFileName := Bee_Common.FixFileName(AppInterface.cMsg);
+            NewFileName := BeeCommon.FixFileName(AppInterface.cMsg);
             if Archive.FindFile(NewFileName) <> -1 then
             begin
               AppInterface.cMsg :=
@@ -760,8 +760,8 @@ begin
       Archive.ClearTags;
       for I := 0 to Archive.Count - 1 do
       begin
-        if Bee_Common.FileNameMatch(Archive.Items[I].FileName, FileMasks) then
-          if Bee_Common.FileNameMatch(Archive.Items[I].FileName, xOption) = False then
+        if BeeCommon.FileNameMatch(Archive.Items[I].FileName, FileMasks) then
+          if BeeCommon.FileNameMatch(Archive.Items[I].FileName, xOption) = False then
           begin
             Archive.Items[I].Tagged := True;
           end;
@@ -861,9 +861,9 @@ begin
       begin
         Node := TAppItem.Create;
 
-        Node.FileName := ExtractFileName(Bee_Common.DoDirSeparators(FileName));
+        Node.FileName := ExtractFileName(BeeCommon.DoDirSeparators(FileName));
 
-        Node.FilePath := ExtractFilePath(Bee_Common.DoDirSeparators(FileName));
+        Node.FilePath := ExtractFilePath(BeeCommon.DoDirSeparators(FileName));
 
         Node.FileSize  := UncompressedSize;
         Node.FilePacked := CompressedSize;
@@ -905,8 +905,8 @@ begin
     Node := TAppItem.Create;
     with TAbTarItem(Archive.Items[I]) do
     begin
-      Node.FileName := ExtractFileName(Bee_Common.DoDirSeparators(FileName));
-      Node.FilePath := ExtractFilePath(Bee_Common.DoDirSeparators(FileName));
+      Node.FileName := ExtractFileName(BeeCommon.DoDirSeparators(FileName));
+      Node.FilePath := ExtractFilePath(BeeCommon.DoDirSeparators(FileName));
 
       Node.FileSize := UncompressedSize;
       Node.FilePacked := CompressedSize;
@@ -1090,12 +1090,12 @@ begin
 
   if (Length(Mask) > 0) and (Mask[Length(Mask)] = PathDelim) then
   begin
-    Mask := Bee_Common.IncludeTrailingBackSlash(Mask) + '*';
+    Mask := BeeCommon.IncludeTrailingBackSlash(Mask) + '*';
     Recursive := True;
   end else
-    if Bee_Common.DirectoryExists(Mask) then
+    if BeeCommon.DirectoryExists(Mask) then
     begin
-      Mask := Bee_Common.IncludeTrailingBackSlash(Mask) + '*';
+      Mask := BeeCommon.IncludeTrailingBackSlash(Mask) + '*';
       Recursive := True;
     end;
 
@@ -1106,10 +1106,10 @@ begin
     RecName := RecPath + Rec.Name;
     if (Rec.Attr and faDirectory) = 0 then
     begin
-      if (Bee_Common.FileNameMatch(RecName, Mask)) then
-        if (Bee_Common.FileNameMatch(RecName, xOption) = False) then
+      if (BeeCommon.FileNameMatch(RecName, Mask)) then
+        if (BeeCommon.FileNameMatch(RecName, xOption) = False) then
         begin
-          I := Archive.FindFile(cdOption + Bee_Common.DeleteFileDrive(RecName));
+          I := Archive.FindFile(cdOption + BeeCommon.DeleteFileDrive(RecName));
           if not (fOption xor uOption) then
           begin
             if I = -1 then
@@ -1155,7 +1155,7 @@ begin
     begin
       if Recursive and (Rec.Name <> '.') and (Rec.Name <> '..')then
       begin
-        ScanFileSystem(Bee_Common.IncludeTrailingBackSlash(RecName) +
+        ScanFileSystem(BeeCommon.IncludeTrailingBackSlash(RecName) +
           ExtractFileName(Mask) + '!');
       end;
     end;

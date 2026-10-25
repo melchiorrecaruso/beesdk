@@ -18,12 +18,12 @@ uses
   Controls,
   LResources,
   //
-  Bee_Codec,
-  Bee_Files,
-  Bee_Common,
-  Bee_Headers,
-  Bee_Modeller,
-  Bee_Configuration;
+  BeeCodec,
+  BeeFiles,
+  BeeCommon,
+  BeeHeaders,
+  BeeModeller,
+  BeeConfiguration;
 
 const
   CrossoverProbability = 0.15;

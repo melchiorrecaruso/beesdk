@@ -25,7 +25,7 @@
   v0.7.9 build 0527 - 2007.12.03 by Melchiorre Caruso.
 }
 
-unit Bee_Interface_Base;
+unit BeeInterfaceBase;
 
 {$MODE OBJFPC}{$H+}
 {$R-}{$Q-}{$S-}{$I-}

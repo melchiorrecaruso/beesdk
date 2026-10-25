@@ -27,7 +27,7 @@
   v0.7.9 build 0551 - 2007.12.18 by Melchiorre Caruso.
 }
 
-unit Bee_Interface;
+unit BeeInterface;
 
 {$MODE OBJFPC}{$H+}
 {$R-}{$Q-}{$S-}{$I-}
@@ -36,7 +36,7 @@ interface
 
 uses
   {$IFDEF THREADSYNCHRONIZER}
-  Bee_Interface_Base,
+  BeeInterfaceBase,
   {$ENDIF}
   Classes;
   

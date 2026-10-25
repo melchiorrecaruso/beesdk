@@ -31,7 +31,7 @@
 
 }
 
-unit Bee_Codec;
+unit BeeCodec;
 
 {$MODE OBJFPC}{$H+}
 
@@ -39,10 +39,10 @@ interface
 
 uses
   Classes,        // TStream
-  Bee_RangeCoder; // TRangeCoder, ...
+  BeeRangeCoder;  // TRangeCoder, ...
 
 const
-  MaxFreq = Bee_RangeCoder.MaxFreq;
+  MaxFreq = BeeRangeCoder.MaxFreq;
 
 // Array of Frequencyes...
 
