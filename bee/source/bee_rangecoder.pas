@@ -41,6 +41,7 @@
   
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky.
   v0.7.9 build 0601 - 2007.12.01 by Melchiorre Caruso.
+  v0.7.9 build 0602 - 2026.10.25 by Melchiorre Caruso.
 
 }
 
@@ -157,7 +158,13 @@ end;
 
 function TRangeCoder.GetFreq(TotFreq: cardinal): cardinal;
 begin
-  Result := MulDecDiv(Code + 1, TotFreq, Range);
+  // A valid stream always has Code < Range, hence Result < TotFreq.
+  // Corrupted data would overflow the division or let the caller search
+  // past the last symbol: return the last frequency and let the CRC fail.
+  if Code < Range then
+    Result := MulDecDiv(Code + 1, TotFreq, Range)
+  else
+    Result := TotFreq - 1;
 end;
 
 procedure TRangeCoder.ShiftLow;
