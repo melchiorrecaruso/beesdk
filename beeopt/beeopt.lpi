@@ -57,7 +57,7 @@
     <SearchPaths>
       <IncludeFiles Value="../bee/source/bee-include;$(ProjOutDir)"/>
       <OtherUnitFiles Value="../bee/source"/>
-      <UnitOutputDirectory Value="../build/units"/>
+      <UnitOutputDirectory Value="../build/units-beeopt-$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
       <Optimizations>
@@ -65,6 +65,9 @@
       </Optimizations>
     </CodeGeneration>
     <Linking>
+      <Debugging>
+        <GenerateDebugInfo Value="False"/>
+      </Debugging>
       <LinkSmart Value="True"/>
       <Options>
         <Win32>

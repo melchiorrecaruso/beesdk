@@ -5,29 +5,54 @@
     <PathDelim Value="\"/>
     <General>
       <Flags>
-        <SaveClosedFiles Value="False"/>
-        <LRSInOutputDirectory Value="False"/>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+        <MainUnitHasScaledStatement Value="False"/>
       </Flags>
+      <UseAppBundle Value="False"/>
     </General>
-    <BuildModes>
-      <Item Name="default" Default="True"/>
+    <BuildModes Active="Release">
+      <Item Name="Release" Default="True"/>
+      <Item Name="Release-i386">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="../../build/i386/bee"/>
+          </Target>
+          <SearchPaths>
+            <UnitOutputDirectory Value="../../build/units-bee-$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="ObjFPC"/>
+              <CStyleOperator Value="False"/>
+              <AllowLabel Value="False"/>
+              <CPPInline Value="False"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+        </CompilerOptions>
+      </Item>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
-      <DestinationDirectory Value="$(TestDir)\publishedproject\"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T &apos;Lazarus Run Output&apos; -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
-      </local>
       <FormatVersion Value="2"/>
-      <Modes>
-        <Mode Name="default">
-          <local>
-            <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T &apos;Lazarus Run Output&apos; -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
-          </local>
-        </Mode>
-      </Modes>
     </RunParams>
     <RequiredPackages>
       <Item>
@@ -38,271 +63,22 @@
       <Unit>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Bee"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
-        <UsageCount Value="66"/>
-        <TopLine Value="16"/>
-        <CursorPos X="55" Y="38"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beeapp.pas"/>
-        <UnitName Value="BeeApp"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="16"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="1303"/>
-        <CursorPos X="82" Y="1059"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beemainpacker.pas"/>
-        <UnitName Value="BeeMainPacker"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="13"/>
-        <EditorIndex Value="11"/>
-        <TopLine Value="580"/>
-        <CursorPos X="40" Y="616"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beeassembler.pas"/>
-        <UnitName Value="BeeAssembler"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
-        <EditorIndex Value="2"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beecommon.pas"/>
-        <UnitName Value="BeeCommon"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="3"/>
-        <CursorPos X="75" Y="577"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beeconfiguration.pas"/>
-        <UnitName Value="BeeConfiguration"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="171"/>
-        <CursorPos X="29" Y="191"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beecrc.pas"/>
-        <UnitName Value="BeeCrc"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
-        <EditorIndex Value="6"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beefiles.pas"/>
-        <UnitName Value="BeeFiles"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
-        <EditorIndex Value="7"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beeheaders.pas"/>
-        <UnitName Value="BeeHeaders"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
-        <EditorIndex Value="8"/>
-        <TopLine Value="277"/>
-        <CursorPos X="18" Y="297"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beeinterface.pas"/>
-        <UnitName Value="BeeInterface"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
-        <EditorIndex Value="9"/>
-        <TopLine Value="207"/>
-        <CursorPos X="29" Y="241"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beeinterfacebase.pas"/>
-        <UnitName Value="BeeInterfaceBase"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
-        <EditorIndex Value="10"/>
-        <TopLine Value="21"/>
-        <CursorPos X="6" Y="41"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beemodeller.pas"/>
-        <UnitName Value="BeeModeller"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
-        <EditorIndex Value="12"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beerangecoder0.pas"/>
-        <UnitName Value="BeeRangeCoder0"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
-        <EditorIndex Value="13"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beerangecoder1.pas"/>
-        <UnitName Value="BeeRangeCoder1"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
-        <EditorIndex Value="14"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beerangecoder.pas"/>
-        <UnitName Value="BeeRangeCoder"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
-        <EditorIndex Value="15"/>
-      </Unit>
-      <Unit>
-        <Filename Value="beerangecoderb.pas"/>
-        <UnitName Value="BeeRangeCoderB"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
-        <EditorIndex Value="16"/>
-      </Unit>
-      <Unit>
-        <Filename Value="C:\FPC\3.2.2\source\rtl\objpas\sysutils\filutilh.inc"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="10"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="184"/>
-        <CursorPos X="11" Y="227"/>
       </Unit>
     </Units>
-    <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="beemainpacker.pas"/>
-        <Caret Line="410" Column="36" TopLine="390"/>
-      </Position>
-      <Position>
-        <Filename Value="beemainpacker.pas"/>
-        <Caret Line="441" Column="40" TopLine="421"/>
-      </Position>
-      <Position>
-        <Filename Value="beemainpacker.pas"/>
-        <Caret Line="504" Column="40" TopLine="484"/>
-      </Position>
-      <Position>
-        <Filename Value="beemainpacker.pas"/>
-        <Caret Line="514" Column="40" TopLine="494"/>
-      </Position>
-      <Position>
-        <Filename Value="beemainpacker.pas"/>
-        <Caret Line="545" Column="40" TopLine="525"/>
-      </Position>
-      <Position>
-        <Filename Value="beemainpacker.pas"/>
-        <Caret Line="606" Column="40" TopLine="580"/>
-      </Position>
-      <Position>
-        <Filename Value="beeconfiguration.pas"/>
-      </Position>
-      <Position>
-        <Filename Value="beeconfiguration.pas"/>
-        <Caret Line="82" Column="29" TopLine="62"/>
-      </Position>
-      <Position>
-        <Filename Value="beeconfiguration.pas"/>
-        <Caret Line="149" Column="42" TopLine="129"/>
-      </Position>
-      <Position>
-        <Filename Value="beeheaders.pas"/>
-      </Position>
-      <Position>
-        <Filename Value="beeheaders.pas"/>
-        <Caret Line="57" Column="19" TopLine="37"/>
-      </Position>
-      <Position>
-        <Filename Value="beeheaders.pas"/>
-        <Caret Line="85" Column="5" TopLine="65"/>
-      </Position>
-      <Position>
-        <Filename Value="beeheaders.pas"/>
-        <Caret Line="221" Column="3" TopLine="201"/>
-      </Position>
-      <Position>
-        <Filename Value="beeheaders.pas"/>
-        <Caret Line="257" Column="8" TopLine="237"/>
-      </Position>
-      <Position>
-        <Filename Value="beeheaders.pas"/>
-        <Caret Line="258" Column="54" TopLine="238"/>
-      </Position>
-      <Position>
-        <Filename Value="beeheaders.pas"/>
-        <Caret Line="296" Column="8" TopLine="276"/>
-      </Position>
-      <Position>
-        <Filename Value="beeinterface.pas"/>
-        <Caret Line="122" Column="5" TopLine="42"/>
-      </Position>
-      <Position>
-        <Filename Value="beeinterface.pas"/>
-        <Caret Line="88" Column="9" TopLine="68"/>
-      </Position>
-      <Position>
-        <Filename Value="beeinterface.pas"/>
-        <Caret Line="114" Column="5" TopLine="94"/>
-      </Position>
-      <Position>
-        <Filename Value="beeinterface.pas"/>
-        <Caret Line="213" Column="36" TopLine="193"/>
-      </Position>
-      <Position>
-        <Filename Value="beecommon.pas"/>
-        <Caret Line="278" Column="32" TopLine="254"/>
-      </Position>
-      <Position>
-        <Filename Value="beecommon.pas"/>
-        <Caret Line="81" Column="25"/>
-      </Position>
-      <Position>
-        <Filename Value="beecommon.pas"/>
-        <Caret Line="605" Column="26" TopLine="565"/>
-      </Position>
-      <Position>
-        <Filename Value="beecommon.pas"/>
-        <Caret Line="607" Column="16" TopLine="579"/>
-      </Position>
-      <Position>
-        <Filename Value="beecommon.pas"/>
-        <Caret Line="600" Column="3" TopLine="565"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\FPC\3.2.2\source\rtl\objpas\sysutils\filutilh.inc"/>
-        <Caret Line="89" Column="3" TopLine="61"/>
-      </Position>
-      <Position>
-        <Filename Value="beecommon.pas"/>
-        <Caret Line="84" Column="20" TopLine="58"/>
-      </Position>
-      <Position>
-        <Filename Value="beecommon.pas"/>
-        <Caret Line="381" Column="3" TopLine="377"/>
-      </Position>
-      <Position>
-        <Filename Value="beecommon.pas"/>
-        <Caret Line="607" Column="16" TopLine="579"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\FPC\3.2.2\source\rtl\objpas\sysutils\filutilh.inc"/>
-        <Caret Line="227" Column="11" TopLine="184"/>
-      </Position>
-    </JumpHistory>
+    <JumpHistory HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="../../build/bee"/>
+    </Target>
     <SearchPaths>
-      <IncludeFiles Value="bee-include"/>
-      <UnitOutputDirectory Value="..\temp"/>
+      <UnitOutputDirectory Value="../../build/units-bee-$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
+        <SyntaxMode Value="ObjFPC"/>
         <CStyleOperator Value="False"/>
         <AllowLabel Value="False"/>
         <CPPInline Value="False"/>
@@ -310,35 +86,15 @@
     </Parsing>
     <CodeGeneration>
       <SmartLinkUnit Value="True"/>
-      <TargetProcessor Value="PENTIUM"/>
       <Optimizations>
         <OptimizationLevel Value="3"/>
-        <VariablesInRegisters Value="True"/>
-        <UncertainOptimizations Value="True"/>
       </Optimizations>
     </CodeGeneration>
     <Linking>
       <Debugging>
         <GenerateDebugInfo Value="False"/>
-        <UseLineInfoUnit Value="False"/>
       </Debugging>
       <LinkSmart Value="True"/>
     </Linking>
-    <Other>
-      <WriteFPCLogo Value="False"/>
-      <ExecuteAfter>
-        <CompileReasons Compile="False" Build="False" Run="False"/>
-      </ExecuteAfter>
-    </Other>
   </CompilerOptions>
-  <Debugging>
-    <Exceptions>
-      <Item>
-        <Name Value="ECodetoolError"/>
-      </Item>
-      <Item>
-        <Name Value="EFOpenError"/>
-      </Item>
-    </Exceptions>
-  </Debugging>
 </CONFIG>
