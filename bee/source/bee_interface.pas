@@ -29,7 +29,8 @@
 
 unit Bee_Interface;
 
-{$I compiler.inc}
+{$MODE OBJFPC}{$H+}
+{$R-}{$Q-}{$S-}{$I-}
 
 interface
 

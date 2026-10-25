@@ -28,11 +28,13 @@
   v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
   v0.7.9 build 0497 - 2007.11.18 by Melchiorre Caruso;
+  v0.7.9 build 0602 - 2026.10.25 by Melchiorre Caruso.
 }
 
 unit Bee_Headers;
 
-{$I compiler.inc}
+{$MODE OBJFPC}{$H+}
+{$R-}{$Q-}{$S-}{$I-}
 
 interface
 
@@ -55,10 +57,13 @@ const
 type
   THeaderFlag =
     (foVersion, foMethod, foDictionary, foTable, foTear, foMoved, foLast,
-    foPassword, fo09Unused, fo10Unused, fo11Unused, fo12Unused, fo13Unused, fo14Unused,
+    foPassword, foFilter, fo10Unused, fo11Unused, fo12Unused, fo13Unused, fo14Unused,
     fo15Unused, fo16Unused, fo17Unused, fo18Unused, fo19Unused, fo20Unused, fo21Unused,
     fo22Unused, fo23Unused, fo24Unused, fo25Unused, fo26Unused, fo27Unused, fo28Unused,
     fo29Unused, fo30Unused, fo31Unused, fo32Unused);
+
+// foFilter: the member is coded as a preprocessed image (Bee_Exe_Filter);
+// the image identifies its filter and format version.
 
 type
   THeaderFlags = set of THeaderFlag;
@@ -97,6 +102,7 @@ type
     Action: THeaderAction;
     Option: string;
     RecSize: integer;
+    TableExt: string; // table key chosen from the content, if not empty
     constructor Create(const cdOption: string; const Rec: TSearchRec; const RecPath: string);
     function Fresh(const cdOption: string; const Rec: TSearchRec; const RecPath: string): integer;
     constructor Read(Stream: TStream; aAction: THeaderAction);
@@ -133,7 +139,8 @@ type
     procedure MarkItem(Index: integer; aAction: THeaderAction);
     procedure MarkAll(aAction: THeaderAction);
 
-    procedure SortNews(Config: TConfiguration; sOption: boolean; kOption: boolean; const eOption: string);
+    procedure SortNews(Config: TConfiguration; sOption: boolean; kOption: boolean;
+      ExeFilter: boolean; const eOption: string);
 
     procedure ReadItemsB4b(Stream: TStream; aAction: THeaderAction);
     procedure ReadItems(Stream: TStream; aAction: THeaderAction);
@@ -160,7 +167,7 @@ type
   private
     SfxStrm:  TStream;
 
-    procedure MarkLast(Last: THeaderAction);
+    procedure MarkLast(LastAction: THeaderAction);
     procedure ExpandMask(const Mask: string; Masks: TStringList);
     
     procedure QuickSort(L, R: integer);
@@ -171,8 +178,25 @@ type
 implementation
 
 uses
+  LazFileUtils,
   Bee_Files,
-  Bee_Common;
+  Bee_Common,
+  Bee_Exe_Filter;
+
+function TableExtension(const FileName: string): string;
+begin
+  Result := ExtractFileExt(FileName);
+  if Result = '' then
+    Result := '.' + ExtractFileName(FileName);
+end;
+
+function HeaderTableExt(P: THeader): string;
+begin
+  if Length(P.TableExt) > 0 then
+    Result := P.TableExt
+  else
+    Result := TableExtension(P.Name);
+end;
 
 // Compare header function
 
@@ -185,17 +209,17 @@ begin
 
   if (bool1 and bool2) then
   begin
-    Result := CompareFileName(
-      ExtractFileExt(THeader(L.Items[Index1]).Name),
-      ExtractFileExt(THeader(L.Items[Index2]).Name));
+    Result := LazFileUtils.CompareFilenames(
+      HeaderTableExt(THeader(L.Items[Index1])),
+      HeaderTableExt(THeader(L.Items[Index2])));
 
     if Result = 0 then
-      Result := CompareFileName(
+      Result := LazFileUtils.CompareFilenames(
         ExtractFileName(THeader(L.Items[Index1]).Name),
         ExtractFileName(THeader(L.Items[Index2]).Name));
 
     if Result = 0 then
-      Result := CompareFileName(
+      Result := LazFileUtils.CompareFilenames(
         THeader(L.Items[Index1]).Name,
         THeader(L.Items[Index2]).Name);
   end else
@@ -312,7 +336,7 @@ end;
 
 function THeader.SetTable(Config: TConfiguration): boolean;
 begin
-  Result := Config.GetTable(ExtractFileExt(Name), Table);
+  Result := Config.GetTable(HeaderTableExt(Self), Table);
 end;
 
 function THeader.GetName: string;
@@ -333,10 +357,10 @@ begin
   while H >= L do
   begin
     M := (L + H) div 2;
-    if CompareFileName(FileName, THeader(Items[M]).GetName) > 0 then
+    if LazFileUtils.CompareFilenames(FileName, THeader(Items[M]).GetName) > 0 then
       L := M + 1
     else
-      if CompareFileName(FileName,THeader(Items[M]).GetName) < 0 then
+      if LazFileUtils.CompareFilenames(FileName,THeader(Items[M]).GetName) < 0 then
         H := M - 1
       else
         H := -2;
@@ -361,10 +385,10 @@ begin
   while H >= L do
   begin
     M := (L + H) div 2;
-    if  CompareFileName(FName, THeader(Items[M]).GetName) > 0 then
+    if  LazFileUtils.CompareFilenames(FName, THeader(Items[M]).GetName) > 0 then
       L := M + 1
     else
-      if CompareFileName(FName, THeader(Items[M]).GetName) < 0 then
+      if LazFileUtils.CompareFilenames(FName, THeader(Items[M]).GetName) < 0 then
         H := M - 1
       else
         H := -2;
@@ -373,7 +397,7 @@ begin
   if M = -1 then
     Result := 0
   else
-    if CompareFileName(FName, THeader(Items[M]).GetName) < 0 then
+    if LazFileUtils.CompareFilenames(FName, THeader(Items[M]).GetName) < 0 then
       Result := M
     else
       Result := M + 1;
@@ -410,7 +434,7 @@ end;
 procedure THeaders.ExpandMask(const Mask: string; Masks: TStringList);
 var
   I: integer;
-  Error: integer;
+  SearchResult: integer;
   Rec: TSearchRec;
   Card: boolean;
   LastSlash: integer;
@@ -447,8 +471,8 @@ begin
   begin
     FolderPath := Copy(Mask, 1, FirstSlash);
     FolderName := Copy(Mask, FirstSlash + 1, LastSlash - (FirstSlash + 1));
-    Error := FindFirst(FolderPath + '*', faAnyFile, Rec);
-    while Error = 0 do
+    SearchResult := FindFirst(FolderPath + '*', faAnyFile, Rec);
+    while SearchResult = 0 do
     begin
       if ((Rec.Attr and faDirectory) > 0) and (Rec.Name[1] <> '.') then
       begin
@@ -458,7 +482,7 @@ begin
             Copy(Mask, LastSlash, (Length(Mask) + 1) - LastSlash), Masks);
         end;
       end;
-      Error := FindNext(Rec);
+      SearchResult := FindNext(Rec);
     end;
     FindClose(Rec);
   end else
@@ -522,28 +546,41 @@ begin
   end;
 end;
 
-procedure THeaders.SortNews(Config: TConfiguration; sOption: Boolean; kOption: Boolean; const eOption: string);
+procedure THeaders.SortNews(Config: TConfiguration; sOption: Boolean; kOption: Boolean;
+  ExeFilter: boolean; const eOption: string);
 var
   P: THeader;
-  First, I, Method, Dictionary: integer;
+  FirstIndex, I, Method, Dictionary: integer;
   CurrentExt, PreviousExt: string;
 begin
-  QuickSort(0, Count - 1);
-
   Config.Selector('\main');
   Method := StrToInt(Config.CurrentSection.Values['Method']);
   Dictionary := StrToInt(Config.CurrentSection.Values['Dictionary']);
   Config.Selector('\m' + Config.CurrentSection.Values['Method']);
 
-  First := GetNext(0, toUpdate);
-  if First <> -1 then
+  // executables without a table of their own use the .exe table and are
+  // grouped together
+  if ExeFilter then
+    for I := 0 to Count - 1 do
+    begin
+      P := THeader(Items[I]);
+      if (P.Action = toUpdate) and
+        (Length(Config.CurrentSection.Values[TableExtension(P.Name)]) = 0) and
+        BeeExeProbeFile(P.Name) then
+        P.TableExt := '.exe';
+    end;
+
+  QuickSort(0, Count - 1);
+
+  FirstIndex := GetNext(0, toUpdate);
+  if FirstIndex <> -1 then
   begin
     CurrentExt := '.';
-    I := First;
+    I := FirstIndex;
     repeat
-      P := Get(I);
+      P := THeader(Get(I));
 
-      if I = First then
+      if I = FirstIndex then
       begin
         P.Flags := P.Flags + [foVersion, foMethod, foDictionary];
       end;
@@ -553,7 +590,7 @@ begin
       PreviousExt := CurrentExt;
 
       if Length(eOption) = 0 then
-        CurrentExt := ExtractFileExt(P.Name)
+        CurrentExt := HeaderTableExt(P)
       else
         CurrentExt := eOption;
 
@@ -565,7 +602,7 @@ begin
         Include(P.Flags, foMoved);
         Exclude(P.Flags, foTable);
       end else
-        if CompareFileName(CurrentExt, PreviousExt) <> 0 then
+        if LazFileUtils.CompareFilenames(CurrentExt, PreviousExt) <> 0 then
         begin
           Include(P.Flags, foTable);
         end else
@@ -807,7 +844,7 @@ begin
   for I := Child to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action = aAction) and (CompareFileName(Name, aName) = 0) then
+      if (Action = aAction) and (LazFileUtils.CompareFilenames(Name, aName) = 0) then
       begin
         Result := I;
         Exit;
@@ -823,7 +860,7 @@ begin
   for I := Child downto 0 do
     with THeader(Items[I]) do
     begin
-      if (Action in aActions) and (CompareFileName(Name, aName) = 0) then
+      if (Action in aActions) and (LazFileUtils.CompareFilenames(Name, aName) = 0) then
       begin
         Result := I;
         Exit;
@@ -839,7 +876,7 @@ begin
   for I := Child to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action in aActions) and (CompareFileName(Name, aName) = 0) then
+      if (Action in aActions) and (LazFileUtils.CompareFilenames(Name, aName) = 0) then
       begin
         Result := I;
         Exit;
@@ -855,7 +892,7 @@ begin
   for I := Child downto 0 do
     with THeader(Items[I]) do
     begin
-      if (Action = aAction) and (CompareFileName(Name, aName) = 0) then
+      if (Action = aAction) and (LazFileUtils.CompareFilenames(Name, aName) = 0) then
       begin
         Result := I;
         Exit;
@@ -948,12 +985,12 @@ begin
   until I >= R;
 end;
 
-procedure THeaders.MarkLast(Last: THeaderAction);
+procedure THeaders.MarkLast(LastAction: THeaderAction);
 var
   I: integer;
 begin
   for I := Count - 1 downto 0 do
-    if THeader(Items[I]).Action <> Last then
+    if THeader(Items[I]).Action <> LastAction then
     begin
       Include(THeader(Items[I]).Flags, foLast);
       Exit;
@@ -965,7 +1002,7 @@ var
   P: THeader;
   I: integer;
   J: pointer;
-  Error: integer;
+  SearchResult: integer;
   Rec: TSearchRec;
   RecPath: string;
   RecName: string;
@@ -994,8 +1031,8 @@ begin
     end;
 
   RecPath := ExtractFilePath(Mask);
-  Error := FindFirst(RecPath + '*', faAnyFile, Rec);
-  while Error = 0 do
+  SearchResult := FindFirst(RecPath + '*', faAnyFile, Rec);
+  while SearchResult = 0 do
   begin
     RecName := RecPath + Rec.Name;
     if (Rec.Attr and faDirectory) = 0 then
@@ -1041,7 +1078,7 @@ begin
           ExtractFileName(Mask) + '!', Size);
       end;
     end;
-    Error := FindNext(Rec);
+    SearchResult := FindNext(Rec);
   end;
   FindClose(Rec);
 end;

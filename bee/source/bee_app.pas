@@ -31,6 +31,7 @@
 
   v0.7.9 build 0551 - 2007.12.18 by Melchiorre Caruso.
   v0.7.9 build 0601 - 2026.09.12 by Melchiorre Caruso.
+  v0.7.9 build 0602 - 2026.10.25 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -59,6 +60,7 @@ type
   public
     GeneralSize: integer;
     RemainSize:  integer;
+    ExeFilter:   boolean; // --exe-filter
   private
     function OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
 
@@ -172,6 +174,7 @@ begin
   lOption := False;
   oOption := 'Y';
   pOption := False;
+  ExeFilter := False;
   rOption := False;
   sOption := False;
   tOption := False;
@@ -222,6 +225,7 @@ begin
   Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    cd<dir> set current archive directory' + Cr);
   Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    cfg<filename> use specified configuration file');
   Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    pri<priority> set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    -exe-filter   preprocess executables (x86, x64, ARM64; found by content)');
   Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := (Cr + '  Use BeeOpt to make most optimal parameters.');
   Sync(AppInterface^.OnDisplay.Method);
 end;
@@ -408,7 +412,11 @@ begin
                Delete(S, 1, 2);
                xOption.Add(S);
              end;
-        else if FileNamePos('-pri', S) = 1 then
+        else if SameText(S, '--exe-filter') then
+             begin
+               ExeFilter := True;
+             end else
+             if FileNamePos('-pri', S) = 1 then
              begin
                Delete(S, 1, 4);
                if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
@@ -953,7 +961,7 @@ begin
       if ProcessFilesToSwap(Headers) then
       begin
         // sort headers (only toUpdate headers)
-        Headers.SortNews(Cfg, sOption, kOption, eOption);
+        Headers.SortNews(Cfg, sOption, kOption, ExeFilter, eOption);
 
         // if exists a modified solid sequence open Swap file
         if Length(SwapName) > 0 then
@@ -1524,6 +1532,9 @@ begin
     Result[3] := char(byte('a') + Dictionary)
   else
     Result[3] := '?';
+
+  if foFilter in P.Flags then
+    Result := Result + 'x';
 end;
 
 function TBeeApp.VersionToStr(VersionId: cardinal): string;

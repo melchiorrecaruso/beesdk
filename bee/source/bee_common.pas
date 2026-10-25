@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2007 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2026 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,7 +28,8 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
   v0.7.9 build 0515 - 2007.12.02 by Melchiorre Caruso.
-  v0.7.9 build 0061 - 2026.09.12 by Melchiorre Caruso.
+  v0.7.9 build 0601 - 2026.09.12 by Melchiorre Caruso.
+  v0.7.9 build 0602 - 2026.10.25 by Melchiorre Caruso.
 
 }
 
@@ -39,14 +40,12 @@ unit Bee_Common;
 interface
 
 uses
-  {$IFNDEF FPC}
-  Math,
-  {$ENDIF}
   {$IFDEF MSWINDOWS}
   Windows,
   {$ENDIF}
   Classes,
-  SysUtils;
+  Math,
+  SysUtils; // after Windows: FindClose must resolve to SysUtils
 
 const
   Cr = #13#10;
@@ -84,7 +83,6 @@ function FileNameUseWildcards(const FileName: string): boolean;
 function FileNameMatch(const FileName, Mask: string): boolean; overload;
 function FileNameMatch(const FileName: string; Masks: TStringList): boolean; overload;
 
-function CompareFileName(const S1, S2: string): integer;
 function DeleteFilePath(const FilePath, FileName: string): string;
 function DeleteFileDrive(const FileName: string): string;
 function DoDirSeparators(const FileName: string): string;
@@ -141,6 +139,7 @@ function SetPriority(Priority: integer): boolean; // Priority is 0..3
 implementation
 
 uses
+  LazFileUtils,
   Bee_Assembler;
 
 const
@@ -153,29 +152,19 @@ const
 
 function FileNamePos(const Substr, Str: string): integer;
 begin
-  {$IFDEF FILENAMECASESENSITIVE}
-  Result := System.Pos(SubStr, Str)
-  {$ELSE}
-  Result := System.Pos(UpperCase(SubStr), UpperCase(Str));
-  {$ENDIF}
+  if FileNameCaseSensitive then
+    Result := System.Pos(SubStr, Str)
+  else
+    Result := System.Pos(UpperCase(SubStr), UpperCase(Str));
 end;
 
 function FileNameLastPos(const Substr, Str: string): integer;
 begin
   Result := Length(Str);
-  while (Result > 0) and (CompareFileName(Copy(Str, Result, Length(Substr)), Substr) <> 0) do
+  while (Result > 0) and (LazFileUtils.CompareFilenames(Copy(Str, Result, Length(Substr)), Substr) <> 0) do
   begin
     Dec(Result);
   end;
-end;
-
-function CompareFileName(const S1, S2: string): integer;
-begin
-  {$IFDEF FILENAMECASESENSITIVE}
-  Result := SysUtils.CompareStr(S1, S2)
-  {$ELSE}
-  Result := SysUtils.CompareText(S1, S2);
-  {$ENDIF}
 end;
 
 function DeleteFilePath(const FilePath, FileName: string): string;
@@ -266,7 +255,7 @@ begin
   Result := 0;
   for I := 1 to Length(S) do
   begin
-    if CompareFileName(S[I], C) = 0 then Inc(Result);
+    if S[I] = C then Inc(Result);
   end;
 end;
 
@@ -277,13 +266,15 @@ var
   iMask: string;
   I: integer;
 begin
-  {$IFDEF FILENAMECASESENSITIVE}
-  iFileName := FileName;
-  iMask := Mask;
-  {$ELSE}
-  iFileName := UpperCase(FileName);
-  iMask := UpperCase(Mask);
-  {$ENDIF}
+  if FileNameCaseSensitive then
+  begin
+    iFileName := FileName;
+    iMask := Mask;
+  end else
+  begin
+    iFileName := UpperCase(FileName);
+    iMask := UpperCase(Mask);
+  end;
 
   I := System.Pos('!', iMask);
   if I > 0 then

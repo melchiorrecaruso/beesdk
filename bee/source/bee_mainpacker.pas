@@ -28,11 +28,13 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
   v0.7.9 build 0553 - 2007.12.15 by Melchiorre Caruso.
+  v0.7.9 build 0602 - 2026.10.25 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
 
-{$I compiler.inc}
+{$MODE OBJFPC}{$H+}
+{$R-}{$Q-}{$S-}{$I-}
 
 interface
 
@@ -73,6 +75,7 @@ type
     function CopyStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TStream): boolean;
   private
     function GetKey(Header: THeader): string;
+    procedure EncodeData(SrcFile: TStream; Header: THeader);
   private
     App: TBeeApp;
     Stream: TStream;
@@ -91,6 +94,7 @@ type
     function DecodeStrm(Header: THeader; Mode: TExtractingMode; DstStrm: TStream): boolean;
   private
     function GetKey(Header: THeader): string;
+    procedure DecodeData(Header: THeader; DstFile: TStream; var Crc: cardinal);
   private
     App: TBeeApp;
     Stream: TStream;
@@ -106,7 +110,8 @@ uses
   Bee_Crc,      // UpdCrc32...
   Bee_Files,    // TBufferizedReader
   Bee_Common,   // Diag...
-  Bee_BlowFish;
+  Bee_BlowFish,
+  Bee_Exe_Filter;
 
 /// TEncoder
 
@@ -140,6 +145,58 @@ begin
   end;
 end;
 
+// Encodes Header.Size bytes of SrcFile. With the exe filter enabled an
+// executable is coded as its filtered image, preceded by its length.
+
+procedure TEncoder.EncodeData(SrcFile: TStream; Header: THeader);
+var
+  Buffer: TBytes;
+  Load: TBeeExeLoad;
+  Len: cardinal;
+  Symbol: byte;
+  I: integer;
+  Stopped: boolean;
+begin
+  Load := elStream;
+  Buffer := nil;
+  if App.ExeFilter then
+    Load := BeeExeLoad(SrcFile, Header.Size, Header.Crc, Buffer);
+
+  SecondaryCodec.Start;
+  if Load = elFiltered then
+  begin
+    Include(Header.Flags, foFilter);
+    Len := Length(Buffer);
+    for I := 0 to 3 do PPM.UpdateModel(byte(Len shr (I * 8)));
+  end;
+
+  Stopped := False;
+  for I := 0 to High(Buffer) do
+  begin
+    if App.RemainSize and $FFFF = 0 then
+    begin
+      Stopped := App.Tick;
+      if Stopped then Break;
+    end;
+    if I < Header.Size then Inc(App.RemainSize);
+    PPM.UpdateModel(Buffer[I]);
+  end;
+
+  if (Load = elStream) and (not Stopped) then
+    for I := Length(Buffer) + 1 to Header.Size do
+    begin
+      if App.RemainSize and $FFFF = 0 then
+      begin
+        if App.Tick then Break;
+      end;
+      Inc(App.RemainSize);
+      SrcFile.Read(Symbol, 1);
+      UpdCrc32(Header.Crc, Symbol);
+      PPM.UpdateModel(Symbol);
+    end;
+  SecondaryCodec.Flush;
+end;
+
 function TEncoder.EncodeFile(Header: THeader; Mode: TEncodingMode): boolean;
 var
   SrcFile: TFileReader;
@@ -156,6 +213,7 @@ begin
     PPM.FreshFlexible
   else
     PPM.FreshSolid;
+  Exclude(Header.Flags, foFilter);
 
   Header.StartPos := Stream.Seek(0, 1); // stream flush
   Header.Crc := cardinal(-1);
@@ -197,21 +255,7 @@ begin
         Stream.Write(Symbol, 1);
       end;
     end else
-    begin
-      SecondaryCodec.Start;
-      for I := 1 to Header.Size do
-      begin
-        if App.RemainSize and $FFFF = 0 then
-        begin
-          if App.Tick then Break;
-        end;
-        Inc(App.RemainSize);
-        SrcFile.Read(Symbol, 1);
-        UpdCrc32(Header.Crc, Symbol);
-        PPM.UpdateModel(Symbol);
-      end;
-      SecondaryCodec.Flush;
-    end;
+      EncodeData(SrcFile, Header);
     SrcFile.Free;
 
     Header.Pack := Stream.Seek(0, 1) - Header.StartPos; // last stream flush
@@ -228,6 +272,7 @@ begin
   begin
     Include(Header.Flags, foTear);
     Include(Header.Flags, foMoved);
+    Exclude(Header.Flags, foFilter);
     Stream.Size := Header.StartPos;
 
     Dec(App.RemainSize, Header.Size);
@@ -253,6 +298,7 @@ begin
     PPM.FreshFlexible
   else
     PPM.FreshSolid;
+  Exclude(Header.Flags, foFilter);
 
   SrcPosition := 0;
   SrcFile := SrcStrm;
@@ -292,21 +338,7 @@ begin
         Stream.Write(Symbol, 1);
       end;
     end else
-    begin
-      SecondaryCodec.Start;
-      for I := 1 to Header.Size do
-      begin
-        if App.RemainSize and $FFFF = 0 then
-        begin
-          if App.Tick then Break;
-        end;
-        Inc(App.RemainSize);
-        SrcFile.Read(Symbol, 1);
-        UpdCrc32(Header.Crc, Symbol);
-        PPM.UpdateModel(Symbol);
-      end;
-      SecondaryCodec.Flush;
-    end;
+      EncodeData(SrcFile, Header);
     TFileReader(SrcFile).BlowFish.Finish;
 
     Header.Pack := Stream.Seek(0, 1) - Header.StartPos; // last stream flush
@@ -323,6 +355,7 @@ begin
   begin
     Include(Header.Flags, foTear);
     Include(Header.Flags, foMoved);
+    Exclude(Header.Flags, foFilter);
     Stream.Size := Header.StartPos;
     Header.StartPos := SrcPosition;
 
@@ -411,6 +444,64 @@ begin
   Result := App.AppInterface^.OnKey.Answer;
 end;
 
+// Decodes a member into DstFile, updating Crc. A filtered member that does
+// not restore to exactly Header.Size bytes is reported as a CRC error.
+
+procedure TDecoder.DecodeData(Header: THeader; DstFile: TStream; var Crc: cardinal);
+var
+  Buffer, Data: TBytes;
+  Len: cardinal;
+  Symbol: byte;
+  I: integer;
+  Stopped: boolean;
+begin
+  if not (foFilter in Header.Flags) then
+  begin
+    for I := 1 to Header.Size do
+    begin
+      if App.RemainSize and $FFFF = 0 then
+      begin
+        if App.Tick then Break;
+      end;
+      Inc(App.RemainSize);
+      Symbol := PPM.UpdateModel(0);
+      UpdCrc32(Crc, Symbol);
+      DstFile.Write(Symbol, 1);
+    end;
+    Exit;
+  end;
+
+  Len := 0;
+  for I := 0 to 3 do Len := Len or (cardinal(PPM.UpdateModel(0)) shl (I * 8));
+  if (Header.Size <= 0) or (Len > BeeExeFilteredSizeLimit(Header.Size)) then
+  begin
+    Crc := not Header.Crc;
+    Exit;
+  end;
+
+  SetLength(Buffer, Len);
+  Stopped := False;
+  for I := 0 to integer(Len) - 1 do
+  begin
+    if App.RemainSize and $FFFF = 0 then
+    begin
+      Stopped := App.Tick;
+      if Stopped then Break;
+    end;
+    if I < Header.Size then Inc(App.RemainSize);
+    Buffer[I] := PPM.UpdateModel(0);
+  end;
+  if Stopped then Exit;
+
+  if BeeExeDecode(Buffer, Data) and (Length(Data) = Header.Size) then
+  begin
+    Buffer := nil;
+    for I := 0 to High(Data) do UpdCrc32(Crc, Data[I]);
+    DstFile.Write(Data[0], Length(Data));
+  end else
+    Crc := not Header.Crc;
+end;
+
 function TDecoder.DecodeFile(Header: THeader; Mode: TExtractingMode): boolean;
 var
   DstFile: TStream;
@@ -476,17 +567,7 @@ begin
     end else
     begin
       SecondaryCodec.Start;
-      for I := 1 to Header.Size do
-      begin
-        if App.RemainSize and $FFFF = 0 then
-        begin
-          if App.Tick then Break;
-        end;
-        Inc(App.RemainSize);
-        Symbol := PPM.UpdateModel(0);
-        UpdCrc32(Crc, Symbol);
-        DstFile.Write(Symbol, 1);
-      end;
+      DecodeData(Header, DstFile, Crc);
       SecondaryCodec.Flush;
     end;
     TFileReader(Stream).BlowFish.Finish;
@@ -582,17 +663,7 @@ begin
     end else
     begin
       SecondaryCodec.Start;
-      for I := 1 to Header.Size do
-      begin
-        if App.RemainSize and $FFFF = 0 then
-        begin
-          if App.Tick then Break;
-        end;
-        Inc(App.RemainSize);
-        Symbol := PPM.UpdateModel(0);
-        UpdCrc32(Crc, Symbol);
-        DstFile.Write(Symbol, 1);
-      end;
+      DecodeData(Header, DstFile, Crc);
       SecondaryCodec.Flush;
     end;
     TFileReader(Stream).BlowFish.Finish;
